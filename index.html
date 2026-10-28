@@ -38,7 +38,7 @@
               dark: '#526355',
               bg: '#EFF3F0'
             },
-            kakao: {
+            goldaccent: {
               DEFAULT: '#FEE500',
               hover: '#F5DC00',
               text: '#191919'
@@ -125,7 +125,7 @@
       <div class="flex items-center gap-2">
         <span class="hidden sm:inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-sage-bg text-sage-dark font-medium border border-sage/20">
           <span class="w-2 h-2 rounded-full bg-sage animate-pulse"></span>
-          카카오 JS 키 등록 완료 · 대표원장 & 제작자 공동 관리
+          휴대폰 번호 인증 & 사내 가입 코드 보안 적용 · 대표원장 & 제작자 공동 관리
         </span>
       </div>
     </header>
@@ -147,7 +147,7 @@
               통합 성과 관리 시스템
             </h1>
             <p class="text-sm text-ivory/75 leading-relaxed mb-6">
-              사전 입력된 지점원장 및 디자이너 데이터는 모두 비워져 있으며, 직접 회원가입을 완료해야만 등록됩니다. <strong>대표원장</strong>과 <strong>제작자</strong>는 동일한 최상위 관리 권한으로 모든 데이터 및 열람 범위를 제어할 수 있습니다.
+              <strong>대표원장</strong>과 <strong>제작자(관리자)</strong>는 별도 회원가입 없이 전용 패스워드 입력만으로 즉시 접속할 수 있으며, <strong>지점원장</strong>과 <strong>디자이너</strong>는 휴대폰 번호 인증과 <strong>사내 가입 코드</strong>를 통해 직접 회원가입해야 등록됩니다.
             </p>
 
             <!-- 3 Branches Showcase (Live Registered Count) -->
@@ -179,7 +179,7 @@
           <!-- Palette & Security Info -->
           <div class="pt-5 border-t border-white/10">
             <div class="flex items-center justify-between text-xs text-ivory/70 mb-2">
-              <span>카카오 JS 키: <code class="text-kakao font-mono">ca5c0c...ac2e4</code></span>
+              <span>인증 방식: <strong class="text-champagne-light">휴대폰 인증 + 사내 가입 코드</strong></span>
               <span>기기 자동 로그인 유지</span>
             </div>
             <div class="flex items-center gap-2">
@@ -198,141 +198,240 @@
             <!-- Auth Mode Tabs -->
             <div class="flex rounded-xl bg-ivory p-1 border border-ivory-border mb-6">
               <button type="button" id="authTabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-espresso text-ivory shadow-sm transition">
-                카카오톡 간편 로그인
+                로그인 (관리자 패스워드 / 휴대폰 인증)
               </button>
               <button type="button" id="authTabSignupBtn" onclick="switchAuthTab('signup')" class="flex-1 py-2.5 text-sm font-bold rounded-lg text-espresso-muted hover:text-espresso transition">
-                신규 회원가입 (첫 접속)
+                임직원 회원가입 (사내 가입 코드)
               </button>
             </div>
 
-            <!-- TAB 1: KAKAO LOGIN VIEW -->
-            <div id="authLoginPanel" class="space-y-6">
-              <div class="text-center sm:text-left">
-                <div class="flex flex-wrap items-center gap-1.5 mb-2">
-                  <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-champagne-dark bg-champagne-bg px-2.5 py-1 rounded-md">
-                    🔒 로그인 필수 · 원장·디자이너 직접 가입 등록제
-                  </span>
-                  <span class="inline-flex items-center gap-1 text-[11px] font-bold text-sage-dark bg-sage-bg px-2.5 py-1 rounded-md">
-                    ✅ 카카오 JS Key 연동됨
-                  </span>
+            <!-- TAB 1: LOGIN VIEW (ADMIN PASSWORD LOGIN + STAFF PHONE AUTH LOGIN) -->
+            <div id="authLoginPanel" class="space-y-5">
+              
+              <!-- SECTION A: 대표원장 & 제작자(관리자) 회원가입 없이 패스워드 직통 로그인 -->
+              <div class="p-5 rounded-2xl bg-espresso text-ivory border border-champagne/40 shadow-md space-y-3.5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-extrabold px-2.5 py-0.5 rounded bg-champagne text-white">👑 대표원장 · 🛠️ 제작자 전용</span>
+                    <span class="text-xs text-champagne-light font-semibold">회원가입 없이 패스워드 즉시 접속</span>
+                  </div>
+                  <span class="text-[11px] text-ivory/70">최상위 공동 관리자</span>
                 </div>
-                <h2 class="text-xl sm:text-2xl font-bold text-espresso">카카오톡 계정으로 시작하기</h2>
-                <p class="text-sm text-espresso-muted mt-1">
-                  지점원장과 디자이너 데이터는 모두 비워져 있으며, 직접 <strong>회원가입</strong>을 진행해야만 등록됩니다. 한번 로그인한 기기는 로그인 상태가 계속 유지됩니다.
-                </p>
+
+                <!-- Admin Target Selector (대표원장 vs 제작자) -->
+                <div class="grid grid-cols-2 gap-2">
+                  <button type="button" id="adminTypeBtn_ceo" onclick="selectAdminLoginRole('대표원장')" class="py-2.5 px-3 rounded-xl border-2 border-champagne bg-champagne/25 text-ivory font-extrabold text-xs flex items-center justify-center gap-1.5 transition">
+                    <span>👑 대표원장 (영화) 로그인</span>
+                  </button>
+                  <button type="button" id="adminTypeBtn_creator" onclick="selectAdminLoginRole('제작자')" class="py-2.5 px-3 rounded-xl border border-white/15 bg-white/5 text-ivory/75 hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition">
+                    <span>🛠️ 제작자 (관리자) 로그인</span>
+                  </button>
+                </div>
+
+                <form id="adminDirectPasswordForm" onsubmit="handleAdminPasswordLogin(event)" class="space-y-2.5">
+                  <input type="hidden" id="selectedAdminLoginRole" value="대표원장" />
+                  <div class="flex gap-2">
+                    <div class="relative flex-1">
+                      <input
+                        type="password"
+                        id="adminDirectPasswordInput"
+                        required
+                        placeholder="대표원장 또는 제작자(관리자) 전용 패스워드 입력"
+                        class="w-full pl-4 pr-16 py-3 rounded-xl bg-white text-espresso text-sm font-bold placeholder:text-espresso-muted/70 focus:outline-none focus:ring-2 focus:ring-champagne"
+                      />
+                      <button type="button" onclick="togglePasswordVisibility('adminDirectPasswordInput', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-bold text-espresso-muted hover:text-espresso">
+                        보기
+                      </button>
+                    </div>
+                    <button type="submit" class="px-5 py-3 rounded-xl bg-champagne hover:bg-champagne-dark text-white font-extrabold text-xs sm:text-sm shrink-0 shadow-sm transition">
+                      패스워드 접속 &rarr;
+                    </button>
+                  </div>
+                </form>
               </div>
 
-              <!-- Official Style Kakao Login CTA Button -->
-              <div class="space-y-3">
-                <button type="button" onclick="openKakaoAuthModal()" class="w-full py-4 px-6 rounded-xl bg-kakao hover:bg-kakao-hover text-kakao-text font-bold text-base shadow-md hover:shadow-lg transition flex items-center justify-center gap-3 border border-yellow-400/50">
-                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="#191919">
-                    <path d="M12 3C6.477 3 2 6.477 2 10.765c0 2.772 1.855 5.205 4.653 6.578-.153.543-.986 3.504-1.02 3.733-.043.29.106.286.225.208.093-.06 3.694-2.51 4.303-2.936.597.087 1.212.132 1.839.132 5.523 0 10-3.477 10-7.765S17.523 3 12 3z"/>
-                  </svg>
-                  <span>카카오톡 계정으로 3초 만에 로그인</span>
-                </button>
-
-                <div class="flex items-center justify-between px-1 pt-1">
-                  <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-                    <input type="checkbox" id="keepLoggedInCheckbox" checked class="w-4 h-4 rounded border-ivory-border text-espresso focus:ring-champagne" />
-                    <span class="text-xs font-medium text-espresso">이 기기에서 로그인 상태 계속 유지 (자동 로그인)</span>
-                  </label>
-                  <button type="button" onclick="switchAuthTab('signup')" class="text-xs font-bold text-champagne-dark hover:underline">
-                    처음 접속하셨나요? 회원가입 &rarr;
-                  </button>
+              <!-- SECTION B: 지점원장 · 디자이너 휴대폰 번호 인증 로그인 -->
+              <div class="p-5 rounded-2xl bg-ivory/70 border border-ivory-border space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-sage-dark bg-sage-bg px-2.5 py-0.5 rounded-md mb-1">
+                      📱 휴대폰 번호 인증 로그인
+                    </span>
+                    <h3 class="text-base font-bold text-espresso">지점원장 · 디자이너 휴대폰 번호로 로그인</h3>
+                    <p class="text-xs text-espresso-muted">사내 가입 코드로 회원가입을 완료한 휴대폰 번호로 본인 인증 후 접속합니다.</p>
+                  </div>
                 </div>
+
+                <form id="phoneLoginForm" onsubmit="handlePhoneLoginSubmit(event)" class="space-y-3">
+                  <div>
+                    <label for="loginPhoneInput" class="block text-xs font-bold text-espresso mb-1">
+                      가입된 휴대폰 번호
+                    </label>
+                    <div class="flex gap-2">
+                      <input
+                        type="tel"
+                        id="loginPhoneInput"
+                        required
+                        oninput="formatPhoneNumberInput(this)"
+                        placeholder="010-0000-0000"
+                        maxlength="13"
+                        class="flex-1 px-4 py-2.5 rounded-xl border border-ivory-border bg-white text-sm font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
+                      />
+                      <button type="button" onclick="sendLoginPhoneOtp()" class="px-4 py-2.5 rounded-xl bg-sage hover:bg-sage-dark text-white font-bold text-xs shrink-0 transition">
+                        인증번호 받기
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- OTP verification box for Login -->
+                  <div id="loginOtpVerifyBox" class="hidden p-3.5 rounded-xl bg-sage-bg border border-sage/30 space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                      <span id="loginOtpIssuedText" class="font-bold text-sage-dark">📩 인증번호가 발송되었습니다.</span>
+                      <button type="button" onclick="autoFillLoginOtp()" class="text-[11px] font-extrabold text-espresso underline">
+                        인증번호 자동입력
+                      </button>
+                    </div>
+                    <div class="flex gap-2">
+                      <input
+                        type="text"
+                        id="loginOtpCodeInput"
+                        placeholder="인증번호 6자리 입력"
+                        maxlength="6"
+                        class="flex-1 px-3.5 py-2 rounded-lg border border-ivory-border bg-white text-xs font-bold text-espresso"
+                      />
+                      <button type="button" onclick="verifyLoginPhoneOtp()" class="px-4 py-2 rounded-lg bg-espresso text-ivory font-bold text-xs">
+                        인증 확인
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between pt-1">
+                    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                      <input type="checkbox" id="keepLoggedInCheckbox" checked class="w-4 h-4 rounded border-ivory-border text-espresso focus:ring-champagne" />
+                      <span class="text-xs font-medium text-espresso">이 기기에서 로그인 상태 계속 유지 (자동 로그인)</span>
+                    </label>
+                    <button type="button" onclick="switchAuthTab('signup')" class="text-xs font-bold text-champagne-dark hover:underline">
+                      첫 접속이신가요? 회원가입 &rarr;
+                    </button>
+                  </div>
+
+                  <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-espresso hover:bg-espresso-light text-ivory font-bold text-sm shadow-md transition flex items-center justify-center gap-2">
+                    <span>휴대폰 번호로 로그인</span>
+                    <span>&rarr;</span>
+                  </button>
+                </form>
               </div>
 
-              <!-- Quick Access for Root Admins (대표원장 & 제작자) + Direct Signup Entry -->
-              <div class="pt-4 border-t border-ivory-border">
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-xs font-bold text-espresso uppercase tracking-wider">⚡ 최상위 관리자(대표원장 · 제작자) 접속 및 직접 가입</span>
-                  <span class="text-[11px] text-sage-dark font-medium">원장·디자이너 직접 가입 등록제</span>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  <!-- CEO Quick Login -->
-                  <button type="button" onclick="quickLoginAs('u_ceo')" class="p-3 rounded-xl border border-champagne/40 bg-champagne-bg/60 hover:bg-champagne-bg text-left transition group">
-                    <div class="flex items-center justify-between mb-1">
-                      <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-espresso text-ivory">대표원장</span>
-                      <span class="text-xs text-champagne-dark group-hover:translate-x-0.5 transition">&rarr;</span>
-                    </div>
-                    <p class="font-bold text-sm text-espresso">영화 대표원장</p>
-                    <p class="text-[11px] text-espresso-muted">전 지점 총괄 · 모든 데이터 열람</p>
-                  </button>
-
-                  <!-- Creator (제작자) Quick Login - Identical Authority as 대표원장 -->
-                  <button type="button" onclick="quickLoginAs('u_creator')" class="p-3 rounded-xl border border-champagne/40 bg-champagne-bg/60 hover:bg-champagne-bg text-left transition group">
-                    <div class="flex items-center justify-between mb-1">
-                      <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-champagne text-white">제작자 (총괄)</span>
-                      <span class="text-xs text-champagne-dark group-hover:translate-x-0.5 transition">&rarr;</span>
-                    </div>
-                    <p class="font-bold text-sm text-espresso">제작자 관리자</p>
-                    <p class="text-[11px] text-espresso-muted">대표원장과 동일한 전체 관리 권한</p>
-                  </button>
-
-                  <!-- Branch Manager & Designer Direct Signup Entry -->
-                  <button type="button" onclick="handleLoginDesignerCardClick()" class="p-3 rounded-xl border border-sage/40 bg-sage-bg/70 hover:bg-sage-bg text-left transition group">
-                    <div class="flex items-center justify-between mb-1">
-                      <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-sage text-white">원장 · 디자이너</span>
-                      <span class="text-xs text-sage-dark group-hover:translate-x-0.5 transition">&rarr;</span>
-                    </div>
-                    <p id="loginDesignerQuickCardTitle" class="font-bold text-sm text-espresso">직접 회원가입하기</p>
-                    <p id="loginDesignerQuickCardSub" class="text-[11px] text-espresso-muted">직접 가입해야만 등록됩니다</p>
-                  </button>
-                </div>
-
-                <!-- Registered Custom Users List (Populated only when users actually sign up) -->
-                <div id="customRegisteredAccountsBox" class="mt-3 p-3.5 rounded-xl bg-ivory border border-ivory-border">
-                  <p class="text-xs font-bold text-espresso mb-2 flex items-center justify-between">
-                    <span>✨ 직접 회원가입하여 등록된 지점원장 · 디자이너 목록</span>
-                    <span id="customRegisteredCountLabel" class="text-[11px] text-champagne-dark font-extrabold">0명 등록됨</span>
-                  </p>
-                  <div id="customRegisteredAccountsList" class="flex flex-wrap gap-2"></div>
-                </div>
-              </div>
             </div>
 
-            <!-- TAB 2: SIGNUP FORM (REQUIREMENT 3 & 4) -->
-            <div id="authSignupPanel" class="space-y-5 hidden">
+            <!-- TAB 2: SIGNUP FORM (PHONE VERIFICATION + COMPANY INVITE CODE Yuroso1007) -->
+            <div id="authSignupPanel" class="space-y-4 hidden">
               <div>
-                <div class="inline-flex items-center gap-1.5 text-xs font-bold text-kakao-text bg-kakao px-2.5 py-1 rounded-md mb-2">
-                  <span>💬 카카오톡 연동 신규 회원가입 (직접 등록)</span>
+                <div class="inline-flex items-center gap-1.5 text-xs font-bold text-sage-dark bg-sage-bg px-2.5 py-1 rounded-md mb-1.5 border border-sage/30">
+                  <span>📱 휴대폰 번호 인증 + 🔐 사내 가입 코드 필수</span>
                 </div>
-                <h2 class="text-xl font-bold text-espresso">유로소 헤어 임직원 회원가입</h2>
+                <h2 class="text-xl font-bold text-espresso">유로소 헤어 지점원장 · 디자이너 회원가입</h2>
                 <p class="text-xs text-espresso-muted mt-0.5">
-                  지점원장 및 디자이너는 직접 가입해야만 시스템에 등록됩니다. 이름, 지점, 직급을 선택해 가입을 완료해주세요.
+                  외부인 가입 방지를 위해 <strong>휴대폰 번호 인증</strong>과 유로소 헤어 <strong>사내 가입 코드</strong>가 확인되어야만 등록됩니다. (대표원장·제작자는 회원가입 없이 로그인 탭에서 패스워드로 바로 접속하세요.)
                 </p>
               </div>
 
-              <form id="signupForm" onsubmit="handleSignupSubmit(event)" class="space-y-4">
-                <!-- 1. 디자이너 이름 -->
+              <form id="signupForm" onsubmit="handleSignupSubmit(event)" class="space-y-3.5">
+                <!-- 1. 디자이너/원장 이름 -->
                 <div>
-                  <label for="signupNameInput" class="block text-xs font-bold text-espresso mb-1.5">
-                    1. 디자이너 이름 (또는 원장·제작자 성함) <span class="text-red-600">*</span>
+                  <label for="signupNameInput" class="block text-xs font-bold text-espresso mb-1">
+                    1. 이름 (디자이너 또는 지점원장 성함) <span class="text-red-600">*</span>
                   </label>
                   <input
                     type="text"
                     id="signupNameInput"
                     required
                     placeholder="예: 김유로, 하은, 도윤 등 이름을 입력하세요"
-                    class="w-full px-4 py-3 rounded-xl border border-ivory-border bg-ivory/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-champagne text-sm font-medium text-espresso"
+                    class="w-full px-4 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-champagne text-sm font-medium text-espresso"
                   />
                 </div>
 
-                <!-- 2. 지점 선택 (파주 운정점, 운정역점, 마곡발산점) -->
+                <!-- 2. 휴대폰 번호 인증 -->
                 <div>
-                  <label for="signupBranchSelect" class="block text-xs font-bold text-espresso mb-1.5">
-                    2. 소속 지점 선택 (3대 지점 중 선택) <span class="text-red-600">*</span>
+                  <label for="signupPhoneInput" class="block text-xs font-bold text-espresso mb-1">
+                    2. 휴대폰 번호 인증 <span class="text-red-600">*</span>
+                  </label>
+                  <div class="flex gap-2">
+                    <input
+                      type="tel"
+                      id="signupPhoneInput"
+                      required
+                      oninput="formatPhoneNumberInput(this)"
+                      placeholder="010-0000-0000"
+                      maxlength="13"
+                      class="flex-1 px-4 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-champagne text-sm font-bold text-espresso"
+                    />
+                    <button type="button" onclick="sendSignupPhoneOtp()" class="px-3.5 py-2.5 rounded-xl bg-sage hover:bg-sage-dark text-white font-bold text-xs shrink-0 transition">
+                      인증번호 발송
+                    </button>
+                  </div>
+
+                  <!-- Signup OTP Box -->
+                  <div id="signupOtpVerifyBox" class="hidden mt-2 p-3 rounded-xl bg-sage-bg border border-sage/30 space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                      <span id="signupOtpIssuedText" class="font-bold text-sage-dark">📩 인증번호 6자리가 발송되었습니다.</span>
+                      <button type="button" onclick="autoFillSignupOtp()" class="text-[11px] font-extrabold text-espresso underline">
+                        인증번호 자동입력
+                      </button>
+                    </div>
+                    <div class="flex gap-2">
+                      <input
+                        type="text"
+                        id="signupOtpCodeInput"
+                        placeholder="6자리 인증번호 입력"
+                        maxlength="6"
+                        class="flex-1 px-3 py-2 rounded-lg border border-ivory-border bg-white text-xs font-bold text-espresso"
+                      />
+                      <button type="button" onclick="verifySignupPhoneOtp()" class="px-4 py-2 rounded-lg bg-espresso text-ivory font-bold text-xs">
+                        인증 확인
+                      </button>
+                    </div>
+                  </div>
+                  <p id="signupPhoneVerifiedBadge" class="hidden text-xs font-bold text-sage-dark mt-1.5">
+                    ✅ 휴대폰 번호 본인 인증이 완료되었습니다.
+                  </p>
+                </div>
+
+                <!-- 3. 외부인 가입 방지용 사내 가입 코드 -->
+                <div>
+                  <label for="signupInviteCodeInput" class="block text-xs font-bold text-espresso mb-1">
+                    3. 사내 가입 코드 (외부인 가입 방지 보안코드) <span class="text-red-600">*</span>
+                  </label>
+                  <div class="relative">
+                    <input
+                      type="password"
+                      id="signupInviteCodeInput"
+                      required
+                      placeholder="유로소 헤어 사내 가입 코드를 입력하세요"
+                      class="w-full pl-4 pr-16 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-champagne text-sm font-bold text-espresso"
+                    />
+                    <button type="button" onclick="togglePasswordVisibility('signupInviteCodeInput', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-bold text-espresso-muted hover:text-espresso">
+                      보기
+                    </button>
+                  </div>
+                  <p class="text-[11px] text-espresso-muted mt-1">※ 유로소 헤어 임직원에게만 안내된 사내 가입 코드가 일치해야 가입됩니다.</p>
+                </div>
+
+                <!-- 4. 지점 선택 (파주 운정점, 운정역점, 마곡발산점) -->
+                <div>
+                  <label for="signupBranchSelect" class="block text-xs font-bold text-espresso mb-1">
+                    4. 소속 지점 선택 (3대 지점 중 선택) <span class="text-red-600">*</span>
                   </label>
                   <select
                     id="signupBranchSelect"
                     required
-                    class="w-full px-4 py-3 rounded-xl border border-ivory-border bg-ivory/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-champagne text-sm font-semibold text-espresso"
+                    class="w-full px-4 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-champagne text-sm font-semibold text-espresso"
                   >
                     <option value="파주 운정점">파주 운정점</option>
                     <option value="운정역점">운정역점</option>
                     <option value="마곡발산점">마곡발산점</option>
                   </select>
-                  <div class="grid grid-cols-3 gap-2 mt-2">
+                  <div class="grid grid-cols-3 gap-2 mt-1.5">
                     <button type="button" onclick="selectSignupBranchCard('파주 운정점')" id="branchCard_파주 운정점" class="py-2 px-2 rounded-lg border-2 border-champagne bg-champagne-bg text-xs font-bold text-espresso transition">
                       📍 파주 운정점
                     </button>
@@ -345,33 +444,25 @@
                   </div>
                 </div>
 
-                <!-- 3. 직급 선택 (대표원장, 지점원장, 디자이너, 제작자) -->
+                <!-- 5. 직급 선택 (디자이너 / 지점원장) -->
                 <div>
-                  <label for="signupRoleSelect" class="block text-xs font-bold text-espresso mb-1.5">
-                    3. 직급 선택 (대표원장 / 지점원장 / 디자이너 / 제작자) <span class="text-red-600">*</span>
+                  <label for="signupRoleSelect" class="block text-xs font-bold text-espresso mb-1">
+                    5. 직급 선택 (디자이너 / 지점원장) <span class="text-red-600">*</span>
                   </label>
                   <select
                     id="signupRoleSelect"
                     required
-                    class="w-full px-4 py-3 rounded-xl border border-ivory-border bg-ivory/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-champagne text-sm font-semibold text-espresso"
+                    class="w-full px-4 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-champagne text-sm font-semibold text-espresso"
                   >
                     <option value="디자이너">디자이너 (개인 KPI 대시보드 & CRM 5대 지표 입력·열람)</option>
                     <option value="지점원장">지점원장 (소속 지점 KPI & 소속 디자이너 성과 열람)</option>
-                    <option value="대표원장">대표원장 (전 지점 총괄 KPI & 열람 데이터 설정 관리)</option>
-                    <option value="제작자">제작자 (대표원장과 동일한 최상위 시스템·데이터 관리 권한)</option>
                   </select>
-                  <div class="grid grid-cols-4 gap-2 mt-2">
+                  <div class="grid grid-cols-2 gap-2 mt-1.5">
                     <button type="button" onclick="selectSignupRoleCard('디자이너')" id="roleCard_디자이너" class="py-2 px-2 rounded-lg border-2 border-champagne bg-champagne-bg text-xs font-bold text-espresso transition">
                       ✂️ 디자이너
                     </button>
                     <button type="button" onclick="selectSignupRoleCard('지점원장')" id="roleCard_지점원장" class="py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition">
                       🏢 지점원장
-                    </button>
-                    <button type="button" onclick="selectSignupRoleCard('대표원장')" id="roleCard_대표원장" class="py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition">
-                      👑 대표원장
-                    </button>
-                    <button type="button" onclick="selectSignupRoleCard('제작자')" id="roleCard_제작자" class="py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition">
-                      🛠️ 제작자
                     </button>
                   </div>
                 </div>
@@ -382,11 +473,11 @@
                     <input type="checkbox" id="signupKeepLoggedIn" checked class="w-4 h-4 rounded border-ivory-border text-espresso focus:ring-champagne" />
                     <span class="text-xs font-semibold text-espresso">가입 후 이 기기에서 로그인 계속 유지하기</span>
                   </label>
-                  <span class="text-[11px] text-sage-dark font-semibold">카카오 JS 키 연동됨</span>
+                  <span class="text-[11px] text-sage-dark font-semibold">휴대폰 인증 · 사내코드 보안</span>
                 </div>
 
                 <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-espresso hover:bg-espresso-light text-ivory font-bold text-sm shadow-md transition flex items-center justify-center gap-2">
-                  <span>카카오 계정으로 회원가입 완료 및 시작하기</span>
+                  <span>휴대폰 인증 및 사내 코드로 회원가입 완료</span>
                   <span>&rarr;</span>
                 </button>
               </form>
@@ -394,7 +485,7 @@
           </div>
 
           <div class="pt-4 mt-4 border-t border-ivory-border flex flex-wrap items-center justify-between gap-2 text-xs text-espresso-muted">
-            <span>※ 직급별 엄격한 열람 권한 분리(RBAC) 및 대표원장·제작자 전용 데이터 제어 적용</span>
+            <span>※ 대표원장 · 제작자는 회원가입 없이 패스워드로 접속하며, 가입자 리스트 및 회원탈퇴를 전용 관리합니다.</span>
             <span class="font-medium text-espresso">YUROSO HAIR CORP.</span>
           </div>
         </div>
@@ -497,15 +588,15 @@
         <div class="flex items-center gap-2 flex-wrap">
           <!-- Current Logged-in User Chip -->
           <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">
-            <span class="w-2.5 h-2.5 rounded-full bg-kakao"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-goldaccent"></span>
             <div class="text-left">
               <p id="loggedInUserNameDisplay" class="text-xs font-bold text-ivory leading-tight">영화 대표원장</p>
-              <p id="loggedInDeviceStatus" class="text-[10px] text-champagne-light leading-tight">카카오 연동 · 기기 로그인 유지 중</p>
+              <p id="loggedInDeviceStatus" class="text-[10px] text-champagne-light leading-tight">인증됨 · 기기 로그인 유지 중</p>
             </div>
           </div>
 
           <!-- CEO & CREATOR DATA VISIBILITY SETTINGS BUTTON -->
-          <button type="button" id="btnOpenDataVisibilityModal" onclick="openDataVisibilityModal()" class="px-3.5 py-2 rounded-xl bg-kakao hover:bg-kakao-hover text-kakao-text text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm">
+          <button type="button" id="btnOpenDataVisibilityModal" onclick="openDataVisibilityModal()" class="px-3.5 py-2 rounded-xl bg-goldaccent hover:bg-goldaccent-hover text-goldaccent-text text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm">
             <span id="btnDataVisibilityLabel">🔐 열람 데이터 설정 (대표원장·제작자)</span>
           </button>
 
@@ -536,7 +627,7 @@
             </button>
             <button type="button" id="navTab_crm" onclick="switchMainTab('crm')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap flex items-center gap-1.5">
               <span>🧮 고객관리(CRM) 5대 지표 입력·자동계산</span>
-              <span class="px-1.5 py-0.5 text-[10px] rounded bg-kakao text-kakao-text font-extrabold">핵심</span>
+              <span class="px-1.5 py-0.5 text-[10px] rounded bg-goldaccent text-goldaccent-text font-extrabold">핵심</span>
             </button>
             <button type="button" id="navTab_branches" onclick="switchMainTab('branches')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
               🏆 3대 지점장 & 총 결과 KPI 비교 분석
@@ -686,6 +777,50 @@
           </div>
           <div class="relative h-80 w-full">
             <canvas id="allDesignersComparisonChart"></canvas>
+          </div>
+        </div>
+
+        <!-- CEO & CREATOR EXCLUSIVE SUBSCRIBER LIST & MEMBER WITHDRAWAL SECTION (대표원장·제작자 전용 가입자 리스트 및 회원탈퇴 관리란) -->
+        <div id="adminSubscriberManagementCard" class="card-luxury rounded-2xl overflow-hidden border-2 border-champagne">
+          <div class="p-5 sm:p-6 bg-espresso text-ivory flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] px-2.5 py-0.5 rounded bg-goldaccent text-goldaccent-text font-extrabold">👑 대표원장 · 🛠️ 제작자 전용 열람</span>
+                <span class="text-xs text-champagne-light font-semibold">지점원장 · 디자이너에게는 이 가입자 리스트 란이 보이지 않습니다</span>
+              </div>
+              <h3 class="text-base sm:text-lg font-bold mt-1">
+                👥 전체 가입자 리스트 및 디자이너 · 지점원장 회원탈퇴 관리
+              </h3>
+              <p class="text-xs text-ivory/75 mt-0.5">
+                휴대폰 번호 인증과 사내 가입 코드(Yuroso1007)로 가입한 디자이너 및 지점원장 목록입니다. 대표원장과 제작자만 열람 및 즉시 회원탈퇴 처리가 가능합니다.
+              </p>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span id="adminSubscriberCountBadge" class="px-3 py-1.5 rounded-xl bg-white/10 text-champagne-light text-xs font-extrabold">
+                가입 인원 0명
+              </span>
+              <button type="button" onclick="openQuickSignupModal()" class="px-3.5 py-2 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-bold transition">
+                + 인원 추가 등록
+              </button>
+              <button type="button" onclick="clearAllRegisteredDesigners()" class="px-3.5 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-200 border border-red-400/30 text-xs font-bold transition">
+                🗑️ 전체 가입자 일괄 회원탈퇴
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto custom-scrollbar bg-white">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-ivory-soft text-espresso-muted text-xs uppercase border-b border-ivory-border">
+                  <th class="py-3 px-4 font-bold">이름 / 직급</th>
+                  <th class="py-3 px-4 font-bold">소속 지점</th>
+                  <th class="py-3 px-4 font-bold">인증 휴대폰 번호</th>
+                  <th class="py-3 px-4 font-bold">가입일 / 인증방식</th>
+                  <th class="py-3 px-4 font-bold text-center">데이터 열람 상태</th>
+                  <th class="py-3 px-4 font-bold text-center">회원탈퇴 관리 (대표원장·제작자 전용)</th>
+                </tr>
+              </thead>
+              <tbody id="adminSubscriberTableBody" class="divide-y divide-ivory-border text-xs sm:text-sm"></tbody>
+            </table>
           </div>
         </div>
 
@@ -954,8 +1089,8 @@
                   <p class="text-xs text-ivory/70">자동계산 재방문 고객 비율</p>
                   <p class="text-[11px] text-champagne-light">(재방문 고객수 ÷ 총 고객수)</p>
                   <div class="mt-2 flex items-baseline gap-1">
-                    <span id="crmLiveRevisitRate" class="text-3xl font-extrabold text-kakao">0.0</span>
-                    <span class="text-base font-bold text-kakao">%</span>
+                    <span id="crmLiveRevisitRate" class="text-3xl font-extrabold text-goldaccent">0.0</span>
+                    <span class="text-base font-bold text-goldaccent">%</span>
                   </div>
                 </div>
                 <div class="border-l border-white/10 pl-4">
@@ -1175,8 +1310,8 @@
             </p>
           </div>
           <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="openDataVisibilityModal()" class="px-4 py-2.5 rounded-xl bg-champagne text-white hover:bg-champagne-dark text-xs font-bold transition">
-              🔐 열람 데이터 설정 (대표원장·제작자)
+            <button type="button" id="membersTabBtnVisibility" onclick="openDataVisibilityModal()" class="px-4 py-2.5 rounded-xl bg-champagne text-white hover:bg-champagne-dark text-xs font-bold transition">
+              🔐 가입자 리스트 · 회원탈퇴 · 데이터 설정 (대표원장·제작자)
             </button>
             <button type="button" onclick="openQuickSignupModal()" class="px-4 py-2.5 rounded-xl bg-espresso hover:bg-espresso-light text-ivory text-xs font-bold transition">
               + 새 디자이너/원장 등록 (회원가입)
@@ -1211,7 +1346,7 @@
 
 
   <!-- ===================================================================== -->
-  <!-- MODALS (DATA VISIBILITY, KAKAO OAUTH, QUICK SIGNUP, TARGET, VERCEL)   -->
+  <!-- MODALS (DATA VISIBILITY, ADMIN PASSWORD, QUICK SIGNUP, TARGET, COACHING) -->
   <!-- ===================================================================== -->
 
   <!-- 0. CEO & CREATOR DATA VISIBILITY & ACCESS CONTROL SETTINGS MODAL -->
@@ -1221,7 +1356,7 @@
       <div class="bg-espresso text-ivory px-6 py-4 flex items-center justify-between shrink-0">
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-[11px] px-2 py-0.5 rounded bg-kakao text-kakao-text font-extrabold">👑 대표원장 & 🛠️ 제작자 전용</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-goldaccent text-goldaccent-text font-extrabold">👑 대표원장 & 🛠️ 제작자 전용</span>
             <span class="text-[11px] text-champagne-light font-bold">DATA VISIBILITY & RBAC CONTROL CENTER</span>
           </div>
           <h3 class="text-base sm:text-lg font-bold mt-1">볼 수 있는 데이터 범위 설정 및 가입 원장·디자이너 관리창</h3>
@@ -1424,7 +1559,7 @@
               <p class="text-[11px] text-espresso-muted">회원가입을 통해 등록된 인원만 표시되며, 대표원장과 제작자가 개별 열람 허용/차단 및 계정 삭제를 관리합니다.</p>
             </div>
             <button type="button" onclick="clearAllRegisteredDesigners()" class="px-3 py-1.5 rounded-lg bg-red-600/10 hover:bg-red-600/20 text-red-700 border border-red-300 text-xs font-bold transition">
-              🗑️ 등록된 원장·디자이너 전체 비우기
+              🗑️ 전체 가입자 일괄 회원탈퇴
             </button>
           </div>
 
@@ -1441,77 +1576,76 @@
     </div>
   </div>
 
-  <!-- 1. KAKAO ACCOUNT LOGIN SIMULATOR & OAUTH MODAL -->
-  <div id="kakaoAuthModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+  <!-- 1. ADMIN PASSWORD VERIFICATION MODAL (대표원장 & 제작자 패스워드 인증 모달) -->
+  <div id="adminPasswordModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-ivory-border">
-      <div class="bg-kakao px-6 py-5 flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="#191919">
-            <path d="M12 3C6.477 3 2 6.477 2 10.765c0 2.772 1.855 5.205 4.653 6.578-.153.543-.986 3.504-1.02 3.733-.043.29.106.286.225.208.093-.06 3.694-2.51 4.303-2.936.597.087 1.212.132 1.839.132 5.523 0 10-3.477 10-7.765S17.523 3 12 3z"/>
-          </svg>
-          <span class="font-extrabold text-base text-kakao-text">kakao 계정으로 로그인</span>
-        </div>
-        <button type="button" onclick="closeKakaoAuthModal()" class="text-kakao-text/70 hover:text-kakao-text font-bold text-lg">&times;</button>
-      </div>
-
-      <div class="p-6 space-y-5">
-        <div class="text-center">
-          <p class="text-sm font-bold text-espresso">유로소 헤어(YUROSO HAIR) KPI & CRM</p>
-          <p class="text-[11px] font-mono text-sage-dark bg-sage-bg px-2.5 py-1 rounded-md inline-block mt-1">
-            Kakao JS Key: ca5c0c72d775121ca34db74d39cac2e4
-          </p>
-          <p class="text-xs text-espresso-muted mt-1.5">
-            지점원장 및 디자이너는 직접 회원가입을 진행해야만 등록됩니다. 처음 접속하신 경우 아래 회원가입 버튼으로 시작해주세요.
-          </p>
-        </div>
-
-        <!-- Option 1: First-time visitor -> Proceed to Signup -->
-        <div class="p-4 rounded-2xl bg-kakao/20 border-2 border-kakao">
-          <p class="text-xs font-extrabold text-espresso mb-1">🆕 지점원장 · 디자이너 · 관리자 신규 회원가입</p>
-          <p class="text-xs text-espresso-muted mb-3">
-            카카오 계정 인증 후 이름 · 지점(파주 운정점/운정역점/마곡발산점) · 직급(대표원장/지점원장/디자이너/제작자)을 입력하여 직접 등록합니다.
-          </p>
-          <button type="button" onclick="proceedKakaoToSignup()" class="w-full py-2.5 px-4 rounded-xl bg-kakao hover:bg-kakao-hover text-kakao-text font-bold text-xs shadow-sm transition">
-            새 카카오톡 계정으로 회원가입 진행하기 &rarr;
-          </button>
-        </div>
-
-        <!-- Option 2: Existing Registered Kakao Account Selection -->
+      <div class="bg-espresso text-ivory px-6 py-4 flex items-center justify-between">
         <div>
-          <label for="kakaoModalUserSelect" class="block text-xs font-bold text-espresso mb-1.5">
-            ✅ 등록된 관리자(대표원장·제작자) 또는 가입 완료된 계정으로 접속
-          </label>
-          <select id="kakaoModalUserSelect" class="w-full px-3.5 py-2.5 rounded-xl border border-ivory-border bg-ivory text-xs font-bold text-espresso mb-3">
-          </select>
-          <button type="button" onclick="confirmKakaoExistingLogin()" class="w-full py-3 px-4 rounded-xl bg-espresso hover:bg-espresso-light text-ivory font-bold text-xs transition">
-            선택한 카카오 계정으로 로그인 (기기 로그인 유지)
+          <span class="text-[11px] text-champagne-light font-bold">ADMINISTRATOR ACCESS</span>
+          <h3 id="adminPasswordModalTitle" class="text-base font-bold">대표원장 · 제작자 패스워드 인증</h3>
+        </div>
+        <button type="button" onclick="closeAdminPasswordModal()" class="text-ivory/70 hover:text-white text-2xl font-bold">&times;</button>
+      </div>
+      <form id="adminPasswordModalForm" onsubmit="handleAdminPasswordModalSubmit(event)" class="p-6 space-y-4">
+        <input type="hidden" id="adminModalTargetRole" value="대표원장" />
+        <p id="adminPasswordModalDesc" class="text-xs text-espresso-muted leading-relaxed">
+          대표원장 및 제작자(관리자)는 별도 회원가입 없이 전용 패스워드를 입력하여 즉시 접속 및 권한 전환이 가능합니다.
+        </p>
+        <div class="relative">
+          <input
+            type="password"
+            id="adminModalPasswordInput"
+            required
+            placeholder="전용 패스워드를 입력하세요"
+            class="w-full pl-4 pr-16 py-3 rounded-xl border border-ivory-border bg-ivory/50 text-sm font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
+          />
+          <button type="button" onclick="togglePasswordVisibility('adminModalPasswordInput', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-espresso-muted hover:text-espresso">
+            보기
           </button>
         </div>
-      </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeAdminPasswordModal()" class="px-4 py-2.5 rounded-xl border border-ivory-border text-xs font-bold text-espresso-muted">취소</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-espresso hover:bg-espresso-light text-ivory text-xs font-bold">패스워드 확인 및 접속</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- 2. IN-APP QUICK SIGNUP MODAL (ADD NEW DESIGNER / MANAGER / CEO / CREATOR ANYTIME) -->
+  <!-- 2. IN-APP QUICK SIGNUP MODAL (ADD NEW DESIGNER / BRANCH MANAGER WITH PHONE & INVITE CODE) -->
   <div id="quickSignupModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-ivory-border">
       <div class="bg-espresso text-ivory px-6 py-4 flex items-center justify-between">
         <div>
-          <span class="text-[11px] text-champagne-light font-bold">KAKAO MEMBER REGISTRATION</span>
-          <h3 class="text-base font-bold">유로소 헤어 신규 회원가입 / 인원 직접 등록</h3>
+          <span class="text-[11px] text-champagne-light font-bold">STAFF MEMBER REGISTRATION</span>
+          <h3 class="text-base font-bold">유로소 헤어 지점원장 · 디자이너 신규 가입 등록</h3>
         </div>
         <button type="button" onclick="closeQuickSignupModal()" class="text-ivory/70 hover:text-white text-xl font-bold">&times;</button>
       </div>
       <form id="modalSignupForm" onsubmit="handleModalSignupSubmit(event)" class="p-6 space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="modalSignupName" class="block text-xs font-bold text-espresso mb-1">
+              1. 이름 (디자이너·지점원장 성함) <span class="text-red-600">*</span>
+            </label>
+            <input type="text" id="modalSignupName" required placeholder="예: 수아, 은우, 김유로" class="w-full px-4 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 text-sm font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne" />
+          </div>
+          <div>
+            <label for="modalSignupPhone" class="block text-xs font-bold text-espresso mb-1">
+              2. 휴대폰 번호 <span class="text-red-600">*</span>
+            </label>
+            <input type="tel" id="modalSignupPhone" required oninput="formatPhoneNumberInput(this)" maxlength="13" placeholder="010-0000-0000" class="w-full px-4 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 text-sm font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne" />
+          </div>
+        </div>
         <div>
-          <label for="modalSignupName" class="block text-xs font-bold text-espresso mb-1">
-            1. 디자이너 이름 (또는 원장·제작자 성함) <span class="text-red-600">*</span>
+          <label for="modalSignupInviteCode" class="block text-xs font-bold text-espresso mb-1">
+            3. 사내 가입 코드 (외부인 가입 방지 코드) <span class="text-red-600">*</span>
           </label>
-          <input type="text" id="modalSignupName" required placeholder="예: 수아, 은우, 김유로" class="w-full px-4 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 text-sm font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne" />
+          <input type="password" id="modalSignupInviteCode" required placeholder="사내 가입 코드를 입력하세요" class="w-full px-4 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 text-sm font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne" />
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label for="modalSignupBranch" class="block text-xs font-bold text-espresso mb-1">
-              2. 지점 선택 <span class="text-red-600">*</span>
+              4. 지점 선택 <span class="text-red-600">*</span>
             </label>
             <select id="modalSignupBranch" class="w-full px-3.5 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 text-sm font-bold text-espresso">
               <option value="파주 운정점">파주 운정점</option>
@@ -1521,13 +1655,11 @@
           </div>
           <div>
             <label for="modalSignupRole" class="block text-xs font-bold text-espresso mb-1">
-              3. 직급 선택 <span class="text-red-600">*</span>
+              5. 직급 선택 <span class="text-red-600">*</span>
             </label>
             <select id="modalSignupRole" class="w-full px-3.5 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 text-sm font-bold text-espresso">
               <option value="디자이너">디자이너</option>
               <option value="지점원장">지점원장</option>
-              <option value="대표원장">대표원장</option>
-              <option value="제작자">제작자 (최상위 공동관리자)</option>
             </select>
           </div>
         </div>
@@ -1617,12 +1749,13 @@
   <!-- ===================================================================== -->
   <script>
     // -----------------------------------------------------------------------
-    // 1. STORAGE KEYS, REGISTERED KAKAO JS KEY & INITIAL SEED DATA
+    // 1. STORAGE KEYS, SECURITY CODES, ADMIN PASSWORDS & INITIAL SEED DATA
     // -----------------------------------------------------------------------
     const STORAGE_KEY_STATE = 'yuroso_hair_enterprise_state_v3';
     const STORAGE_KEY_SESSION = 'yuroso_hair_auth_session_v3';
-    const STORAGE_KEY_KAKAO_KEY = 'yuroso_hair_kakao_js_key_v1';
-    const DEFAULT_KAKAO_JS_KEY = 'ca5c0c72d775121ca34db74d39cac2e4';
+    const COMPANY_INVITE_CODE = 'Yuroso1007';
+    const CEO_MASTER_PASSWORD = '^^yuroso1004';
+    const CREATOR_MASTER_PASSWORD = "IPStor101`12__~!";
 
     const BRANCH_NAMES = ['파주 운정점', '운정역점', '마곡발산점'];
 
@@ -1652,7 +1785,6 @@
 
     function createInitialState() {
       return {
-        kakaoJsKey: DEFAULT_KAKAO_JS_KEY,
         targets: {
           designerSales: 18000000,
           designerRevisitRate: 72,
@@ -1793,10 +1925,6 @@
       safeRemoveStorage('yuroso_hair_enterprise_state_v2');
       safeRemoveStorage('yuroso_hair_auth_session_v2');
 
-      // 기본 카카오 JS 키 등록 보장
-      if (!safeGetStorage(STORAGE_KEY_KAKAO_KEY)) {
-        safeSetStorage(STORAGE_KEY_KAKAO_KEY, DEFAULT_KAKAO_JS_KEY);
-      }
 
       const raw = safeGetStorage(STORAGE_KEY_STATE);
       if (raw) {
@@ -1829,7 +1957,6 @@
             } else {
               parsed.visibilitySettings = Object.assign(createDefaultVisibilitySettings(), parsed.visibilitySettings);
             }
-            parsed.kakaoJsKey = parsed.kakaoJsKey || DEFAULT_KAKAO_JS_KEY;
             appState = parsed;
           }
         } catch (e) {
@@ -2061,8 +2188,8 @@
       const toast = document.createElement('div');
       const bgClass = type === 'error'
         ? 'bg-red-900 text-white border-red-500'
-        : type === 'kakao'
-        ? 'bg-kakao text-kakao-text border-yellow-500'
+        : type === 'highlight'
+        ? 'bg-goldaccent text-goldaccent-text border-yellow-500'
         : 'bg-espresso text-ivory border-champagne';
       toast.className = `pointer-events-auto px-4 py-3 rounded-xl border shadow-xl text-xs font-bold flex items-center justify-between gap-3 transition-all duration-300 ${bgClass}`;
       toast.innerHTML = `
@@ -2076,8 +2203,44 @@
     }
 
     // -----------------------------------------------------------------------
-    // 5. AUTHENTICATION, KAKAO LOGIN, DIRECT SIGNUP & PERSISTENT SESSION
+    // 5. AUTHENTICATION: ADMIN PASSWORD LOGIN, PHONE OTP AUTH & INVITE CODE SIGNUP
     // -----------------------------------------------------------------------
+    let issuedSignupOtp = null;
+    let isSignupPhoneVerified = false;
+    let verifiedSignupPhoneNumber = '';
+
+    let issuedLoginOtp = null;
+    let isLoginPhoneVerified = false;
+    let verifiedLoginPhoneNumber = '';
+
+    function togglePasswordVisibility(inputId, btnEl) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        if (btnEl) btnEl.textContent = '숨기기';
+      } else {
+        input.type = 'password';
+        if (btnEl) btnEl.textContent = '보기';
+      }
+    }
+
+    function formatPhoneNumberInput(inputEl) {
+      if (!inputEl) return;
+      const digits = inputEl.value.replace(/[^0-9]/g, '').slice(0, 11);
+      let formatted = digits;
+      if (digits.length > 3 && digits.length <= 7) {
+        formatted = digits.slice(0, 3) + '-' + digits.slice(3);
+      } else if (digits.length > 7) {
+        formatted = digits.slice(0, 3) + '-' + digits.slice(3, 7) + '-' + digits.slice(7);
+      }
+      inputEl.value = formatted;
+    }
+
+    function normalizePhone(phoneStr) {
+      return (phoneStr || '').replace(/[^0-9]/g, '');
+    }
+
     function switchAuthTab(tab) {
       const loginPanel = document.getElementById('authLoginPanel');
       const signupPanel = document.getElementById('authSignupPanel');
@@ -2097,17 +2260,209 @@
       }
     }
 
-    function handleLoginDesignerCardClick() {
-      const registeredStaff = appState.users.filter(u => u.isCustom);
-      if (registeredStaff.length > 0) {
-        quickLoginAs(registeredStaff[registeredStaff.length - 1].id);
+    function selectAdminLoginRole(role) {
+      const hiddenInput = document.getElementById('selectedAdminLoginRole');
+      if (hiddenInput) hiddenInput.value = role;
+      const ceoBtn = document.getElementById('adminTypeBtn_ceo');
+      const creatorBtn = document.getElementById('adminTypeBtn_creator');
+      const pwInput = document.getElementById('adminDirectPasswordInput');
+
+      if (role === '대표원장') {
+        if (ceoBtn) ceoBtn.className = 'py-2.5 px-3 rounded-xl border-2 border-champagne bg-champagne/25 text-ivory font-extrabold text-xs flex items-center justify-center gap-1.5 transition';
+        if (creatorBtn) creatorBtn.className = 'py-2.5 px-3 rounded-xl border border-white/15 bg-white/5 text-ivory/75 hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition';
+        if (pwInput) pwInput.placeholder = '대표원장 패스워드를 입력하세요';
       } else {
-        switchAuthTab('signup');
-        selectSignupRoleCard('디자이너');
-        const input = document.getElementById('signupNameInput');
-        if (input) input.focus();
-        showToast('✂️ 현재 등록된 지점원장·디자이너가 없습니다. 직접 회원가입을 진행해주세요!', 'kakao');
+        if (creatorBtn) creatorBtn.className = 'py-2.5 px-3 rounded-xl border-2 border-champagne bg-champagne/25 text-ivory font-extrabold text-xs flex items-center justify-center gap-1.5 transition';
+        if (ceoBtn) ceoBtn.className = 'py-2.5 px-3 rounded-xl border border-white/15 bg-white/5 text-ivory/75 hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition';
+        if (pwInput) pwInput.placeholder = '제작자(관리자) 패스워드를 입력하세요';
       }
+      if (pwInput) pwInput.focus();
+    }
+
+    // 대표원장(^^yuroso1004) 및 제작자(IPStor101`12__~!) 회원가입 없이 패스워드 직통 로그인
+    function handleAdminPasswordLogin(e) {
+      e.preventDefault();
+      const pwInput = document.getElementById('adminDirectPasswordInput');
+      const enteredPw = pwInput ? pwInput.value : '';
+      const selectedRole = document.getElementById('selectedAdminLoginRole')?.value || '대표원장';
+      const keepCheckbox = document.getElementById('keepLoggedInCheckbox');
+      const keepLoggedIn = keepCheckbox ? keepCheckbox.checked : true;
+
+      if (enteredPw === CEO_MASTER_PASSWORD) {
+        const ceoUser = appState.users.find(u => u.id === 'u_ceo') || appState.users[0];
+        if (pwInput) pwInput.value = '';
+        establishUserSession(ceoUser, keepLoggedIn);
+        showToast('👑 대표원장 패스워드 인증 성공! 영화 대표원장님 계정으로 즉시 접속되었습니다.', 'highlight');
+        return;
+      }
+
+      if (enteredPw === CREATOR_MASTER_PASSWORD) {
+        const creatorUser = appState.users.find(u => u.id === 'u_creator');
+        if (pwInput) pwInput.value = '';
+        if (creatorUser) {
+          establishUserSession(creatorUser, keepLoggedIn);
+          showToast('🛠️ 제작자(관리자) 패스워드 인증 성공! 제작자 총괄관리 계정으로 즉시 접속되었습니다.', 'highlight');
+          return;
+        }
+      }
+
+      showToast(`⛔ [${selectedRole}] 패스워드가 일치하지 않습니다. 대소문자 및 특수문자를 확인해주세요.`, 'error');
+    }
+
+    // 휴대폰 번호 로그인 OTP 발송 및 검증
+    function sendLoginPhoneOtp() {
+      const phoneInput = document.getElementById('loginPhoneInput');
+      const rawPhone = phoneInput ? phoneInput.value.trim() : '';
+      const normPhone = normalizePhone(rawPhone);
+
+      if (normPhone.length < 10) {
+        showToast('올바른 휴대폰 번호(10~11자리)를 입력해주세요.', 'error');
+        if (phoneInput) phoneInput.focus();
+        return;
+      }
+
+      const matchedUser = appState.users.find(u => u.isCustom && normalizePhone(u.phone) === normPhone);
+      if (!matchedUser) {
+        showToast('등록되지 않은 휴대폰 번호입니다. [임직원 회원가입] 탭에서 사내 가입 코드로 먼저 가입해주세요.', 'error');
+        return;
+      }
+
+      issuedLoginOtp = String(Math.floor(100000 + Math.random() * 900000));
+      isLoginPhoneVerified = false;
+      verifiedLoginPhoneNumber = '';
+
+      const box = document.getElementById('loginOtpVerifyBox');
+      const textEl = document.getElementById('loginOtpIssuedText');
+      if (box) box.classList.remove('hidden');
+      if (textEl) textEl.textContent = `📩 [${rawPhone}] 인증번호 [${issuedLoginOtp}] 발송됨`;
+      showToast(`📱 휴대폰 인증번호 [${issuedLoginOtp}]가 발송되었습니다. 인증번호를 입력하거나 [인증번호 자동입력]을 눌러주세요.`, 'highlight');
+    }
+
+    function autoFillLoginOtp() {
+      if (!issuedLoginOtp) return;
+      const input = document.getElementById('loginOtpCodeInput');
+      if (input) input.value = issuedLoginOtp;
+      verifyLoginPhoneOtp();
+    }
+
+    function verifyLoginPhoneOtp() {
+      const phoneInput = document.getElementById('loginPhoneInput');
+      const otpInput = document.getElementById('loginOtpCodeInput');
+      const enteredOtp = otpInput ? otpInput.value.trim() : '';
+
+      if (!issuedLoginOtp || enteredOtp !== issuedLoginOtp) {
+        showToast('⛔ 인증번호 6자리가 일치하지 않습니다.', 'error');
+        return false;
+      }
+
+      isLoginPhoneVerified = true;
+      verifiedLoginPhoneNumber = normalizePhone(phoneInput ? phoneInput.value : '');
+      showToast('✅ 휴대폰 번호 인증이 확인되었습니다!');
+      return true;
+    }
+
+    function handlePhoneLoginSubmit(e) {
+      e.preventDefault();
+      const phoneInput = document.getElementById('loginPhoneInput');
+      const normPhone = normalizePhone(phoneInput ? phoneInput.value : '');
+
+      if (normPhone.length < 10) {
+        showToast('가입된 휴대폰 번호를 입력해주세요.', 'error');
+        return;
+      }
+
+      const matchedUser = appState.users.find(u => u.isCustom && normalizePhone(u.phone) === normPhone);
+      if (!matchedUser) {
+        showToast('⛔ 해당 휴대폰 번호로 가입된 계정이 없습니다 (또는 회원탈퇴 처리됨). 먼저 회원가입을 진행해주세요.', 'error');
+        return;
+      }
+
+      if (!isLoginPhoneVerified || verifiedLoginPhoneNumber !== normPhone) {
+        const otpInput = document.getElementById('loginOtpCodeInput');
+        if (issuedLoginOtp && otpInput && otpInput.value.trim() === issuedLoginOtp) {
+          isLoginPhoneVerified = true;
+          verifiedLoginPhoneNumber = normPhone;
+        } else {
+          sendLoginPhoneOtp();
+          return;
+        }
+      }
+
+      if (matchedUser.canViewData === false) {
+        showToast(`⛔ [${matchedUser.name}] 계정은 대표원장·제작자 설정에 의해 현재 데이터 열람이 제한되어 있습니다.`, 'error');
+        return;
+      }
+
+      const keepCheckbox = document.getElementById('keepLoggedInCheckbox');
+      const keepLoggedIn = keepCheckbox ? keepCheckbox.checked : true;
+
+      isLoginPhoneVerified = false;
+      issuedLoginOtp = null;
+      const box = document.getElementById('loginOtpVerifyBox');
+      if (box) box.classList.add('hidden');
+      if (phoneInput) phoneInput.value = '';
+
+      establishUserSession(matchedUser, keepLoggedIn);
+      showToast(`📱 휴대폰 번호 인증 완료! [${matchedUser.branch}] ${matchedUser.name} ${matchedUser.title}님으로 로그인되었습니다.`, 'highlight');
+    }
+
+    // 회원가입 휴대폰 번호 OTP 발송 및 검증
+    function sendSignupPhoneOtp() {
+      const phoneInput = document.getElementById('signupPhoneInput');
+      const rawPhone = phoneInput ? phoneInput.value.trim() : '';
+      const normPhone = normalizePhone(rawPhone);
+
+      if (normPhone.length < 10) {
+        showToast('휴대폰 번호 10~11자리를 정확히 입력해주세요.', 'error');
+        if (phoneInput) phoneInput.focus();
+        return;
+      }
+
+      const duplicate = appState.users.find(u => u.isCustom && normalizePhone(u.phone) === normPhone);
+      if (duplicate) {
+        showToast(`이미 [${duplicate.branch} · ${duplicate.name} ${duplicate.role}] 계정으로 가입된 휴대폰 번호입니다. 로그인 탭에서 접속해주세요.`, 'error');
+        return;
+      }
+
+      issuedSignupOtp = String(Math.floor(100000 + Math.random() * 900000));
+      isSignupPhoneVerified = false;
+      verifiedSignupPhoneNumber = '';
+
+      const box = document.getElementById('signupOtpVerifyBox');
+      const textEl = document.getElementById('signupOtpIssuedText');
+      const badge = document.getElementById('signupPhoneVerifiedBadge');
+      if (box) box.classList.remove('hidden');
+      if (badge) badge.classList.add('hidden');
+      if (textEl) textEl.textContent = `📩 [${rawPhone}] 인증번호 [${issuedSignupOtp}] 발송됨`;
+
+      showToast(`📱 휴대폰 인증번호 [${issuedSignupOtp}]가 발송되었습니다. [인증번호 자동입력] 또는 번호 입력 후 [인증 확인]을 눌러주세요.`, 'highlight');
+    }
+
+    function autoFillSignupOtp() {
+      if (!issuedSignupOtp) return;
+      const input = document.getElementById('signupOtpCodeInput');
+      if (input) input.value = issuedSignupOtp;
+      verifySignupPhoneOtp();
+    }
+
+    function verifySignupPhoneOtp() {
+      const phoneInput = document.getElementById('signupPhoneInput');
+      const otpInput = document.getElementById('signupOtpCodeInput');
+      const enteredOtp = otpInput ? otpInput.value.trim() : '';
+
+      if (!issuedSignupOtp || enteredOtp !== issuedSignupOtp) {
+        showToast('⛔ 휴대폰 인증번호가 일치하지 않습니다.', 'error');
+        return false;
+      }
+
+      isSignupPhoneVerified = true;
+      verifiedSignupPhoneNumber = normalizePhone(phoneInput ? phoneInput.value : '');
+      const box = document.getElementById('signupOtpVerifyBox');
+      const badge = document.getElementById('signupPhoneVerifiedBadge');
+      if (box) box.classList.add('hidden');
+      if (badge) badge.classList.remove('hidden');
+      showToast('✅ 휴대폰 번호 본인 인증이 완료되었습니다!');
+      return true;
     }
 
     function selectSignupBranchCard(branch) {
@@ -2125,7 +2480,7 @@
 
     function selectSignupRoleCard(role) {
       document.getElementById('signupRoleSelect').value = role;
-      ['디자이너', '지점원장', '대표원장', '제작자'].forEach(r => {
+      ['디자이너', '지점원장'].forEach(r => {
         const btn = document.getElementById('roleCard_' + r);
         if (!btn) return;
         if (r === role) {
@@ -2136,67 +2491,16 @@
       });
     }
 
-    function openKakaoAuthModal() {
-      populateKakaoModalSelect();
-      const modal = document.getElementById('kakaoAuthModal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
-
-    function closeKakaoAuthModal() {
-      const modal = document.getElementById('kakaoAuthModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
-    function proceedKakaoToSignup() {
-      closeKakaoAuthModal();
-      switchAuthTab('signup');
-      const nameInput = document.getElementById('signupNameInput');
-      if (nameInput) nameInput.focus();
-      showToast('💬 카카오 계정이 인증되었습니다. 이름·지점·직급을 선택해 회원가입을 완료해주세요!', 'kakao');
-    }
-
-    function populateKakaoModalSelect() {
-      const sel = document.getElementById('kakaoModalUserSelect');
-      if (!sel) return;
-      sel.innerHTML = appState.users.map(u => {
-        const badge = u.isCustom ? ' [직접가입]' : ' [최상위관리자]';
-        return `<option value="${u.id}">[${u.role}] ${u.branch} — ${u.name} ${u.title}${badge}</option>`;
-      }).join('');
-    }
-
-    function confirmKakaoExistingLogin() {
-      const sel = document.getElementById('kakaoModalUserSelect');
-      if (!sel || !sel.value) return;
-      closeKakaoAuthModal();
-      quickLoginAs(sel.value);
-    }
-
-    function quickLoginAs(userId) {
-      const user = appState.users.find(u => u.id === userId);
-      if (!user) {
-        switchAuthTab('signup');
-        showToast('등록된 계정이 없습니다. 먼저 회원가입을 진행해주세요.', 'error');
-        return;
-      }
-      if (user.canViewData === false && user.role !== '대표원장' && user.role !== '제작자') {
-        showToast(`⛔ [${user.name}] 계정은 관리자 설정에 의해 현재 데이터 열람이 제한되어 있습니다.`, 'error');
-        return;
-      }
-      const keepCheckbox = document.getElementById('keepLoggedInCheckbox');
-      const keepLoggedIn = keepCheckbox ? keepCheckbox.checked : true;
-
-      establishUserSession(user, keepLoggedIn);
-      showToast(`💬 카카오톡 계정(${user.name} ${user.title})으로 로그인되었습니다. 기기 로그인이 유지됩니다.`, 'kakao');
-    }
-
-    function registerNewMember(name, branch, role, keepLoggedIn = true) {
+    function registerNewMember(name, branch, role, phone, keepLoggedIn = true) {
       const trimmedName = name.trim();
+      const formattedPhone = phone ? phone.trim() : '010-0000-0000';
       const newId = 'u_custom_' + Date.now();
+      const todayStr = new Date().toISOString().slice(0, 10);
       const newUser = {
         id: newId,
         name: trimmedName,
+        phone: formattedPhone,
+        registeredAt: todayStr,
         title: role,
         role: role,
         branch: branch,
@@ -2226,6 +2530,9 @@
     function handleSignupSubmit(e) {
       e.preventDefault();
       const name = document.getElementById('signupNameInput').value.trim();
+      const phone = document.getElementById('signupPhoneInput').value.trim();
+      const normPhone = normalizePhone(phone);
+      const inviteCode = document.getElementById('signupInviteCodeInput').value.trim();
       const branch = document.getElementById('signupBranchSelect').value;
       const role = document.getElementById('signupRoleSelect').value;
       const keepLoggedIn = document.getElementById('signupKeepLoggedIn').checked;
@@ -2235,16 +2542,58 @@
         return;
       }
 
-      const newUser = registerNewMember(name, branch, role, keepLoggedIn);
+      if (normPhone.length < 10) {
+        showToast('휴대폰 번호 10~11자리를 정확히 입력해주세요.', 'error');
+        return;
+      }
+
+      // Check phone verification
+      if (!isSignupPhoneVerified || verifiedSignupPhoneNumber !== normPhone) {
+        const otpInput = document.getElementById('signupOtpCodeInput');
+        if (issuedSignupOtp && otpInput && otpInput.value.trim() === issuedSignupOtp) {
+          isSignupPhoneVerified = true;
+          verifiedSignupPhoneNumber = normPhone;
+        } else {
+          showToast('📱 먼저 [인증번호 발송] 버튼을 눌러 휴대폰 번호 인증을 완료해주세요.', 'error');
+          sendSignupPhoneOtp();
+          return;
+        }
+      }
+
+      // Check duplicate phone
+      const duplicate = appState.users.find(u => u.isCustom && normalizePhone(u.phone) === normPhone);
+      if (duplicate) {
+        showToast('이미 가입된 휴대폰 번호입니다. 로그인 탭에서 접속해주세요.', 'error');
+        return;
+      }
+
+      // Validate Company Invite Code (Yuroso1007)
+      if (inviteCode !== COMPANY_INVITE_CODE) {
+        showToast('⛔ 사내 가입 코드가 일치하지 않습니다. 외부인은 가입할 수 없습니다.', 'error');
+        document.getElementById('signupInviteCodeInput').focus();
+        return;
+      }
+
+      const newUser = registerNewMember(name, branch, role, phone, keepLoggedIn);
+
+      // Reset signup form
       document.getElementById('signupNameInput').value = '';
+      document.getElementById('signupPhoneInput').value = '';
+      document.getElementById('signupInviteCodeInput').value = '';
+      isSignupPhoneVerified = false;
+      issuedSignupOtp = null;
+      const badge = document.getElementById('signupPhoneVerifiedBadge');
+      if (badge) badge.classList.add('hidden');
+
       establishUserSession(newUser, keepLoggedIn);
-      showToast(`🎉 환영합니다! [${branch}] ${name} ${role}님 직접 회원가입 등록 및 기기 로그인 유지가 완료되었습니다.`);
+      showToast(`🎉 환영합니다! [${branch}] ${name} ${role}님 휴대폰 인증 및 사내 가입 코드 확인으로 회원가입이 완료되었습니다.`);
     }
 
     function establishUserSession(user, keepLoggedIn = true) {
       currentSession = {
         userId: user.id,
         name: user.name,
+        phone: user.phone || '',
         title: user.title,
         role: user.role,
         branch: user.branch,
@@ -2280,7 +2629,7 @@
       document.getElementById('authGateView').classList.remove('hidden');
       switchAuthTab('login');
       renderCustomRegisteredAccountsOnLogin();
-      showToast('로그아웃되었습니다. 다시 접속하려면 카카오톡 로그인을 진행해주세요.');
+      showToast('로그아웃되었습니다.');
     }
 
     function renderCustomRegisteredAccountsOnLogin() {
@@ -2293,52 +2642,14 @@
           countEl.textContent = `${mgrLabel} · 디자이너 ${desCount}명`;
         }
       });
-
-      const customStaff = appState.users.filter(u => u.isCustom);
-      const qTitle = document.getElementById('loginDesignerQuickCardTitle');
-      const qSub = document.getElementById('loginDesignerQuickCardSub');
-      if (qTitle && qSub) {
-        if (customStaff.length > 0) {
-          const latest = customStaff[customStaff.length - 1];
-          qTitle.textContent = `${latest.name} ${latest.role} 접속`;
-          qSub.textContent = `${latest.branch} · 직접 가입 등록됨`;
-        } else {
-          qTitle.textContent = '직접 회원가입하기';
-          qSub.textContent = '직접 가입해야만 등록됩니다';
-        }
-      }
-
-      const list = document.getElementById('customRegisteredAccountsList');
-      const countLabel = document.getElementById('customRegisteredCountLabel');
-      if (!list) return;
-
-      if (countLabel) countLabel.textContent = `${customStaff.length}명 등록됨`;
-
-      if (customStaff.length === 0) {
-        list.innerHTML = `
-          <div class="w-full text-xs text-espresso-muted py-1 flex items-center justify-between">
-            <span>아직 직접 가입한 지점원장·디자이너가 없습니다. 회원가입 후 이곳에 등록됩니다.</span>
-            <button type="button" onclick="switchAuthTab('signup')" class="text-champagne-dark font-bold hover:underline">지금 가입하기 &rarr;</button>
-          </div>
-        `;
-        return;
-      }
-
-      list.innerHTML = customStaff.map(u => `
-        <button type="button" onclick="quickLoginAs('${u.id}')" class="px-3 py-1.5 rounded-lg bg-sage text-white text-xs font-bold hover:bg-sage-dark transition flex items-center gap-1.5 shadow-sm">
-          <span>💬 ${u.name} ${u.role} (${u.branch})</span>
-          <span>&rarr;</span>
-        </button>
-      `).join('');
     }
 
     // -----------------------------------------------------------------------
-    // 6. CEO & CREATOR DATA VISIBILITY & ACCESS CONTROL MODAL LOGIC
+    // 6. CEO & CREATOR DATA VISIBILITY & MEMBER WITHDRAWAL (회원탈퇴) LOGIC
     // -----------------------------------------------------------------------
     function openDataVisibilityModal() {
-      // 대표원장 또는 제작자(Creator)만 열람 데이터 설정창을 열고 관리할 수 있음!
       if (!isCEOView()) {
-        showToast('⛔ 대표원장 및 제작자(최상위 관리자)만 볼 수 있는 데이터 설정을 관리할 수 있습니다.', 'error');
+        showToast('⛔ 대표원장 및 제작자(최상위 관리자)만 가입자 리스트 및 데이터 설정을 관리할 수 있습니다.', 'error');
         return;
       }
 
@@ -2434,37 +2745,95 @@
       showToast('🔐 [볼 수 있는 데이터 설정]이 저장되어 전 직급에 즉시 적용되었습니다.');
     }
 
+    // 대표원장 & 제작자 전용 가입자 리스트 및 회원탈퇴 렌더링 (대시보드 내 전용 섹션 + 설정 모달 내부 동시 업데이트)
     function renderCeoRegisteredMembersManageList() {
-      const container = document.getElementById('ceoRegisteredMembersManageList');
-      if (!container) return;
+      const modalContainer = document.getElementById('ceoRegisteredMembersManageList');
+      const adminCard = document.getElementById('adminSubscriberManagementCard');
+      const adminTbody = document.getElementById('adminSubscriberTableBody');
+      const countBadge = document.getElementById('adminSubscriberCountBadge');
+      const membersBtnVis = document.getElementById('membersTabBtnVisibility');
 
-      const customMembers = appState.users.filter(u => u.isCustom);
-      if (customMembers.length === 0) {
-        container.innerHTML = `
-          <div class="p-4 rounded-xl bg-white border border-ivory-border text-center text-xs text-espresso-muted">
-            현재 직접 회원가입한 지점원장·디자이너가 없습니다. 회원가입을 진행하면 이곳에 표시되어 대표원장님과 제작자님이 열람 승인/차단 및 삭제를 관리할 수 있습니다.
-          </div>
-        `;
+      // 대표원장 또는 제작자가 아니면 가입자 리스트 란을 철저히 숨김!
+      if (!isCEOView()) {
+        if (adminCard) adminCard.classList.add('hidden');
+        if (membersBtnVis) membersBtnVis.classList.add('hidden');
         return;
       }
 
-      container.innerHTML = customMembers.map(u => `
-        <div class="p-3 rounded-xl bg-white border border-ivory-border flex flex-wrap items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded bg-espresso text-ivory text-[11px] font-bold">${u.role}</span>
-            <span class="font-bold text-espresso text-xs">${u.name}</span>
-            <span class="text-xs text-espresso-muted">(${u.branch})</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <button type="button" onclick="toggleMemberCanViewData('${u.id}')" class="px-2.5 py-1 rounded-lg text-xs font-bold ${u.canViewData !== false ? 'bg-sage text-white' : 'bg-amber-100 text-amber-900'}">
-              ${u.canViewData !== false ? '✅ 데이터 열람 승인됨' : '🔒 열람 제한됨'}
-            </button>
-            <button type="button" onclick="deleteRegisteredMember('${u.id}')" class="px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold">
-              삭제
-            </button>
-          </div>
-        </div>
-      `).join('');
+      if (adminCard) adminCard.classList.remove('hidden');
+      if (membersBtnVis) membersBtnVis.classList.remove('hidden');
+
+      const customMembers = appState.users.filter(u => u.isCustom);
+      if (countBadge) countBadge.textContent = `가입된 원장·디자이너 ${customMembers.length}명`;
+
+      if (modalContainer) {
+        if (customMembers.length === 0) {
+          modalContainer.innerHTML = `
+            <div class="p-4 rounded-xl bg-white border border-ivory-border text-center text-xs text-espresso-muted">
+              현재 회원가입한 지점원장·디자이너가 없습니다. 휴대폰 인증 및 사내 가입 코드(Yuroso1007)로 가입하면 이곳에 표시됩니다.
+            </div>
+          `;
+        } else {
+          modalContainer.innerHTML = customMembers.map(u => `
+            <div class="p-3 rounded-xl bg-white border border-ivory-border flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-espresso text-ivory text-[11px] font-bold">${u.role}</span>
+                <span class="font-bold text-espresso text-xs">${u.name}</span>
+                <span class="text-xs text-espresso-muted">(${u.branch} · ${u.phone || '번호미등록'})</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="toggleMemberCanViewData('${u.id}')" class="px-2.5 py-1 rounded-lg text-xs font-bold ${u.canViewData !== false ? 'bg-sage text-white' : 'bg-amber-100 text-amber-900'}">
+                  ${u.canViewData !== false ? '✅ 열람 승인됨' : '🔒 열람 제한됨'}
+                </button>
+                <button type="button" onclick="deleteRegisteredMember('${u.id}')" class="px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold">
+                  🚫 회원탈퇴 처리
+                </button>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      if (adminTbody) {
+        if (customMembers.length === 0) {
+          adminTbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="py-6 px-4 text-center text-xs text-espresso-muted">
+                현재 가입된 지점원장 · 디자이너가 없습니다. 직원이 휴대폰 번호 인증과 사내 가입 코드(<strong>Yuroso1007</strong>)로 회원가입하면 이 가입자 리스트에 표시되며, 대표원장님과 제작자님이 직접 <strong>회원탈퇴</strong>를 관리할 수 있습니다.
+              </td>
+            </tr>
+          `;
+        } else {
+          adminTbody.innerHTML = customMembers.map(u => {
+            const roleBadge = u.role === '지점원장'
+              ? 'bg-champagne text-white'
+              : 'bg-sage-bg text-sage-dark border border-sage/30';
+            return `
+              <tr class="hover:bg-ivory/60 transition">
+                <td class="py-3 px-4">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-espresso">${u.name}</span>
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${roleBadge}">${u.role}</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4 font-semibold text-espresso">${u.branch}</td>
+                <td class="py-3 px-4 font-mono text-xs text-espresso">${u.phone || '010-****-****'}</td>
+                <td class="py-3 px-4 text-xs text-espresso-muted">${u.registeredAt || '2026-10-28'} · 휴대폰+사내코드 인증</td>
+                <td class="py-3 px-4 text-center">
+                  <button type="button" onclick="toggleMemberCanViewData('${u.id}')" class="px-2.5 py-1 rounded-lg text-xs font-bold ${u.canViewData !== false ? 'bg-sage text-white' : 'bg-amber-100 text-amber-900'}">
+                    ${u.canViewData !== false ? '✅ 열람 승인' : '🔒 열람 차단'}
+                  </button>
+                </td>
+                <td class="py-3 px-4 text-center">
+                  <button type="button" onclick="deleteRegisteredMember('${u.id}')" class="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold shadow-sm transition">
+                    🚫 회원탈퇴 시키기
+                  </button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
     }
 
     function toggleMemberCanViewData(userId) {
@@ -2480,28 +2849,42 @@
 
     function deleteRegisteredMember(userId) {
       if (!isCEOView()) {
-        showToast('⛔ 대표원장 및 제작자만 등록된 계정을 삭제할 수 있습니다.', 'error');
+        showToast('⛔ 대표원장 및 제작자만 디자이너·지점원장을 회원탈퇴 시킬 수 있습니다.', 'error');
         return;
       }
       const idx = appState.users.findIndex(u => u.id === userId);
       if (idx === -1) return;
       const removed = appState.users[idx];
       if (removed.id === 'u_ceo' || removed.id === 'u_creator') {
-        showToast('최상위 관리자(대표원장·제작자) 기본 계정은 삭제할 수 없습니다.', 'error');
+        showToast('최상위 관리자(대표원장·제작자) 계정은 회원탈퇴 대상이 아닙니다.', 'error');
         return;
       }
       appState.users.splice(idx, 1);
       appState.crmHistory = appState.crmHistory.filter(h => h.userId !== userId);
+
+      // 지점원장이 탈퇴한 경우 지점 메타 정보 갱신
+      if (removed.role === '지점원장' && appState.branches[removed.branch]) {
+        const remainingMgrs = appState.users.filter(u => u.branch === removed.branch && u.role === '지점원장' && u.isCustom);
+        if (remainingMgrs.length > 0) {
+          const latestMgr = remainingMgrs[remainingMgrs.length - 1];
+          appState.branches[removed.branch].managerName = `${latestMgr.name} 지점원장`;
+          appState.branches[removed.branch].managerId = latestMgr.id;
+        } else {
+          appState.branches[removed.branch].managerName = '원장 미등록';
+          appState.branches[removed.branch].managerId = '';
+        }
+      }
+
       saveAppState();
       renderCeoRegisteredMembersManageList();
       renderCustomRegisteredAccountsOnLogin();
       syncAllSelectorsAndRender();
-      showToast(`🗑️ [${removed.branch}] ${removed.name} ${removed.role} 계정이 삭제되었습니다.`);
+      showToast(`🚫 [${removed.branch}] ${removed.name} ${removed.role}님이 회원탈퇴 처리되었습니다.`);
     }
 
     function clearAllRegisteredDesigners() {
       if (!isCEOView()) {
-        showToast('⛔ 대표원장 및 제작자만 인원 목록을 초기화할 수 있습니다.', 'error');
+        showToast('⛔ 대표원장 및 제작자만 전체 회원탈퇴를 실행할 수 있습니다.', 'error');
         return;
       }
       appState.users = appState.users.filter(u => u.id === 'u_ceo' || u.id === 'u_creator');
@@ -2517,12 +2900,65 @@
       renderCeoRegisteredMembersManageList();
       renderCustomRegisteredAccountsOnLogin();
       syncAllSelectorsAndRender();
-      showToast('🗑️ 등록된 모든 지점원장·디자이너 데이터가 비워졌습니다.');
+      showToast('🗑️ 가입된 모든 지점원장·디자이너가 일괄 회원탈퇴 처리되었습니다.');
     }
 
     // -----------------------------------------------------------------------
-    // 7. RBAC ROLE SWITCHER & NAVIGATION SYNC
+    // 7. RBAC ROLE SWITCHER & ADMIN PASSWORD GATE
     // -----------------------------------------------------------------------
+    function openAdminPasswordModal(targetRole) {
+      const m = document.getElementById('adminPasswordModal');
+      const roleInput = document.getElementById('adminModalTargetRole');
+      const titleEl = document.getElementById('adminPasswordModalTitle');
+      const descEl = document.getElementById('adminPasswordModalDesc');
+      const pwInput = document.getElementById('adminModalPasswordInput');
+
+      if (roleInput) roleInput.value = targetRole;
+      if (titleEl) titleEl.textContent = targetRole === '제작자' ? '🛠️ 제작자(관리자) 패스워드 입력' : '👑 대표원장 패스워드 입력';
+      if (descEl) descEl.textContent = `[${targetRole}] 권한으로 전환하려면 전용 패스워드를 입력해주세요.`;
+      if (pwInput) pwInput.value = '';
+
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
+      if (pwInput) pwInput.focus();
+    }
+
+    function closeAdminPasswordModal() {
+      const m = document.getElementById('adminPasswordModal');
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
+    }
+
+    function handleAdminPasswordModalSubmit(e) {
+      e.preventDefault();
+      const targetRole = document.getElementById('adminModalTargetRole')?.value || '대표원장';
+      const pw = document.getElementById('adminModalPasswordInput')?.value || '';
+
+      if (pw === CEO_MASTER_PASSWORD) {
+        const ceoUser = appState.users.find(u => u.id === 'u_ceo') || appState.users[0];
+        closeAdminPasswordModal();
+        establishUserSession(ceoUser, true);
+        showToast('👑 대표원장 패스워드가 확인되어 대표원장 모드로 전환되었습니다.', 'highlight');
+        return;
+      }
+
+      if (pw === CREATOR_MASTER_PASSWORD) {
+        const creatorUser = appState.users.find(u => u.id === 'u_creator');
+        closeAdminPasswordModal();
+        if (creatorUser) {
+          establishUserSession(creatorUser, true);
+          showToast('🛠️ 제작자(관리자) 패스워드가 확인되어 제작자 총괄관리 모드로 전환되었습니다.', 'highlight');
+          return;
+        }
+      }
+
+      showToast(`⛔ [${targetRole}] 패스워드가 올바르지 않습니다.`, 'error');
+    }
+
     function populateRBACSelectors() {
       const desSelect = document.getElementById('rbacDesignerUserSelect');
       if (desSelect) {
@@ -2556,6 +2992,14 @@
         showToast(`🔒 '계정 권한 고정'이 켜져 있어 현재 로그인된 [${currentSession.role}] 외 직급으로 전환할 수 없습니다.`, 'error');
         return;
       }
+
+      // 일반 직원(디자이너/지점원장)으로 로그인한 상태에서 대표원장이나 제작자로 전환 시도 시 패스워드 확인!
+      if ((targetRole === '대표원장' || targetRole === '제작자') &&
+          (!currentSession || (currentSession.role !== '대표원장' && currentSession.role !== '제작자'))) {
+        openAdminPasswordModal(targetRole);
+        return;
+      }
+
       if (targetRole === '디자이너') {
         const designers = appState.users.filter(u => u.role === '디자이너' && u.isCustom);
         if (designers.length === 0) {
@@ -2621,7 +3065,7 @@
         syncAllSelectorsAndRender();
         showToast(`🔒 계정 권한 고정이 활성화되어 [${currentSession.name} ${currentSession.role}] 권한으로 고정되었습니다.`);
       } else {
-        showToast('🔓 상단 RBAC 권한 전환 바에서 모든 직급을 자유롭게 체험할 수 있습니다.');
+        showToast('🔓 상단 RBAC 권한 전환 바가 해제되었습니다.');
       }
     }
 
@@ -2682,7 +3126,7 @@
       const btnVisLabel = document.getElementById('btnDataVisibilityLabel');
       const bannerBtnVis = document.getElementById('bannerBtnDataVisibility');
       if (isCEOView()) {
-        if (btnVis) btnVis.className = 'px-3.5 py-2 rounded-xl bg-kakao hover:bg-kakao-hover text-kakao-text text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm';
+        if (btnVis) btnVis.className = 'px-3.5 py-2 rounded-xl bg-goldaccent hover:bg-goldaccent-hover text-goldaccent-text text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm';
         if (btnVisLabel) btnVisLabel.textContent = '🔐 열람 데이터 설정 (대표원장·제작자 관리)';
         if (bannerBtnVis) bannerBtnVis.classList.remove('hidden');
       } else {
@@ -2714,8 +3158,8 @@
       if (currentSession) {
         document.getElementById('loggedInUserNameDisplay').textContent = `${currentSession.name} ${currentSession.role} (${currentSession.branch})`;
         document.getElementById('loggedInDeviceStatus').textContent = currentSession.keepLoggedIn
-          ? '카카오 연동 · 기기 로그인 유지 중'
-          : '카카오 연동 · 일회성 세션';
+          ? '인증됨 · 기기 로그인 유지 중'
+          : '인증됨 · 일회성 세션';
       }
 
       if (isCEOView()) {
@@ -2754,6 +3198,7 @@
         bannerSub.textContent = '디자이너는 직접 회원가입을 완료해야만 등록되며, 허용된 본인 결과값만 열람합니다.';
       }
 
+      renderCeoRegisteredMembersManageList();
       renderDashboardView();
       renderCrmCalculatorView();
       renderBranchesComparisonView();
@@ -2839,11 +3284,11 @@
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
               <span class="text-xs font-bold text-champagne-light uppercase">TOP ADMINISTRATOR KPI EVALUATION (대표원장 · 제작자 공동 권한)</span>
-              <h3 class="text-lg sm:text-xl font-bold mt-0.5">${roleLabel} 종합 KPI 달성 점수: <span class="text-kakao">${ceo.ceoTotalScore.toFixed(1)}점</span> / 100점 (${ceo.ceoGrade})</h3>
+              <h3 class="text-lg sm:text-xl font-bold mt-0.5">${roleLabel} 종합 KPI 달성 점수: <span class="text-goldaccent">${ceo.ceoTotalScore.toFixed(1)}점</span> / 100점 (${ceo.ceoGrade})</h3>
               <p class="text-xs text-ivory/75 mt-1">전 지점 매출 성장(30%) + 영업이익(30%) + 지점 목표 달성(20%) + 리더·인재 성장(20%) 통합 산출</p>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
-              <button type="button" onclick="openDataVisibilityModal()" class="px-4 py-2.5 rounded-xl bg-kakao hover:bg-kakao-hover text-kakao-text text-xs font-extrabold transition shadow-md">
+              <button type="button" onclick="openDataVisibilityModal()" class="px-4 py-2.5 rounded-xl bg-goldaccent hover:bg-goldaccent-hover text-goldaccent-text text-xs font-extrabold transition shadow-md">
                 🔐 볼 수 있는 데이터 설정 관리
               </button>
               <button type="button" onclick="switchMainTab('branches')" class="px-4 py-2.5 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-bold transition shadow-md">
@@ -2921,7 +3366,7 @@
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
               <span class="text-xs font-bold text-champagne-light uppercase">BRANCH DIRECTOR KPI (${b.branchName} 전용 열람)</span>
-              <h3 class="text-lg sm:text-xl font-bold mt-0.5">${b.branchName} (${b.meta.managerName}) 종합 KPI 점수: <span class="text-kakao">${maskIfHidden('colKpiScore', b.managerTotalScore.toFixed(1) + '점')}</span> (${b.managerGrade})</h3>
+              <h3 class="text-lg sm:text-xl font-bold mt-0.5">${b.branchName} (${b.meta.managerName}) 종합 KPI 점수: <span class="text-goldaccent">${maskIfHidden('colKpiScore', b.managerTotalScore.toFixed(1) + '점')}</span> (${b.managerGrade})</h3>
               <p class="text-xs text-ivory/75 mt-1">지점 매출(35%) + 디자이너 평균매출 성장(30%) + 재방문 고객 비율(20%) + 직원 성장·유지(15%) 합산</p>
             </div>
             <span class="px-3 py-1.5 rounded-xl bg-white/10 text-xs font-semibold text-champagne-light">
@@ -2966,7 +3411,7 @@
           totalBar.innerHTML = `
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-champagne-light">디자이너 직접 가입 대기 중</span>
-              <button type="button" onclick="openQuickSignupModal()" class="px-3 py-1.5 rounded-lg bg-kakao text-kakao-text text-xs font-extrabold">회원가입 바로가기</button>
+              <button type="button" onclick="openQuickSignupModal()" class="px-3 py-1.5 rounded-lg bg-goldaccent text-goldaccent-text text-xs font-extrabold">회원가입 바로가기</button>
             </div>
           `;
           chartsGrid.classList.add('hidden');
@@ -3058,10 +3503,10 @@
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
               <span class="text-xs font-bold text-champagne-light uppercase">PERSONAL DESIGNER KPI (${desUser.branch} · ${desUser.name} 전용)</span>
-              <h3 class="text-lg sm:text-xl font-bold mt-0.5">${desUser.name} ${desUser.title}님의 개인 KPI 총점: <span class="text-kakao">${maskIfHidden('colKpiScore', kpi.totalScore.toFixed(1) + '점')}</span> (${kpi.grade})</h3>
+              <h3 class="text-lg sm:text-xl font-bold mt-0.5">${desUser.name} ${desUser.title}님의 개인 KPI 총점: <span class="text-goldaccent">${maskIfHidden('colKpiScore', kpi.totalScore.toFixed(1) + '점')}</span> (${kpi.grade})</h3>
               <p class="text-xs text-ivory/80 mt-1">${coachingLine}</p>
             </div>
-            <button type="button" onclick="switchMainTab('crm')" class="px-4 py-2.5 rounded-xl bg-kakao hover:bg-kakao-hover text-kakao-text text-xs font-extrabold transition shadow-md">
+            <button type="button" onclick="switchMainTab('crm')" class="px-4 py-2.5 rounded-xl bg-goldaccent hover:bg-goldaccent-hover text-goldaccent-text text-xs font-extrabold transition shadow-md">
               내 CRM 5대 지표 입력·수정하기 &rarr;
             </button>
           </div>
@@ -3433,7 +3878,7 @@
           : u.role === '지점원장'
           ? 'bg-champagne text-white'
           : 'bg-sage-bg text-sage-dark border border-sage/30';
-        const customBadge = u.isCustom ? '<span class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-kakao text-kakao-text font-extrabold">직접가입</span>' : '<span class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-champagne-bg text-champagne-dark font-bold">총괄관리</span>';
+        const customBadge = u.isCustom ? '<span class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-goldaccent text-goldaccent-text font-extrabold">직접가입</span>' : '<span class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-champagne-bg text-champagne-dark font-bold">총괄관리</span>';
 
         return `
           <tr class="hover:bg-ivory/70 transition">
@@ -3954,7 +4399,7 @@
       const signupPromptCard = staffCount === 0 ? `
         <div class="card-luxury rounded-2xl p-6 border-2 border-dashed border-champagne flex flex-col justify-between bg-champagne-bg/30">
           <div>
-            <span class="text-xs font-bold px-2.5 py-1 rounded bg-kakao text-kakao-text">직접 회원가입 등록제</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded bg-goldaccent text-goldaccent-text">직접 회원가입 등록제</span>
             <h4 class="font-bold text-espresso text-base mt-2">현재 등록된 지점원장 · 디자이너가 없습니다</h4>
             <p class="text-xs text-espresso-muted mt-1 leading-relaxed">
               기존에 기본 입력되어 있던 지점원장 및 디자이너 데이터는 모두 비워졌습니다. 직접 회원가입(이름·지점·직급 선택)을 완료하면 이곳에 카드가 자동 생성됩니다.
@@ -3979,7 +4424,7 @@
                   <div>
                     <div class="flex items-center gap-1.5">
                       <h4 class="font-bold text-espresso text-base">${u.name} ${u.title}</h4>
-                      ${u.isCustom ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-kakao text-kakao-text font-extrabold">직접가입</span>' : '<span class="text-[10px] px-1.5 py-0.5 rounded bg-champagne-bg text-champagne-dark font-bold">총괄관리</span>'}
+                      ${u.isCustom ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-goldaccent text-goldaccent-text font-extrabold">직접가입</span>' : '<span class="text-[10px] px-1.5 py-0.5 rounded bg-champagne-bg text-champagne-dark font-bold">총괄관리</span>'}
                     </div>
                     <p class="text-xs text-espresso-muted">${u.branch}</p>
                   </div>
@@ -4024,8 +4469,8 @@
                 </button>
               ` : ''}
               ${isCEOView() && u.id !== 'u_ceo' && u.id !== 'u_creator' ? `
-                <button type="button" onclick="deleteRegisteredMember('${u.id}')" class="py-2 px-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold transition">
-                  삭제
+                <button type="button" onclick="deleteRegisteredMember('${u.id}')" class="py-2 px-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold transition">
+                  🚫 회원탈퇴
                 </button>
               ` : ''}
             </div>
@@ -4052,21 +4497,40 @@
     function handleModalSignupSubmit(e) {
       e.preventDefault();
       const name = document.getElementById('modalSignupName').value.trim();
+      const phone = document.getElementById('modalSignupPhone').value.trim();
+      const normPhone = normalizePhone(phone);
+      const inviteCode = document.getElementById('modalSignupInviteCode').value.trim();
       const branch = document.getElementById('modalSignupBranch').value;
       const role = document.getElementById('modalSignupRole').value;
       const switchNow = document.getElementById('modalSwitchToNewUser').checked;
 
       if (!name) return;
-      const newUser = registerNewMember(name, branch, role, true);
+      if (normPhone.length < 10) {
+        showToast('휴대폰 번호 10~11자리를 정확히 입력해주세요.', 'error');
+        return;
+      }
+      if (inviteCode !== COMPANY_INVITE_CODE) {
+        showToast('⛔ 사내 가입 코드가 일치하지 않습니다.', 'error');
+        return;
+      }
+      const duplicate = appState.users.find(u => u.isCustom && normalizePhone(u.phone) === normPhone);
+      if (duplicate) {
+        showToast('이미 등록된 휴대폰 번호입니다.', 'error');
+        return;
+      }
+
+      const newUser = registerNewMember(name, branch, role, phone, true);
       document.getElementById('modalSignupName').value = '';
+      document.getElementById('modalSignupPhone').value = '';
+      document.getElementById('modalSignupInviteCode').value = '';
       closeQuickSignupModal();
 
       if (switchNow) {
         establishUserSession(newUser, true);
-        showToast(`🎉 [${branch}] ${name} ${role}님으로 직접 회원가입 및 계정 전환이 완료되었습니다!`);
+        showToast(`🎉 [${branch}] ${name} ${role}님으로 회원가입 및 계정 전환이 완료되었습니다!`);
       } else {
         syncAllSelectorsAndRender();
-        showToast(`✅ [${branch}] ${name} ${role}님이 유로소 헤어 시스템에 직접 등록되었습니다.`);
+        showToast(`✅ [${branch}] ${name} ${role}님이 유로소 헤어 시스템에 등록되었습니다.`);
       }
     }
 

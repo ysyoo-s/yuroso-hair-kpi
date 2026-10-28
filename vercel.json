@@ -3,9 +3,6 @@
   "name": "yuroso-hair-kpi-crm",
   "cleanUrls": true,
   "trailingSlash": false,
-  "env": {
-    "KAKAO_JAVASCRIPT_KEY": "ca5c0c72d775121ca34db74d39cac2e4"
-  },
   "headers": [
     {
       "source": "/(.*)",
