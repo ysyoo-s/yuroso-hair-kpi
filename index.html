@@ -82,10 +82,6 @@
     .card-luxury:hover {
       box-shadow: 0 8px 28px -4px rgba(44, 34, 30, 0.09);
     }
-    .naver-badge {
-      background: linear-gradient(135deg, #03C75A 0%, #02b350 100%);
-      color: #fff;
-    }
     @media print {
       .no-print {
         display: none !important;
@@ -131,10 +127,6 @@
           <span class="w-2 h-2 rounded-full bg-sage animate-pulse"></span>
           카카오 JS 키 등록 완료 · 대표원장 & 제작자 공동 관리
         </span>
-        <button type="button" onclick="openVercelModal()" class="text-xs px-3 py-1.5 rounded-lg bg-espresso text-ivory hover:bg-espresso-light transition font-medium flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          GitHub·Vercel 배포 가이드
-        </button>
       </div>
     </header>
 
@@ -525,11 +517,6 @@
           <!-- Target KPI Settings Modal Button -->
           <button type="button" onclick="openTargetSettingsModal()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-ivory text-xs font-medium transition flex items-center gap-1.5">
             <span>⚙️ 목표치 설정</span>
-          </button>
-
-          <!-- GitHub & Vercel Guide Button -->
-          <button type="button" onclick="openVercelModal()" class="px-3 py-2 rounded-xl bg-sage hover:bg-sage-dark text-white text-xs font-bold transition flex items-center gap-1.5">
-            <span>🚀 Vercel 배포 설정</span>
           </button>
 
           <!-- Logout Button -->
@@ -1598,64 +1585,6 @@
     </div>
   </div>
 
-  <!-- 4. GITHUB & VERCEL DEPLOYMENT + KAKAO OAUTH SETUP MODAL -->
-  <div id="vercelModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-ivory-border max-h-[90vh] flex flex-col">
-      <div class="bg-espresso text-ivory px-6 py-4 flex items-center justify-between shrink-0">
-        <div>
-          <span class="text-[11px] text-champagne-light font-bold">GITHUB + VERCEL + KAKAO OAUTH DEPLOYMENT</span>
-          <h3 class="text-base font-bold">GitHub 연동 Vercel 실서버 배포 및 카카오 JavaScript 키 설정</h3>
-        </div>
-        <button type="button" onclick="closeVercelModal()" class="text-ivory/70 hover:text-white text-xl font-bold">&times;</button>
-      </div>
-      <div class="p-6 overflow-y-auto custom-scrollbar space-y-5 text-xs leading-relaxed text-espresso">
-        <div class="p-4 rounded-2xl bg-sage-bg border border-sage/30">
-          <p class="font-bold text-sm text-sage-dark mb-1">✅ 카카오 JavaScript 키 등록 완료 & Vercel 무설정 정적 배포 호환</p>
-          <p class="text-espresso-muted">
-            요청하신 카카오톡 JavaScript 키(<code class="font-bold text-espresso font-mono">ca5c0c72d775121ca34db74d39cac2e4</code>)가 시스템에 기본 내장되어 있습니다.
-          </p>
-        </div>
-
-        <div class="space-y-2">
-          <h4 class="font-bold text-sm text-espresso">1단계: GitHub 리포지토리 업로드 및 Vercel 연동</h4>
-          <ol class="list-decimal list-inside space-y-1 text-espresso-muted">
-            <li>함께 제공된 배포 패키지(<code class="text-espresso font-semibold">yuroso_hair_vercel_deploy.zip</code>)의 파일들을 GitHub 새 리포지토리에 업로드(Push)합니다.</li>
-            <li><strong>Vercel Dashboard &rarr; Add New Project</strong>에서 해당 GitHub 리포지토리를 Import합니다.</li>
-            <li>Framework Preset은 <strong>Other (Static)</strong> 그대로 두고 <strong>Deploy</strong>를 클릭하면 즉시 배포가 완료됩니다.</li>
-          </ol>
-        </div>
-
-        <div class="space-y-2">
-          <h4 class="font-bold text-sm text-espresso">2단계: 등록된 Kakao Developers JavaScript 키 확인 및 변경</h4>
-          <p class="text-espresso-muted">
-            <a href="https://developers.kakao.com" target="_blank" rel="noopener noreferrer" class="text-champagne-dark underline font-bold">Kakao Developers</a>의 [내 애플리케이션 &rarr; 플랫폼 &rarr; Web]에 배포된 Vercel 도메인 주소를 등록하시면 아래 등록된 JavaScript 키로 즉시 연동됩니다.
-          </p>
-          <div class="flex gap-2">
-            <input type="text" id="kakaoJsKeyInput" value="ca5c0c72d775121ca34db74d39cac2e4" placeholder="카카오 JavaScript App Key 입력" class="flex-1 px-3 py-2 rounded-xl border border-ivory-border bg-ivory text-xs font-mono font-bold text-espresso" />
-            <button type="button" onclick="saveKakaoJsKey()" class="px-4 py-2 rounded-xl bg-espresso text-ivory font-bold">키 저장</button>
-          </div>
-        </div>
-
-        <div class="space-y-2">
-          <div class="flex items-center justify-between">
-            <h4 class="font-bold text-sm text-espresso">3단계: vercel.json 설정 파일 (SPA 라우팅 & 캐시 최적화)</h4>
-            <button type="button" onclick="copyVercelJson()" class="px-2.5 py-1 rounded bg-champagne-bg text-champagne-dark font-bold">클립보드 복사</button>
-          </div>
-          <pre id="vercelJsonCodeBlock" class="p-3 rounded-xl bg-espresso text-ivory font-mono text-[11px] overflow-x-auto">{
-  "version": 2,
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}</pre>
-        </div>
-      </div>
-      <div class="p-4 border-t border-ivory-border bg-ivory flex justify-end">
-        <button type="button" onclick="closeVercelModal()" class="px-5 py-2 rounded-xl bg-espresso text-ivory text-xs font-bold">확인</button>
-      </div>
-    </div>
-  </div>
-
   <!-- 5. COACHING NOTE MODAL -->
   <div id="coachingModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-ivory-border">
@@ -1744,8 +1673,6 @@
             targetOperatingProfit: 26000000,
             staffRetentionScore: 95.0,
             leaderGrowthScore: 94.0,
-            naverRating: 4.94,
-            naverReviewCount: 1840
           },
           '운정역점': {
             id: 'b_unjeong2',
@@ -1759,8 +1686,6 @@
             targetOperatingProfit: 23500000,
             staffRetentionScore: 92.5,
             leaderGrowthScore: 91.5,
-            naverRating: 4.91,
-            naverReviewCount: 1420
           },
           '마곡발산점': {
             id: 'b_magok3',
@@ -1774,8 +1699,6 @@
             targetOperatingProfit: 29500000,
             staffRetentionScore: 94.0,
             leaderGrowthScore: 95.5,
-            naverRating: 4.95,
-            naverReviewCount: 1690
           }
         },
         // 지점원장 및 디자이너 기본 입력 데이터 모두 제거!
@@ -3853,7 +3776,7 @@
             <div>
               <div class="flex items-center justify-between mb-3">
                 <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-espresso text-champagne-light">${s.meta.badge}</span>
-                <span class="text-xs font-extrabold px-2.5 py-0.5 rounded bg-sage-bg text-sage-dark">네이버 ★ ${s.meta.naverRating}</span>
+                <span class="text-xs font-extrabold px-2.5 py-0.5 rounded bg-sage-bg text-sage-dark">실시간 KPI 연동</span>
               </div>
               <h4 class="text-xl font-bold text-espresso">${s.branchName}</h4>
               <p class="text-xs text-espresso-muted mt-0.5">지점 총괄: <strong class="text-espresso">${s.meta.managerName}</strong> · 직접 가입 디자이너 ${s.designerCount}명</p>
@@ -4174,48 +4097,6 @@
       closeTargetSettingsModal();
       syncAllSelectorsAndRender();
       showToast('⚙️ 디자이너 KPI 목표 기준치가 저장되어 전사 점수가 재산출되었습니다.');
-    }
-
-    function openVercelModal() {
-      const savedKey = safeGetStorage(STORAGE_KEY_KAKAO_KEY) || DEFAULT_KAKAO_JS_KEY;
-      const input = document.getElementById('kakaoJsKeyInput');
-      if (input) input.value = savedKey;
-      const m = document.getElementById('vercelModal');
-      m.classList.remove('hidden');
-      m.classList.add('flex');
-    }
-
-    function closeVercelModal() {
-      const m = document.getElementById('vercelModal');
-      m.classList.add('hidden');
-      m.classList.remove('flex');
-    }
-
-    function saveKakaoJsKey() {
-      const val = (document.getElementById('kakaoJsKeyInput')?.value || '').trim() || DEFAULT_KAKAO_JS_KEY;
-      appState.kakaoJsKey = val;
-      safeSetStorage(STORAGE_KEY_KAKAO_KEY, val);
-      saveAppState();
-      showToast(`카카오 JavaScript App Key(${val})가 저장되었습니다.`, 'kakao');
-    }
-
-    function copyVercelJson() {
-      const text = document.getElementById('vercelJsonCodeBlock')?.textContent || '';
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text);
-        } else {
-          const ta = document.createElement('textarea');
-          ta.value = text;
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand('copy');
-          ta.remove();
-        }
-        showToast('vercel.json 설정 코드가 클립보드에 복사되었습니다!');
-      } catch (e) {
-        showToast('복사 완료!');
-      }
     }
 
     function openCoachingModal(userId) {
