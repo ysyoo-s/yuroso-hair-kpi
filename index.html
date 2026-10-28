@@ -1,0 +1,3697 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YUROSO HAIR | 유로소 헤어 통합 KPI & CRM 경영 시스템</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ivory: {
+              DEFAULT: '#FAF7F2',
+              soft: '#F4EFE6',
+              border: '#E6DEC8',
+              dark: '#EAE2D3'
+            },
+            espresso: {
+              DEFAULT: '#2C221E',
+              light: '#43352F',
+              muted: '#6E5D54',
+              deep: '#1D1613'
+            },
+            champagne: {
+              DEFAULT: '#B08968',
+              light: '#C8A688',
+              dark: '#8F6B4D',
+              bg: '#F7F1EB'
+            },
+            sage: {
+              DEFAULT: '#6B7F6E',
+              light: '#869B89',
+              dark: '#526355',
+              bg: '#EFF3F0'
+            },
+            kakao: {
+              DEFAULT: '#FEE500',
+              hover: '#F5DC00',
+              text: '#191919'
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans KR"', '"Inter"', 'sans-serif'],
+            serif: ['"Playfair Display"', '"Noto Sans KR"', 'serif']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #FAF7F2;
+      color: #2C221E;
+      font-family: 'Noto Sans KR', 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    .brand-serif {
+      font-family: 'Playfair Display', serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #F4EFE6;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #C8A688;
+      border-radius: 9999px;
+    }
+    .card-luxury {
+      background: #FFFFFF;
+      border: 1px solid #E6DEC8;
+      box-shadow: 0 4px 20px -4px rgba(44, 34, 30, 0.05);
+      transition: all 0.2s ease;
+    }
+    .card-luxury:hover {
+      box-shadow: 0 8px 28px -4px rgba(44, 34, 30, 0.09);
+    }
+    .naver-badge {
+      background: linear-gradient(135deg, #03C75A 0%, #02b350 100%);
+      color: #fff;
+    }
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: #FFFFFF !important;
+      }
+      .card-luxury {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-champagne selection:text-white">
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- ===================================================================== -->
+  <!-- 1. AUTH GATE SCREEN (LOGIN & SIGNUP - SHOWN BEFORE AUTHENTICATION)    -->
+  <!-- ===================================================================== -->
+  <div id="authGateView" class="min-h-screen flex flex-col justify-between bg-ivory relative overflow-hidden">
+    <!-- Decorative Background Elements -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-champagne/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-sage/15 blur-3xl pointer-events-none"></div>
+
+    <!-- Top Brand Header -->
+    <header class="w-full py-5 px-6 sm:px-10 flex items-center justify-between border-b border-ivory-border bg-white/70 backdrop-blur-md z-10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-espresso text-ivory flex items-center justify-center font-bold text-lg brand-serif tracking-wider shadow-sm">
+          Y
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-lg tracking-tight text-espresso brand-serif">YUROSO HAIR</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-champagne/15 text-champagne-dark font-semibold">유로소 헤어</span>
+          </div>
+          <p class="text-xs text-espresso-muted">파주 운정점(1호점) · 운정역점(2호점) · 마곡발산점(3호점) 통합 KPI & CRM</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="hidden sm:inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-sage-bg text-sage-dark font-medium border border-sage/20">
+          <span class="w-2 h-2 rounded-full bg-sage animate-pulse"></span>
+          네이버 플레이스 감성 브랜드 에디션
+        </span>
+        <button type="button" onclick="openVercelModal()" class="text-xs px-3 py-1.5 rounded-lg bg-espresso text-ivory hover:bg-espresso-light transition font-medium flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          GitHub·Vercel 배포 가이드
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Auth Container -->
+    <main class="flex-1 flex items-center justify-center p-4 sm:p-8 z-10">
+      <div class="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 rounded-3xl overflow-hidden shadow-2xl border border-ivory-border bg-white">
+        
+        <!-- Left Brand Visual Column -->
+        <div class="lg:col-span-5 bg-espresso text-ivory p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-champagne/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-2xl pointer-events-none"></div>
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-champagne/20 border border-champagne/40 text-champagne-light text-xs font-medium mb-6">
+              <span>PREMIUM SALON MANAGEMENT</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-bold leading-snug mb-3">
+              유로소 헤어 3대 지점<br/>
+              <span class="text-champagne-light">직급별 KPI & CRM</span><br/>
+              통합 성과 관리 시스템
+            </h1>
+            <p class="text-sm text-ivory/75 leading-relaxed mb-6">
+              네이버 플레이스 유로소 헤어의 감성과 철학을 담은 데이터 기반 살롱 경영 플랫폼입니다. 대표원장, 지점원장, 디자이너 직급별 맞춤 권한(RBAC)으로 투명하고 정확한 성장을 지원합니다.
+            </p>
+
+            <!-- 3 Branches Showcase -->
+            <div class="space-y-2.5 mb-6">
+              <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                <div>
+                  <span class="text-xs text-champagne-light font-semibold">1호점 · 본점</span>
+                  <h3 class="text-sm font-bold text-ivory">유로소 헤어 파주 운정점</h3>
+                </div>
+                <span class="text-xs px-2.5 py-1 rounded-full bg-sage/30 text-ivory font-medium">서윤 지점원장 외 4명</span>
+              </div>
+              <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                <div>
+                  <span class="text-xs text-champagne-light font-semibold">2호점 · 역세권</span>
+                  <h3 class="text-sm font-bold text-ivory">유로소 헤어 운정역점</h3>
+                </div>
+                <span class="text-xs px-2.5 py-1 rounded-full bg-sage/30 text-ivory font-medium">민준 지점원장 외 4명</span>
+              </div>
+              <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                <div>
+                  <span class="text-xs text-champagne-light font-semibold">3호점 · 서울 강서</span>
+                  <h3 class="text-sm font-bold text-ivory">유로소 헤어 마곡발산점</h3>
+                </div>
+                <span class="text-xs px-2.5 py-1 rounded-full bg-sage/30 text-ivory font-medium">지현 지점원장 외 4명</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Palette & Security Info -->
+          <div class="pt-5 border-t border-white/10">
+            <div class="flex items-center justify-between text-xs text-ivory/70 mb-2">
+              <span>유로소 시그니처 톤앤매너</span>
+              <span>기기 자동 로그인 유지 지원</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#FAF7F2] border border-white/30" title="Warm Ivory #FAF7F2"></span>
+              <span class="w-5 h-5 rounded-full bg-[#2C221E] border border-white/30" title="Espresso Brown #2C221E"></span>
+              <span class="w-5 h-5 rounded-full bg-[#B08968] border border-white/30" title="Champagne Gold #B08968"></span>
+              <span class="w-5 h-5 rounded-full bg-[#6B7F6E] border border-white/30" title="Sage Olive #6B7F6E"></span>
+              <span class="ml-auto text-[11px] text-champagne-light font-medium">👑 총괄: 영화 대표원장</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Auth Interaction Column -->
+        <div class="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-between bg-white">
+          <div>
+            <!-- Auth Mode Tabs -->
+            <div class="flex rounded-xl bg-ivory p-1 border border-ivory-border mb-6">
+              <button type="button" id="authTabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-espresso text-ivory shadow-sm transition">
+                카카오톡 간편 로그인
+              </button>
+              <button type="button" id="authTabSignupBtn" onclick="switchAuthTab('signup')" class="flex-1 py-2.5 text-sm font-bold rounded-lg text-espresso-muted hover:text-espresso transition">
+                신규 회원가입 (첫 접속)
+              </button>
+            </div>
+
+            <!-- TAB 1: KAKAO LOGIN VIEW -->
+            <div id="authLoginPanel" class="space-y-6">
+              <div class="text-center sm:text-left">
+                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-champagne-dark bg-champagne-bg px-2.5 py-1 rounded-md mb-2">
+                  🔒 로그인 필수 전용 시스템
+                </span>
+                <h2 class="text-xl sm:text-2xl font-bold text-espresso">카카오톡 계정으로 시작하기</h2>
+                <p class="text-sm text-espresso-muted mt-1">
+                  처음 접속하시는 분은 카카오 인증 후 회원가입 화면으로 안내되며, 한번 로그인한 기기는 다음 접속 시에도 자동으로 로그인이 유지됩니다.
+                </p>
+              </div>
+
+              <!-- Official Style Kakao Login CTA Button -->
+              <div class="space-y-3">
+                <button type="button" onclick="openKakaoAuthModal()" class="w-full py-4 px-6 rounded-xl bg-kakao hover:bg-kakao-hover text-kakao-text font-bold text-base shadow-md hover:shadow-lg transition flex items-center justify-center gap-3 border border-yellow-400/50">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="#191919">
+                    <path d="M12 3C6.477 3 2 6.477 2 10.765c0 2.772 1.855 5.205 4.653 6.578-.153.543-.986 3.504-1.02 3.733-.043.29.106.286.225.208.093-.06 3.694-2.51 4.303-2.936.597.087 1.212.132 1.839.132 5.523 0 10-3.477 10-7.765S17.523 3 12 3z"/>
+                  </svg>
+                  <span>카카오톡 계정으로 3초 만에 로그인</span>
+                </button>
+
+                <div class="flex items-center justify-between px-1 pt-1">
+                  <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                    <input type="checkbox" id="keepLoggedInCheckbox" checked class="w-4 h-4 rounded border-ivory-border text-espresso focus:ring-champagne" />
+                    <span class="text-xs font-medium text-espresso">이 기기에서 로그인 상태 계속 유지 (자동 로그인)</span>
+                  </label>
+                  <button type="button" onclick="switchAuthTab('signup')" class="text-xs font-bold text-champagne-dark hover:underline">
+                    처음 접속하셨나요? 회원가입 &rarr;
+                  </button>
+                </div>
+              </div>
+
+              <!-- Quick Demo / Registered Kakao Account Selector -->
+              <div class="pt-4 border-t border-ivory-border">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-bold text-espresso uppercase tracking-wider">⚡ 직급별 등록 계정 빠른 카카오 접속 (체험 및 검증용)</span>
+                  <span class="text-[11px] text-sage-dark font-medium">클릭 시 즉시 접속</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  <!-- CEO Quick Login -->
+                  <button type="button" onclick="quickLoginAs('u_ceo')" class="p-3 rounded-xl border border-champagne/40 bg-champagne-bg/60 hover:bg-champagne-bg text-left transition group">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-espresso text-ivory">대표원장</span>
+                      <span class="text-xs text-champagne-dark group-hover:translate-x-0.5 transition">&rarr;</span>
+                    </div>
+                    <p class="font-bold text-sm text-espresso">영화 대표원장</p>
+                    <p class="text-[11px] text-espresso-muted">전 지점 총괄 · 모든 데이터 열람</p>
+                  </button>
+
+                  <!-- Branch Manager Quick Login -->
+                  <button type="button" onclick="quickLoginAs('u_mgr_1')" class="p-3 rounded-xl border border-ivory-border bg-ivory/60 hover:bg-ivory-soft text-left transition group">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-champagne text-white">지점원장</span>
+                      <span class="text-xs text-espresso-muted group-hover:translate-x-0.5 transition">&rarr;</span>
+                    </div>
+                    <p class="font-bold text-sm text-espresso">서윤 지점원장</p>
+                    <p class="text-[11px] text-espresso-muted">파주 운정점(1호점) 전용 열람</p>
+                  </button>
+
+                  <!-- Designer Quick Login -->
+                  <button type="button" onclick="quickLoginAs('u_des_101')" class="p-3 rounded-xl border border-ivory-border bg-ivory/60 hover:bg-ivory-soft text-left transition group">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-sage text-white">디자이너</span>
+                      <span class="text-xs text-espresso-muted group-hover:translate-x-0.5 transition">&rarr;</span>
+                    </div>
+                    <p class="font-bold text-sm text-espresso">지우 수석디자이너</p>
+                    <p class="text-[11px] text-espresso-muted">개인 KPI & CRM 5대 지표 입력</p>
+                  </button>
+                </div>
+
+                <!-- Recently Registered Custom Users List (if any) -->
+                <div id="customRegisteredAccountsBox" class="mt-3 hidden">
+                  <p class="text-xs font-bold text-sage-dark mb-1.5">✨ 이 기기에서 신규 가입한 계정으로 바로 로그인:</p>
+                  <div id="customRegisteredAccountsList" class="flex flex-wrap gap-2"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: SIGNUP FORM (REQUIREMENT 3 & 4) -->
+            <div id="authSignupPanel" class="space-y-5 hidden">
+              <div>
+                <div class="inline-flex items-center gap-1.5 text-xs font-bold text-kakao-text bg-kakao px-2.5 py-1 rounded-md mb-2">
+                  <span>💬 카카오톡 연동 신규 회원가입</span>
+                </div>
+                <h2 class="text-xl font-bold text-espresso">유로소 헤어 임직원 회원가입</h2>
+                <p class="text-xs text-espresso-muted mt-0.5">
+                  이름, 소속 지점, 직급을 선택하여 가입하면 즉시 본인의 KPI 고객데이터 및 성과를 작성할 수 있습니다.
+                </p>
+              </div>
+
+              <form id="signupForm" onsubmit="handleSignupSubmit(event)" class="space-y-4">
+                <!-- 1. 디자이너 이름 -->
+                <div>
+                  <label for="signupNameInput" class="block text-xs font-bold text-espresso mb-1.5">
+                    1. 디자이너 이름 (실명 또는 활동명) <span class="text-red-600">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="signupNameInput"
+                    required
+                    placeholder="예: 김유로, 하은, 도윤 등 이름을 입력하세요"
+                    class="w-full px-4 py-3 rounded-xl border border-ivory-border bg-ivory/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-champagne text-sm font-medium text-espresso"
+                  />
+                </div>
+
+                <!-- 2. 지점 선택 (파주 운정점, 운정역점, 마곡발산점) -->
+                <div>
+                  <label for="signupBranchSelect" class="block text-xs font-bold text-espresso mb-1.5">
+                    2. 소속 지점 선택 (3대 지점 중 선택) <span class="text-red-600">*</span>
+                  </label>
+                  <select
+                    id="signupBranchSelect"
+                    required
+                    class="w-full px-4 py-3 rounded-xl border border-ivory-border bg-ivory/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-champagne text-sm font-semibold text-espresso"
+                  >
+                    <option value="파주 운정점">파주 운정점 (1호점)</option>
+                    <option value="운정역점">운정역점 (2호점)</option>
+                    <option value="마곡발산점">마곡발산점 (3호점)</option>
+                  </select>
+                  <div class="grid grid-cols-3 gap-2 mt-2">
+                    <button type="button" onclick="selectSignupBranchCard('파주 운정점')" id="branchCard_파주 운정점" class="py-2 px-2 rounded-lg border-2 border-champagne bg-champagne-bg text-xs font-bold text-espresso transition">
+                      📍 파주 운정점
+                    </button>
+                    <button type="button" onclick="selectSignupBranchCard('운정역점')" id="branchCard_운정역점" class="py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition">
+                      🚉 운정역점
+                    </button>
+                    <button type="button" onclick="selectSignupBranchCard('마곡발산점')" id="branchCard_마곡발산점" class="py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition">
+                      🏙️ 마곡발산점
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 3. 직급 선택 (대표원장, 지점원장, 디자이너) -->
+                <div>
+                  <label for="signupRoleSelect" class="block text-xs font-bold text-espresso mb-1.5">
+                    3. 직급 선택 (대표원장 / 지점원장 / 디자이너) <span class="text-red-600">*</span>
+                  </label>
+                  <select
+                    id="signupRoleSelect"
+                    required
+                    class="w-full px-4 py-3 rounded-xl border border-ivory-border bg-ivory/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-champagne text-sm font-semibold text-espresso"
+                  >
+                    <option value="디자이너">디자이너 (개인 KPI 대시보드 & CRM 5대 지표 입력·열람)</option>
+                    <option value="지점원장">지점원장 (소속 지점 KPI & 소속 디자이너 성과 열람)</option>
+                    <option value="대표원장">대표원장 (전 지점 총괄 KPI & 전 지점 원장·디자이너 통합 조회)</option>
+                  </select>
+                  <div class="grid grid-cols-3 gap-2 mt-2">
+                    <button type="button" onclick="selectSignupRoleCard('디자이너')" id="roleCard_디자이너" class="py-2 px-2 rounded-lg border-2 border-champagne bg-champagne-bg text-xs font-bold text-espresso transition">
+                      ✂️ 디자이너
+                    </button>
+                    <button type="button" onclick="selectSignupRoleCard('지점원장')" id="roleCard_지점원장" class="py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition">
+                      🏢 지점원장
+                    </button>
+                    <button type="button" onclick="selectSignupRoleCard('대표원장')" id="roleCard_대표원장" class="py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition">
+                      👑 대표원장
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Keep device logged in -->
+                <div class="p-3 rounded-xl bg-ivory border border-ivory-border flex items-center justify-between">
+                  <label class="inline-flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="signupKeepLoggedIn" checked class="w-4 h-4 rounded border-ivory-border text-espresso focus:ring-champagne" />
+                    <span class="text-xs font-semibold text-espresso">가입 후 이 기기에서 로그인 계속 유지하기</span>
+                  </label>
+                  <span class="text-[11px] text-sage-dark font-semibold">카카오 인증 연동됨</span>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-espresso hover:bg-espresso-light text-ivory font-bold text-sm shadow-md transition flex items-center justify-center gap-2">
+                  <span>카카오 계정으로 회원가입 완료 및 시작하기</span>
+                  <span>&rarr;</span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="pt-4 mt-4 border-t border-ivory-border flex flex-wrap items-center justify-between gap-2 text-xs text-espresso-muted">
+            <span>※ 직급별 엄격한 열람 권한 분리(RBAC)가 적용되어 있습니다.</span>
+            <span class="font-medium text-espresso">YUROSO HAIR CORP.</span>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <footer class="py-4 px-6 text-center text-xs text-espresso-muted border-t border-ivory-border bg-white/50">
+      © 2026 YUROSO HAIR (유로소 헤어 파주 운정점 · 운정역점 · 마곡발산점). All rights reserved.
+    </footer>
+  </div>
+
+
+  <!-- ===================================================================== -->
+  <!-- 2. MAIN APPLICATION WORKSPACE (SHOWN ONLY WHEN LOGGED IN)             -->
+  <!-- ===================================================================== -->
+  <div id="appWorkspaceView" class="hidden min-h-screen flex flex-col bg-ivory">
+
+    <!-- TOP RBAC PERMISSION SWITCHER BAR (상단 RBAC 권한 전환 바) -->
+    <div class="bg-espresso-deep text-ivory border-b border-white/10 px-4 sm:px-8 py-2.5 no-print">
+      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-champagne text-white">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            상단 RBAC 권한 전환 바
+          </span>
+          <span id="rbacNoticeText" class="text-xs text-ivory/80">
+            직급별 엄격한 열람 권한 분리 적용 중
+          </span>
+        </div>
+
+        <!-- Role Switcher Controls -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <!-- 1. 대표원장 전환 -->
+          <button type="button" id="rbacBtnCEO" onclick="switchRBACRole('대표원장')" class="px-3 py-1 rounded-lg text-xs font-bold transition border border-white/15 bg-white/10 hover:bg-champagne hover:text-white">
+            👑 대표원장 (영화)
+          </button>
+
+          <!-- 2. 지점원장 전환 + 지점 선택 -->
+          <div class="inline-flex items-center rounded-lg border border-white/15 bg-white/5 overflow-hidden">
+            <button type="button" id="rbacBtnManager" onclick="switchRBACRole('지점원장')" class="px-2.5 py-1 text-xs font-bold transition hover:bg-champagne hover:text-white">
+              🏢 지점원장
+            </button>
+            <select id="rbacManagerBranchSelect" onchange="handleRBACBranchChange(this.value)" aria-label="지점원장 소속 지점 선택" class="bg-espresso text-ivory text-xs px-2 py-1 border-l border-white/15 focus:outline-none">
+              <option value="파주 운정점">파주 운정점(서윤 원장)</option>
+              <option value="운정역점">운정역점(민준 원장)</option>
+              <option value="마곡발산점">마곡발산점(지현 원장)</option>
+            </select>
+          </div>
+
+          <!-- 3. 디자이너 전환 + 디자이너 선택 -->
+          <div class="inline-flex items-center rounded-lg border border-white/15 bg-white/5 overflow-hidden">
+            <button type="button" id="rbacBtnDesigner" onclick="switchRBACRole('디자이너')" class="px-2.5 py-1 text-xs font-bold transition hover:bg-champagne hover:text-white">
+              ✂️ 디자이너
+            </button>
+            <select id="rbacDesignerUserSelect" onchange="handleRBACDesignerChange(this.value)" aria-label="디자이너 계정 선택" class="bg-espresso text-ivory text-xs px-2 py-1 border-l border-white/15 focus:outline-none max-w-[165px]">
+            </select>
+          </div>
+
+          <!-- Strict RBAC Lock Toggle -->
+          <label class="inline-flex items-center gap-1.5 text-[11px] text-champagne-light cursor-pointer ml-1 pl-2 border-l border-white/15" title="체크 시 현재 로그인한 계정의 직급 외 타 직급 전환을 잠급니다">
+            <input type="checkbox" id="strictRbacLockCheckbox" onchange="toggleStrictRbacLock(this.checked)" class="w-3.5 h-3.5 rounded text-champagne focus:ring-0" />
+            <span>계정 권한 고정</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN BRAND HEADER -->
+    <header class="bg-espresso text-ivory border-b border-espresso-light sticky top-0 z-30 shadow-md no-print">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+        
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-2xl bg-champagne text-white flex items-center justify-center font-bold text-xl brand-serif shadow-inner">
+            Y
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-lg sm:text-xl tracking-tight text-ivory brand-serif">YUROSO HAIR</span>
+              <span id="headerCurrentRoleBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-champagne text-white font-bold">
+                대표원장
+              </span>
+              <span id="headerCurrentBranchBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-white/10 text-champagne-light font-medium">
+                전 지점 총괄
+              </span>
+            </div>
+            <p id="headerAccessScopeDesc" class="text-xs text-ivory/70 mt-0.5">
+              최상위 관리자 권한: 3대 지점(파주 운정점 · 운정역점 · 마곡발산점) 원장 및 전 디자이너 KPI 통합 조회
+            </p>
+          </div>
+        </div>
+
+        <!-- Right User Status & Action Buttons -->
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <!-- Current Logged-in User Chip -->
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">
+            <span class="w-2.5 h-2.5 rounded-full bg-kakao"></span>
+            <div class="text-left">
+              <p id="loggedInUserNameDisplay" class="text-xs font-bold text-ivory leading-tight">영화 대표원장</p>
+              <p id="loggedInDeviceStatus" class="text-[10px] text-champagne-light leading-tight">카카오 연동 · 기기 로그인 유지 중</p>
+            </div>
+          </div>
+
+          <!-- New Member Registration Modal Button (for testing signup anytime) -->
+          <button type="button" onclick="openQuickSignupModal()" class="px-3 py-2 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+            <span>+ 신규 인원 회원가입</span>
+          </button>
+
+          <!-- Target KPI Settings Modal Button -->
+          <button type="button" onclick="openTargetSettingsModal()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-ivory text-xs font-medium transition flex items-center gap-1.5">
+            <span>⚙️ 목표치 설정</span>
+          </button>
+
+          <!-- GitHub & Vercel Guide Button -->
+          <button type="button" onclick="openVercelModal()" class="px-3 py-2 rounded-xl bg-sage hover:bg-sage-dark text-white text-xs font-bold transition flex items-center gap-1.5">
+            <span>🚀 Vercel 배포 설정</span>
+          </button>
+
+          <!-- Logout Button -->
+          <button type="button" onclick="handleLogout()" class="px-3 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-200 border border-red-400/30 text-xs font-semibold transition">
+            로그아웃
+          </button>
+        </div>
+      </div>
+
+      <!-- SUB NAVIGATION TABS + PERIOD FILTER BAR -->
+      <div class="bg-espresso-light/80 border-t border-white/10 px-4 sm:px-8">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 py-2">
+          <!-- Main Navigation Tabs -->
+          <nav class="flex items-center gap-1 overflow-x-auto custom-scrollbar py-0.5" aria-label="주요 메뉴 탭">
+            <button type="button" id="navTab_dashboard" onclick="switchMainTab('dashboard')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-champagne text-white transition whitespace-nowrap">
+              📊 직급별 맞춤 KPI 대시보드
+            </button>
+            <button type="button" id="navTab_crm" onclick="switchMainTab('crm')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap flex items-center gap-1.5">
+              <span>🧮 고객관리(CRM) 5대 지표 입력·자동계산</span>
+              <span class="px-1.5 py-0.5 text-[10px] rounded bg-kakao text-kakao-text font-extrabold">핵심</span>
+            </button>
+            <button type="button" id="navTab_branches" onclick="switchMainTab('branches')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
+              🏆 3대 지점장 & 총 결과 KPI 비교 분석
+            </button>
+            <button type="button" id="navTab_members" onclick="switchMainTab('members')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
+              👥 소속 디자이너·원장 성과 및 코칭
+            </button>
+          </nav>
+
+          <!-- Global Period Filter (일 / 월 / 년 비교) + Export -->
+          <div class="flex items-center gap-2 ml-auto">
+            <div class="inline-flex rounded-lg bg-espresso p-0.5 border border-white/15">
+              <button type="button" id="periodBtn_daily" onclick="setGlobalPeriod('daily')" class="px-2.5 py-1 rounded-md text-xs font-medium text-ivory/75 hover:text-white transition">
+                일별(Daily)
+              </button>
+              <button type="button" id="periodBtn_monthly" onclick="setGlobalPeriod('monthly')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-champagne text-white transition">
+                월별(Monthly)
+              </button>
+              <button type="button" id="periodBtn_yearly" onclick="setGlobalPeriod('yearly')" class="px-2.5 py-1 rounded-md text-xs font-medium text-ivory/75 hover:text-white transition">
+                연별(Yearly)
+              </button>
+            </div>
+
+            <button type="button" onclick="exportCurrentDataCSV()" class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-ivory text-xs font-medium transition flex items-center gap-1" title="현재 데이터를 엑셀 호환 CSV로 다운로드">
+              <span>📥 CSV 내보내기</span>
+            </button>
+            <button type="button" onclick="window.print()" class="hidden sm:inline-flex px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-ivory text-xs font-medium transition items-center gap-1" title="현재 대시보드 리포트 인쇄 / PDF 저장">
+              <span>🖨️ 리포트 인쇄</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- =================================================================== -->
+    <!-- WORKSPACE BODY CONTENT                                              -->
+    <!-- =================================================================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 space-y-6">
+
+      <!-- RBAC Permission Banner (Dynamic Context Banner) -->
+      <div id="rbacStatusBanner" class="rounded-2xl p-4 sm:px-6 bg-white border border-ivory-border shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+          <div id="rbacBannerIcon" class="w-11 h-11 rounded-xl bg-espresso text-champagne-light flex items-center justify-center text-xl font-bold shrink-0">
+            👑
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h2 id="rbacBannerTitle" class="text-base sm:text-lg font-bold text-espresso">
+                영화 대표원장님 — 전 지점 통합 경영 대시보드
+              </h2>
+              <span id="rbacBannerWeightTag" class="text-xs px-2.5 py-0.5 rounded-full bg-champagne-bg text-champagne-dark font-semibold border border-champagne/30">
+                가중치: 매출성장 30% · 영업이익 30% · 지점목표달성 20% · 리더·인재성장 20%
+              </span>
+            </div>
+            <p id="rbacBannerSubtitle" class="text-xs text-espresso-muted mt-0.5">
+              파주 운정점(1호점), 운정역점(2호점), 마곡발산점(3호점)의 모든 지점원장 및 디자이너 성과를 일·월·년 단위로 비교 분석합니다.
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="naver-badge text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-sm">
+            N 스마트플레이스 예약·리뷰 연동
+          </span>
+          <button type="button" onclick="switchMainTab('crm')" class="px-3.5 py-2 rounded-xl bg-espresso hover:bg-espresso-light text-ivory text-xs font-bold transition">
+            CRM 5대 지표 계산기 바로가기 &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- TAB VIEW 1: 직급별 맞춤 KPI 대시보드 (ROLE-BASED DASHBOARD)       -->
+      <!-- ================================================================= -->
+      <section id="tabView_dashboard" class="space-y-6">
+
+        <!-- 4 WEIGHTED KPI CARDS (DYNAMICALLY RENDERED BY ROLE) -->
+        <div id="roleKpiCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+        <!-- TOTAL WEIGHTED KPI SCORE SUMMARY BAR -->
+        <div id="roleTotalKpiSummaryCard" class="card-luxury rounded-2xl p-5 sm:p-6 bg-gradient-to-r from-espresso to-espresso-light text-ivory"></div>
+
+        <!-- CHARTS SECTION (ROLE-SPECIFIC COMPARISONS & DAILY/MONTHLY/YEARLY TRENDS) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Primary Chart: Trend or Branch/Designer Comparison -->
+          <div class="lg:col-span-7 card-luxury rounded-2xl p-5 sm:p-6 flex flex-col justify-between">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <div>
+                <span id="mainChartBadge" class="text-[11px] font-bold uppercase tracking-wider text-champagne-dark bg-champagne-bg px-2 py-0.5 rounded">
+                  일·월·년 시계열 비교 분석
+                </span>
+                <h3 id="mainChartTitle" class="text-base sm:text-lg font-bold text-espresso mt-1">
+                  3대 지점 매출 및 목표 달성 추이 비교
+                </h3>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <select id="dashboardMetricFilter" onchange="renderDashboardView()" aria-label="차트 지표 선택" class="text-xs font-semibold px-3 py-1.5 rounded-lg border border-ivory-border bg-ivory text-espresso focus:outline-none">
+                  <option value="sales">매출액 (만원) 비교</option>
+                  <option value="kpiScore">종합 KPI 점수 (100점 만점)</option>
+                  <option value="revisitRate">재방문 고객 비율 (%)</option>
+                  <option value="avgTicket">평균 객단가 (원)</option>
+                </select>
+              </div>
+            </div>
+            <div class="relative h-72 w-full">
+              <canvas id="primaryDashboardChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Secondary Chart: Designer / Branch Manager KPI Breakdown -->
+          <div class="lg:col-span-5 card-luxury rounded-2xl p-5 sm:p-6 flex flex-col justify-between">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <div>
+                <span id="secondaryChartBadge" class="text-[11px] font-bold uppercase tracking-wider text-sage-dark bg-sage-bg px-2 py-0.5 rounded">
+                  직급별 권한 맞춤 비교
+                </span>
+                <h3 id="secondaryChartTitle" class="text-base sm:text-lg font-bold text-espresso mt-1">
+                  소속 디자이너 KPI 종합 점수 비교
+                </h3>
+              </div>
+              <span id="secondaryChartScopeTag" class="text-xs font-medium text-espresso-muted">전 지점 기준</span>
+            </div>
+            <div class="relative h-72 w-full">
+              <canvas id="secondaryDashboardChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- ALL DESIGNERS & MANAGERS COMPARISON CHART (VISIBLE TO CEO & BRANCH MANAGER) -->
+        <div id="allDesignersChartCard" class="card-luxury rounded-2xl p-5 sm:p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-espresso text-ivory">원장·디자이너 통합 비교 그래프</span>
+                <span id="allDesignersChartRoleHint" class="text-xs text-champagne-dark font-semibold">대표원장 및 지점원장 전용 뷰</span>
+              </div>
+              <h3 id="allDesignersChartHeading" class="text-base sm:text-lg font-bold text-espresso mt-1">
+                지점별 디자이너 개인매출 · 재방문율 · KPI 종합점수 비교 그래프
+              </h3>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <select id="designerChartBranchFilter" onchange="renderDashboardView()" aria-label="지점 필터" class="text-xs font-semibold px-3 py-1.5 rounded-lg border border-ivory-border bg-ivory text-espresso focus:outline-none">
+                <option value="ALL">전 지점 전체 보기 (파주 운정·운정역·마곡발산)</option>
+                <option value="파주 운정점">파주 운정점 (1호점)</option>
+                <option value="운정역점">운정역점 (2호점)</option>
+                <option value="마곡발산점">마곡발산점 (3호점)</option>
+              </select>
+            </div>
+          </div>
+          <div class="relative h-80 w-full">
+            <canvas id="allDesignersComparisonChart"></canvas>
+          </div>
+        </div>
+
+        <!-- DETAILED PERFORMANCE TABLE (FILTERED STRICTLY BY RBAC) -->
+        <div class="card-luxury rounded-2xl overflow-hidden">
+          <div class="p-5 sm:p-6 border-b border-ivory-border flex flex-wrap items-center justify-between gap-3 bg-ivory/40">
+            <div>
+              <h3 id="dashboardTableTitle" class="text-base sm:text-lg font-bold text-espresso">
+                직급별 열람 허용 성과 데이터 명세표
+              </h3>
+              <p id="dashboardTableSubtitle" class="text-xs text-espresso-muted mt-0.5">
+                현재 권한에서 열람 가능한 지점원장 및 디자이너의 CRM 5대 지표와 KPI 평가 점수입니다.
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input
+                type="text"
+                id="dashboardSearchInput"
+                oninput="renderDashboardView()"
+                placeholder="이름 또는 지점 검색..."
+                class="px-3 py-1.5 rounded-lg border border-ivory-border bg-white text-xs text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
+              />
+            </div>
+          </div>
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-ivory-soft text-espresso-muted text-xs uppercase border-b border-ivory-border">
+                  <th class="py-3.5 px-4 font-bold">이름 / 직급</th>
+                  <th class="py-3.5 px-4 font-bold">소속 지점</th>
+                  <th class="py-3.5 px-4 font-bold text-right">① 개인매출 (40%)</th>
+                  <th class="py-3.5 px-4 font-bold text-right">② 총 고객수</th>
+                  <th class="py-3.5 px-4 font-bold text-right">③ 신규 고객 (10%)</th>
+                  <th class="py-3.5 px-4 font-bold text-right">④ 재방문 고객</th>
+                  <th class="py-3.5 px-4 font-bold text-right">재방문율 (30%)</th>
+                  <th class="py-3.5 px-4 font-bold text-right">⑤ 객단가 (20%)</th>
+                  <th class="py-3.5 px-4 font-bold text-right">종합 KPI 점수</th>
+                  <th class="py-3.5 px-4 font-bold text-center">등급 / 관리</th>
+                </tr>
+              </thead>
+              <tbody id="dashboardPerformanceTableBody" class="divide-y divide-ivory-border text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ================================================================= -->
+      <!-- TAB VIEW 2: 디자이너용 CRM 5대 지표 자동계산기 (CRM CALCULATOR)   -->
+      <!-- ================================================================= -->
+      <section id="tabView_crm" class="space-y-6 hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Left: 5 CRM Metrics Input Form -->
+          <div class="lg:col-span-7 card-luxury rounded-2xl p-6 sm:p-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-6 border-b border-ivory-border">
+              <div>
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-champagne-dark bg-champagne-bg px-2.5 py-1 rounded-md mb-1">
+                  🧮 디자이너용 CRM 5대 지표 자동계산기
+                </span>
+                <h3 class="text-lg sm:text-xl font-bold text-espresso">
+                  고객관리(CRM) 5대 지표 입력 및 실시간 KPI 산출
+                </h3>
+                <p class="text-xs text-espresso-muted mt-0.5">
+                  고객관리 프로그램에서 나오는 5개 항목만 입력하면 재방문 비율과 디자이너 KPI 점수가 실시간 자동 계산되어 저장됩니다.
+                </p>
+              </div>
+            </div>
+
+            <form id="crmCalculatorForm" onsubmit="handleSaveCrmRecord(event)" class="space-y-5">
+              <!-- Target Designer & Date Row -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-xl bg-ivory border border-ivory-border">
+                <div>
+                  <label for="crmDesignerSelect" class="block text-xs font-bold text-espresso mb-1">
+                    대상 디자이너 (본인/선택)
+                  </label>
+                  <select id="crmDesignerSelect" onchange="handleCrmDesignerSelectChange()" class="w-full px-3 py-2 rounded-lg border border-ivory-border bg-white text-xs font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne">
+                  </select>
+                </div>
+                <div>
+                  <label for="crmBranchReadonly" class="block text-xs font-bold text-espresso mb-1">
+                    소속 지점
+                  </label>
+                  <input type="text" id="crmBranchReadonly" readonly class="w-full px-3 py-2 rounded-lg border border-ivory-border bg-ivory-soft text-xs font-semibold text-espresso-muted" value="파주 운정점" />
+                </div>
+                <div>
+                  <label for="crmRecordPeriodInput" class="block text-xs font-bold text-espresso mb-1">
+                    귀속 년월 / 기록일자
+                  </label>
+                  <input type="month" id="crmRecordPeriodInput" value="2026-10" class="w-full px-3 py-2 rounded-lg border border-ivory-border bg-white text-xs font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne" />
+                </div>
+              </div>
+
+              <!-- 5 Core CRM Inputs -->
+              <div class="space-y-4">
+                <!-- ① 개인매출 -->
+                <div class="p-4 rounded-xl border border-ivory-border bg-white hover:border-champagne transition">
+                  <div class="flex items-center justify-between mb-1.5">
+                    <label for="crmInputSales" class="text-sm font-bold text-espresso flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-espresso text-ivory text-xs flex items-center justify-center font-bold">1</span>
+                      <span>개인매출 (원)</span>
+                    </label>
+                    <span class="text-xs font-bold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark">KPI 배점 40%</span>
+                  </div>
+                  <div class="relative">
+                    <input
+                      type="number"
+                      id="crmInputSales"
+                      min="0"
+                      step="10000"
+                      required
+                      oninput="recalculateCrmLive()"
+                      placeholder="예: 18500000"
+                      class="w-full pr-16 pl-4 py-3 rounded-xl border border-ivory-border bg-ivory/40 focus:bg-white text-base font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
+                    />
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-espresso-muted">원 (KRW)</span>
+                  </div>
+                  <div class="flex items-center justify-between mt-1.5 text-[11px] text-espresso-muted">
+                    <span id="crmSalesKoreanText">한글 금액: 1,850만 원</span>
+                    <span id="crmTargetSalesLabel">목표 매출: 18,000,000원</span>
+                  </div>
+                </div>
+
+                <!-- ② 총 고객수 & ③ 신규 고객수 & ④ 재방문 고객수 -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <!-- ② 총 고객수 -->
+                  <div class="p-4 rounded-xl border border-ivory-border bg-white hover:border-champagne transition">
+                    <div class="flex items-center justify-between mb-1.5">
+                      <label for="crmInputTotalCustomers" class="text-xs font-bold text-espresso flex items-center gap-1.5">
+                        <span class="w-5 h-5 rounded-full bg-espresso text-ivory text-[11px] flex items-center justify-center font-bold">2</span>
+                        <span>총 고객수 (명)</span>
+                      </label>
+                    </div>
+                    <input
+                      type="number"
+                      id="crmInputTotalCustomers"
+                      min="1"
+                      step="1"
+                      required
+                      oninput="recalculateCrmLive('total')"
+                      placeholder="예: 185"
+                      class="w-full px-3.5 py-2.5 rounded-xl border border-ivory-border bg-ivory/40 focus:bg-white text-base font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
+                    />
+                    <p class="text-[11px] text-espresso-muted mt-1">신규 + 재방문 전체 시술 고객</p>
+                  </div>
+
+                  <!-- ③ 신규 고객수 -->
+                  <div class="p-4 rounded-xl border border-ivory-border bg-white hover:border-champagne transition">
+                    <div class="flex items-center justify-between mb-1.5">
+                      <label for="crmInputNewCustomers" class="text-xs font-bold text-espresso flex items-center gap-1.5">
+                        <span class="w-5 h-5 rounded-full bg-espresso text-ivory text-[11px] flex items-center justify-center font-bold">3</span>
+                        <span>신규 고객수 (명)</span>
+                      </label>
+                      <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-champagne-bg text-champagne-dark">10%</span>
+                    </div>
+                    <input
+                      type="number"
+                      id="crmInputNewCustomers"
+                      min="0"
+                      step="1"
+                      required
+                      oninput="recalculateCrmLive('new')"
+                      placeholder="예: 42"
+                      class="w-full px-3.5 py-2.5 rounded-xl border border-ivory-border bg-ivory/40 focus:bg-white text-base font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
+                    />
+                    <p id="crmTargetNewLabel" class="text-[11px] text-espresso-muted mt-1">목표 신규: 40명</p>
+                  </div>
+
+                  <!-- ④ 재방문 고객수 -->
+                  <div class="p-4 rounded-xl border border-ivory-border bg-white hover:border-champagne transition">
+                    <div class="flex items-center justify-between mb-1.5">
+                      <label for="crmInputRevisitCustomers" class="text-xs font-bold text-espresso flex items-center gap-1.5">
+                        <span class="w-5 h-5 rounded-full bg-espresso text-ivory text-[11px] flex items-center justify-center font-bold">4</span>
+                        <span>재방문 고객수 (명)</span>
+                      </label>
+                      <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sage-bg text-sage-dark">비율 30%</span>
+                    </div>
+                    <input
+                      type="number"
+                      id="crmInputRevisitCustomers"
+                      min="0"
+                      step="1"
+                      required
+                      oninput="recalculateCrmLive('revisit')"
+                      placeholder="예: 143"
+                      class="w-full px-3.5 py-2.5 rounded-xl border border-ivory-border bg-ivory/40 focus:bg-white text-base font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
+                    />
+                    <button type="button" onclick="autoFillRevisitCustomers()" class="text-[11px] text-champagne-dark font-bold hover:underline mt-1">
+                      ⚡ (총고객 - 신규) 자동계산 적용
+                    </button>
+                  </div>
+                </div>
+
+                <!-- ⑤ 객단가 -->
+                <div class="p-4 rounded-xl border border-ivory-border bg-white hover:border-champagne transition">
+                  <div class="flex items-center justify-between mb-1.5">
+                    <label for="crmInputAvgTicket" class="text-sm font-bold text-espresso flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-espresso text-ivory text-xs flex items-center justify-center font-bold">5</span>
+                      <span>객단가 (원)</span>
+                    </label>
+                    <div class="flex items-center gap-2">
+                      <button type="button" onclick="autoFillAvgTicket()" class="text-xs font-bold text-champagne-dark hover:underline">
+                        ⚡ 매출 ÷ 총고객수 자동계산 입력
+                      </button>
+                      <span class="text-xs font-bold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark">KPI 배점 20%</span>
+                    </div>
+                  </div>
+                  <div class="relative">
+                    <input
+                      type="number"
+                      id="crmInputAvgTicket"
+                      min="0"
+                      step="1000"
+                      required
+                      oninput="recalculateCrmLive('ticket')"
+                      placeholder="예: 100000"
+                      class="w-full pr-16 pl-4 py-3 rounded-xl border border-ivory-border bg-ivory/40 focus:bg-white text-base font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
+                    />
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-espresso-muted">원 / 1인</span>
+                  </div>
+                  <div class="flex items-center justify-between mt-1.5 text-[11px] text-espresso-muted">
+                    <span id="crmCustomerSumHint">고객수 검증: 신규 + 재방문 = 총 고객수 일치</span>
+                    <span id="crmTargetTicketLabel">목표 객단가: 100,000원</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit / Reset Buttons -->
+              <div class="flex flex-wrap items-center gap-3 pt-2">
+                <button type="submit" class="flex-1 py-4 px-6 rounded-xl bg-espresso hover:bg-espresso-light text-ivory font-bold text-sm shadow-lg transition flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4 text-champagne-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>CRM 5대 지표 저장 및 전사 KPI 대시보드 실시간 반영</span>
+                </button>
+                <button type="button" onclick="loadCurrentDesignerCrmToForm()" class="px-4 py-4 rounded-xl border border-ivory-border bg-ivory hover:bg-ivory-soft text-xs font-bold text-espresso transition">
+                  현재값 불러오기
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right: Live Auto-Calculated Output Panel -->
+          <div class="lg:col-span-5 space-y-5">
+            <!-- Auto-Calculated Result Card -->
+            <div class="card-luxury rounded-2xl p-6 sm:p-7 bg-espresso text-ivory relative overflow-hidden">
+              <div class="absolute -right-12 -bottom-12 w-48 h-48 rounded-full bg-champagne/15 blur-2xl pointer-events-none"></div>
+              
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-champagne text-white">
+                  실시간 자동계산 결과
+                </span>
+                <span id="crmCalcDesignerBadge" class="text-xs text-champagne-light font-semibold">
+                  파주 운정점 · 지우 수석디자이너
+                </span>
+              </div>
+
+              <!-- Auto-calculated Revisit Rate & Total KPI Score -->
+              <div class="grid grid-cols-2 gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 mb-5">
+                <div>
+                  <p class="text-xs text-ivory/70">자동계산 재방문 고객 비율</p>
+                  <p class="text-[11px] text-champagne-light">(재방문 고객수 ÷ 총 고객수)</p>
+                  <div class="mt-2 flex items-baseline gap-1">
+                    <span id="crmLiveRevisitRate" class="text-3xl font-extrabold text-kakao">77.3</span>
+                    <span class="text-base font-bold text-kakao">%</span>
+                  </div>
+                </div>
+                <div class="border-l border-white/10 pl-4">
+                  <p class="text-xs text-ivory/70">디자이너 종합 KPI 점수</p>
+                  <p class="text-[11px] text-champagne-light">4대 가중치 합산 (100점 만점)</p>
+                  <div class="mt-2 flex items-baseline gap-2">
+                    <span id="crmLiveTotalKpiScore" class="text-3xl font-extrabold text-white">96.4</span>
+                    <span id="crmLiveGradeBadge" class="text-xs font-extrabold px-2 py-0.5 rounded bg-sage text-white">S등급</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4 Weighted Score Breakdown Bars -->
+              <div class="space-y-3.5">
+                <p class="text-xs font-bold text-champagne-light uppercase tracking-wider">
+                  디자이너 KPI 4대 항목별 실시간 가중치 환산표
+                </p>
+
+                <!-- 1. 개인매출 (40%) -->
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="font-medium text-ivory/90">① 개인매출 달성 점수 (가중치 40%)</span>
+                    <span id="crmLiveScoreSales" class="font-bold text-champagne-light">38.5 / 40.0점</span>
+                  </div>
+                  <div class="w-full h-2.5 rounded-full bg-white/10 overflow-hidden">
+                    <div id="crmBarSales" class="h-full bg-champagne rounded-full transition-all duration-300" style="width: 95%"></div>
+                  </div>
+                </div>
+
+                <!-- 2. 재방문 비율 (30%) -->
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="font-medium text-ivory/90">② 재방문 비율 점수 (가중치 30%)</span>
+                    <span id="crmLiveScoreRevisit" class="font-bold text-sage-light">30.0 / 30.0점</span>
+                  </div>
+                  <div class="w-full h-2.5 rounded-full bg-white/10 overflow-hidden">
+                    <div id="crmBarRevisit" class="h-full bg-sage rounded-full transition-all duration-300" style="width: 100%"></div>
+                  </div>
+                </div>
+
+                <!-- 3. 객단가 (20%) -->
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="font-medium text-ivory/90">③ 객단가 달성 점수 (가중치 20%)</span>
+                    <span id="crmLiveScoreTicket" class="font-bold text-champagne-light">18.9 / 20.0점</span>
+                  </div>
+                  <div class="w-full h-2.5 rounded-full bg-white/10 overflow-hidden">
+                    <div id="crmBarTicket" class="h-full bg-champagne-light rounded-full transition-all duration-300" style="width: 94%"></div>
+                  </div>
+                </div>
+
+                <!-- 4. 신규 고객수 (10%) -->
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="font-medium text-ivory/90">④ 신규 고객수 점수 (가중치 10%)</span>
+                    <span id="crmLiveScoreNew" class="font-bold text-sage-light">9.0 / 10.0점</span>
+                  </div>
+                  <div class="w-full h-2.5 rounded-full bg-white/10 overflow-hidden">
+                    <div id="crmBarNew" class="h-full bg-sage-light rounded-full transition-all duration-300" style="width: 90%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Auto Coaching Insight -->
+              <div class="mt-5 p-3.5 rounded-xl bg-white/10 border border-white/15 text-xs leading-relaxed text-ivory/90">
+                <span class="font-bold text-champagne-light">💡 AI 살롱 CRM 자동 분석 코멘트:</span>
+                <p id="crmLiveCoachingText" class="mt-1">
+                  재방문 고객 비율이 목표치를 상회하며 탄탄한 고정 고객층을 유지하고 있습니다. 클리닉·두피 케어 결합 시술로 객단가를 5% 높이면 만점 달성이 가능합니다.
+                </p>
+              </div>
+            </div>
+
+            <!-- Formula Reference Box -->
+            <div class="card-luxury rounded-2xl p-5 bg-ivory/60">
+              <h4 class="text-xs font-bold text-espresso uppercase tracking-wider mb-2">
+                📐 유로소 헤어 디자이너 KPI 산출 공식 안내
+              </h4>
+              <ul class="text-xs text-espresso-muted space-y-1.5">
+                <li>• <strong>재방문 고객 비율(%)</strong> = (④ 재방문 고객수 ÷ ② 총 고객수) × 100</li>
+                <li>• <strong>개인매출 점수(40점)</strong> = (① 개인매출 ÷ 목표 개인매출) × 40점</li>
+                <li>• <strong>재방문 비율 점수(30점)</strong> = (재방문 비율 ÷ 목표 재방문율) × 30점</li>
+                <li>• <strong>객단가 점수(20점)</strong> = (⑤ 객단가 ÷ 목표 객단가) × 20점</li>
+                <li>• <strong>신규 고객수 점수(10점)</strong> = (③ 신규 고객수 ÷ 목표 신규 고객수) × 10점</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CRM SAVED HISTORY LOG TABLE -->
+        <div class="card-luxury rounded-2xl overflow-hidden">
+          <div class="p-5 sm:p-6 border-b border-ivory-border flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base font-bold text-espresso">📋 CRM 5대 지표 저장 이력 내역</h3>
+              <p class="text-xs text-espresso-muted">입력·저장된 고객관리(CRM) 기록과 자동 산출된 KPI 점수 내역입니다.</p>
+            </div>
+            <span id="crmHistoryCountBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-champagne-bg text-champagne-dark">
+              총 12건 기록됨
+            </span>
+          </div>
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-ivory-soft text-espresso-muted text-xs uppercase border-b border-ivory-border">
+                  <th class="py-3 px-4 font-bold">귀속년월</th>
+                  <th class="py-3 px-4 font-bold">디자이너</th>
+                  <th class="py-3 px-4 font-bold">지점</th>
+                  <th class="py-3 px-4 font-bold text-right">① 개인매출</th>
+                  <th class="py-3 px-4 font-bold text-right">② 총고객</th>
+                  <th class="py-3 px-4 font-bold text-right">③ 신규고객</th>
+                  <th class="py-3 px-4 font-bold text-right">④ 재방문고객</th>
+                  <th class="py-3 px-4 font-bold text-right">재방문율</th>
+                  <th class="py-3 px-4 font-bold text-right">⑤ 객단가</th>
+                  <th class="py-3 px-4 font-bold text-right">KPI 점수</th>
+                </tr>
+              </thead>
+              <tbody id="crmHistoryTableBody" class="divide-y divide-ivory-border text-xs sm:text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================================================================= -->
+      <!-- TAB VIEW 3: 3대 지점별 지점원장 & 총 결과 KPI 비교 분석 대시보드  -->
+      <!-- ================================================================= -->
+      <section id="tabView_branches" class="space-y-6 hidden">
+        
+        <!-- Header Banner for 3-Branch Comparison -->
+        <div class="card-luxury rounded-2xl p-6 bg-white flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-espresso text-champagne-light">
+              3대 지점 총괄 비교 분석 대시보드
+            </span>
+            <h3 class="text-lg sm:text-xl font-bold text-espresso mt-1.5">
+              파주 운정점(1호점) · 운정역점(2호점) · 마곡발산점(3호점) 지점원장 및 총 결과 KPI 달성 현황
+            </h3>
+            <p class="text-xs text-espresso-muted mt-0.5">
+              각 지점원장의 4대 KPI(지점매출 35% / 디자이너 평균매출 성장 30% / 재방문 비율 20% / 직원 성장·유지 15%)와 지점별 총괄 경영 지표를 실시간 비교합니다.
+            </p>
+          </div>
+          <div id="branchTabRestrictionNotice" class="hidden px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-semibold">
+            🔒 현재 직급에서는 본인 소속 지점 상세만 열람되며 타 지점 상세는 요약 처리됩니다.
+          </div>
+        </div>
+
+        <!-- 3 Branch Scorecards Side-by-Side -->
+        <div id="threeBranchComparisonCards" class="grid grid-cols-1 lg:grid-cols-3 gap-6"></div>
+
+        <!-- Branch Comparison Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-7 card-luxury rounded-2xl p-5 sm:p-6">
+            <h4 class="text-base font-bold text-espresso mb-1">3대 지점 매출 · 영업이익 · 목표 달성액 비교</h4>
+            <p class="text-xs text-espresso-muted mb-4">지점별 월 목표 매출 대비 실제 달성 매출과 영업이익(단위: 만원) 비교</p>
+            <div class="relative h-72 w-full">
+              <canvas id="branchFinancialChart"></canvas>
+            </div>
+          </div>
+          <div class="lg:col-span-5 card-luxury rounded-2xl p-5 sm:p-6">
+            <h4 class="text-base font-bold text-espresso mb-1">지점원장 4대 KPI 밸런스 비교 (레이더)</h4>
+            <p class="text-xs text-espresso-muted mb-4">지점매출(35%) · 평균매출성장(30%) · 재방문율(20%) · 직원성장유지(15%)</p>
+            <div class="relative h-72 w-full">
+              <canvas id="branchRadarChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comprehensive Comparison Matrix Table -->
+        <div class="card-luxury rounded-2xl overflow-hidden">
+          <div class="p-5 border-b border-ivory-border bg-ivory/40">
+            <h4 class="text-base font-bold text-espresso">📊 3대 지점 총 결과 KPI 달성 현황 비교 매트릭스</h4>
+          </div>
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-ivory-soft text-espresso-muted text-xs uppercase border-b border-ivory-border">
+                  <th class="py-3.5 px-4 font-bold">비교 평가 항목 (가중치)</th>
+                  <th class="py-3.5 px-4 font-bold text-right">파주 운정점 (1호점 · 서윤 원장)</th>
+                  <th class="py-3.5 px-4 font-bold text-right">운정역점 (2호점 · 민준 원장)</th>
+                  <th class="py-3.5 px-4 font-bold text-right">마곡발산점 (3호점 · 지현 원장)</th>
+                  <th class="py-3.5 px-4 font-bold text-right bg-champagne-bg/50 text-espresso">유로소 전 지점 합계/평균</th>
+                </tr>
+              </thead>
+              <tbody id="branchMatrixTableBody" class="divide-y divide-ivory-border text-xs sm:text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ================================================================= -->
+      <!-- TAB VIEW 4: 소속 디자이너·원장 성과 및 1:1 성장 코칭              -->
+      <!-- ================================================================= -->
+      <section id="tabView_members" class="space-y-6 hidden">
+        <div class="card-luxury rounded-2xl p-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-sage text-white">
+              리더·인재 성장 & 1:1 코칭 보드
+            </span>
+            <h3 class="text-lg sm:text-xl font-bold text-espresso mt-1.5">
+              소속 디자이너 프로필 · KPI 달성도 · 원장 코칭 피드백 관리
+            </h3>
+            <p class="text-xs text-espresso-muted mt-0.5">
+              신규 회원가입한 디자이너를 포함하여 열람 권한 내 인원의 상세 성과와 코칭 메모를 관리합니다.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="openQuickSignupModal()" class="px-4 py-2.5 rounded-xl bg-espresso hover:bg-espresso-light text-ivory text-xs font-bold transition">
+              + 새 디자이너/원장 등록 (회원가입)
+            </button>
+          </div>
+        </div>
+
+        <!-- Member Profile Cards Grid -->
+        <div id="memberCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-ivory-border py-5 px-4 sm:px-8 mt-10 no-print">
+      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs text-espresso-muted">
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-espresso brand-serif">YUROSO HAIR</span>
+          <span>|</span>
+          <span>파주 운정점(1호점) · 운정역점(2호점) · 마곡발산점(3호점)</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span>대표원장: 영화 대표원장</span>
+          <button type="button" onclick="resetDemoDataConfirm()" class="text-red-600 hover:underline font-medium">
+            초기 데이터 복원(리셋)
+          </button>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+
+  <!-- ===================================================================== -->
+  <!-- MODALS (KAKAO OAUTH, QUICK SIGNUP, TARGET SETTINGS, VERCEL GUIDE)     -->
+  <!-- ===================================================================== -->
+
+  <!-- 1. KAKAO ACCOUNT LOGIN SIMULATOR & OAUTH MODAL -->
+  <div id="kakaoAuthModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-ivory-border">
+      <!-- Kakao Yellow Header -->
+      <div class="bg-kakao px-6 py-5 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="#191919">
+            <path d="M12 3C6.477 3 2 6.477 2 10.765c0 2.772 1.855 5.205 4.653 6.578-.153.543-.986 3.504-1.02 3.733-.043.29.106.286.225.208.093-.06 3.694-2.51 4.303-2.936.597.087 1.212.132 1.839.132 5.523 0 10-3.477 10-7.765S17.523 3 12 3z"/>
+          </svg>
+          <span class="font-extrabold text-base text-kakao-text">kakao 계정으로 로그인</span>
+        </div>
+        <button type="button" onclick="closeKakaoAuthModal()" class="text-kakao-text/70 hover:text-kakao-text font-bold text-lg">&times;</button>
+      </div>
+
+      <div class="p-6 space-y-5">
+        <div class="text-center">
+          <p class="text-sm font-bold text-espresso">유로소 헤어(YUROSO HAIR) KPI & CRM</p>
+          <p class="text-xs text-espresso-muted mt-1">
+            처음 접속하신 경우 신규 회원가입으로 연결되며, 기존 계정을 선택하면 즉시 기기 로그인 유지 상태로 접속합니다.
+          </p>
+        </div>
+
+        <!-- Option 1: First-time visitor -> Proceed to Signup -->
+        <div class="p-4 rounded-2xl bg-kakao/20 border-2 border-kakao">
+          <p class="text-xs font-extrabold text-espresso mb-1">🆕 처음 접속하셨나요? (신규 카카오 연동)</p>
+          <p class="text-xs text-espresso-muted mb-3">
+            카카오 계정 인증 후 이름 · 지점(파주 운정/운정역/마곡발산) · 직급(대표원장/지점원장/디자이너)을 입력하여 가입합니다.
+          </p>
+          <button type="button" onclick="proceedKakaoToSignup()" class="w-full py-2.5 px-4 rounded-xl bg-kakao hover:bg-kakao-hover text-kakao-text font-bold text-xs shadow-sm transition">
+            새 카카오톡 계정으로 회원가입 진행하기 &rarr;
+          </button>
+        </div>
+
+        <!-- Option 2: Existing Registered Kakao Account Selection -->
+        <div>
+          <label for="kakaoModalUserSelect" class="block text-xs font-bold text-espresso mb-1.5">
+            ✅ 이미 등록된 유로소 헤어 카카오 계정으로 즉시 접속
+          </label>
+          <select id="kakaoModalUserSelect" class="w-full px-3.5 py-2.5 rounded-xl border border-ivory-border bg-ivory text-xs font-bold text-espresso mb-3">
+          </select>
+          <button type="button" onclick="confirmKakaoExistingLogin()" class="w-full py-3 px-4 rounded-xl bg-espresso hover:bg-espresso-light text-ivory font-bold text-xs transition">
+            선택한 카카오 계정으로 로그인 (기기 로그인 유지)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. IN-APP QUICK SIGNUP MODAL (ADD NEW DESIGNER / MANAGER / CEO ANYTIME) -->
+  <div id="quickSignupModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-ivory-border">
+      <div class="bg-espresso text-ivory px-6 py-4 flex items-center justify-between">
+        <div>
+          <span class="text-[11px] text-champagne-light font-bold">KAKAO MEMBER REGISTRATION</span>
+          <h3 class="text-base font-bold">유로소 헤어 신규 회원가입 / 인원 등록</h3>
+        </div>
+        <button type="button" onclick="closeQuickSignupModal()" class="text-ivory/70 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+      <form id="modalSignupForm" onsubmit="handleModalSignupSubmit(event)" class="p-6 space-y-4">
+        <div>
+          <label for="modalSignupName" class="block text-xs font-bold text-espresso mb-1">
+            1. 디자이너 이름 (또는 원장 성함) <span class="text-red-600">*</span>
+          </label>
+          <input type="text" id="modalSignupName" required placeholder="예: 수아, 은우, 김유로" class="w-full px-4 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 text-sm font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="modalSignupBranch" class="block text-xs font-bold text-espresso mb-1">
+              2. 지점 선택 <span class="text-red-600">*</span>
+            </label>
+            <select id="modalSignupBranch" class="w-full px-3.5 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 text-sm font-bold text-espresso">
+              <option value="파주 운정점">파주 운정점 (1호점)</option>
+              <option value="운정역점">운정역점 (2호점)</option>
+              <option value="마곡발산점">마곡발산점 (3호점)</option>
+            </select>
+          </div>
+          <div>
+            <label for="modalSignupRole" class="block text-xs font-bold text-espresso mb-1">
+              3. 직급 선택 <span class="text-red-600">*</span>
+            </label>
+            <select id="modalSignupRole" class="w-full px-3.5 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 text-sm font-bold text-espresso">
+              <option value="디자이너">디자이너</option>
+              <option value="지점원장">지점원장</option>
+              <option value="대표원장">대표원장</option>
+            </select>
+          </div>
+        </div>
+        <div class="p-3 rounded-xl bg-ivory border border-ivory-border">
+          <label class="inline-flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="modalSwitchToNewUser" checked class="w-4 h-4 rounded text-espresso" />
+            <span class="text-xs font-bold text-espresso">가입 즉시 이 계정으로 로그인 전환하여 KPI/CRM 입력하기</span>
+          </label>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeQuickSignupModal()" class="px-4 py-2.5 rounded-xl border border-ivory-border text-xs font-bold text-espresso-muted">취소</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-espresso hover:bg-espresso-light text-ivory text-xs font-bold">회원가입 완료</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. KPI TARGET SETTINGS MODAL -->
+  <div id="targetSettingsModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-ivory-border">
+      <div class="bg-espresso text-ivory px-6 py-4 flex items-center justify-between">
+        <div>
+          <span class="text-[11px] text-champagne-light font-bold">KPI TARGET CONFIGURATION</span>
+          <h3 class="text-base font-bold">디자이너 1인당 월간 KPI 목표 기준치 설정</h3>
+        </div>
+        <button type="button" onclick="closeTargetSettingsModal()" class="text-ivory/70 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+      <form id="targetSettingsForm" onsubmit="handleSaveTargetSettings(event)" class="p-6 space-y-4">
+        <p class="text-xs text-espresso-muted">
+          디자이너 CRM 5대 지표 자동계산기에서 100점 만점 환산 시 기준이 되는 월간 목표값입니다.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="targetSalesInput" class="block text-xs font-bold text-espresso mb-1">① 월 목표 개인매출 (원, 배점 40%)</label>
+            <input type="number" id="targetSalesInput" step="500000" required class="w-full px-3.5 py-2 rounded-xl border border-ivory-border text-sm font-bold text-espresso" />
+          </div>
+          <div>
+            <label for="targetRevisitRateInput" class="block text-xs font-bold text-espresso mb-1">② 목표 재방문 비율 (%, 배점 30%)</label>
+            <input type="number" id="targetRevisitRateInput" step="1" min="10" max="100" required class="w-full px-3.5 py-2 rounded-xl border border-ivory-border text-sm font-bold text-espresso" />
+          </div>
+          <div>
+            <label for="targetTicketInput" class="block text-xs font-bold text-espresso mb-1">③ 목표 객단가 (원, 배점 20%)</label>
+            <input type="number" id="targetTicketInput" step="5000" required class="w-full px-3.5 py-2 rounded-xl border border-ivory-border text-sm font-bold text-espresso" />
+          </div>
+          <div>
+            <label for="targetNewCustInput" class="block text-xs font-bold text-espresso mb-1">④ 월 목표 신규 고객수 (명, 배점 10%)</label>
+            <input type="number" id="targetNewCustInput" step="1" required class="w-full px-3.5 py-2 rounded-xl border border-ivory-border text-sm font-bold text-espresso" />
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t border-ivory-border">
+          <button type="button" onclick="closeTargetSettingsModal()" class="px-4 py-2 rounded-xl border border-ivory-border text-xs font-bold text-espresso-muted">닫기</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-bold">목표 기준치 저장 및 재계산</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. GITHUB & VERCEL DEPLOYMENT + KAKAO OAUTH SETUP MODAL -->
+  <div id="vercelModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-ivory-border max-h-[90vh] flex flex-col">
+      <div class="bg-espresso text-ivory px-6 py-4 flex items-center justify-between shrink-0">
+        <div>
+          <span class="text-[11px] text-champagne-light font-bold">GITHUB + VERCEL + KAKAO OAUTH DEPLOYMENT</span>
+          <h3 class="text-base font-bold">GitHub 연동 Vercel 실서버 배포 및 카카오 OAuth 설정</h3>
+        </div>
+        <button type="button" onclick="closeVercelModal()" class="text-ivory/70 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+      <div class="p-6 overflow-y-auto custom-scrollbar space-y-5 text-xs leading-relaxed text-espresso">
+        <div class="p-4 rounded-2xl bg-sage-bg border border-sage/30">
+          <p class="font-bold text-sm text-sage-dark mb-1">✅ Vercel 무설정(Zero-Config) 정적 배포 완벽 호환</p>
+          <p class="text-espresso-muted">
+            이 웹 애플리케이션은 외부 빌드 의존성 없이 단일 <code class="font-bold text-espresso">index.html</code>과 <code class="font-bold text-espresso">vercel.json</code>만으로 GitHub 리포지토리 푸시 즉시 Vercel에서 100% 구동되도록 설계되었습니다.
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <h4 class="font-bold text-sm text-espresso">1단계: GitHub 리포지토리 업로드 및 Vercel 연동</h4>
+          <ol class="list-decimal list-inside space-y-1 text-espresso-muted">
+            <li>함께 제공된 배포 패키지(<code class="text-espresso font-semibold">yuroso_hair_vercel_deploy.zip</code>)의 파일들을 GitHub 새 리포지토리에 업로드(Push)합니다.</li>
+            <li><strong>Vercel Dashboard &rarr; Add New Project</strong>에서 해당 GitHub 리포지토리를 Import합니다.</li>
+            <li>Framework Preset은 <strong>Other (Static)</strong> 그대로 두고 <strong>Deploy</strong>를 클릭하면 10초 내로 배포가 완료됩니다.</li>
+          </ol>
+        </div>
+
+        <div class="space-y-2">
+          <h4 class="font-bold text-sm text-espresso">2단계: 실제 Kakao Developers JavaScript 키 연동 (선택 사항)</h4>
+          <p class="text-espresso-muted">
+            실제 카카오톡 OAuth 팝업 연동을 원하시면 <a href="https://developers.kakao.com" target="_blank" rel="noopener noreferrer" class="text-champagne-dark underline font-bold">Kakao Developers</a>에서 앱 생성 후 [플랫폼 &rarr; Web]에 Vercel 도메인을 등록하고 아래에 JavaScript 키를 입력하세요. (미입력 시에도 내장 카카오 간편 인증 모달로 모든 기능 사용 가능)
+          </p>
+          <div class="flex gap-2">
+            <input type="text" id="kakaoJsKeyInput" placeholder="카카오 JavaScript App Key 입력 (예: a1b2c3d4e5...)" class="flex-1 px-3 py-2 rounded-xl border border-ivory-border bg-ivory text-xs font-mono" />
+            <button type="button" onclick="saveKakaoJsKey()" class="px-4 py-2 rounded-xl bg-espresso text-ivory font-bold">키 저장</button>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-sm text-espresso">3단계: vercel.json 설정 파일 (SPA 라우팅 & 캐시 최적화)</h4>
+            <button type="button" onclick="copyVercelJson()" class="px-2.5 py-1 rounded bg-champagne-bg text-champagne-dark font-bold">클립보드 복사</button>
+          </div>
+          <pre id="vercelJsonCodeBlock" class="p-3 rounded-xl bg-espresso text-ivory font-mono text-[11px] overflow-x-auto">{
+  "version": 2,
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}</pre>
+        </div>
+      </div>
+      <div class="p-4 border-t border-ivory-border bg-ivory flex justify-end">
+        <button type="button" onclick="closeVercelModal()" class="px-5 py-2 rounded-xl bg-espresso text-ivory text-xs font-bold">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. COACHING NOTE MODAL -->
+  <div id="coachingModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-ivory-border">
+      <div class="bg-espresso text-ivory px-6 py-4 flex items-center justify-between">
+        <div>
+          <span class="text-[11px] text-champagne-light font-bold">LEADER & TALENT COACHING</span>
+          <h3 id="coachingModalTitle" class="text-base font-bold">원장 1:1 성장 코칭 피드백 작성</h3>
+        </div>
+        <button type="button" onclick="closeCoachingModal()" class="text-ivory/70 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+      <form id="coachingForm" onsubmit="handleSaveCoachingNote(event)" class="p-6 space-y-4">
+        <input type="hidden" id="coachingTargetUserId" />
+        <div>
+          <label for="coachingNoteTextarea" class="block text-xs font-bold text-espresso mb-1.5">
+            코칭 피드백 및 다음 달 중점 액션 플랜
+          </label>
+          <textarea id="coachingNoteTextarea" rows="4" required class="w-full p-3.5 rounded-xl border border-ivory-border bg-ivory/40 text-xs sm:text-sm text-espresso focus:outline-none focus:ring-2 focus:ring-champagne" placeholder="디자이너의 재방문율, 객단가, 신규 고객 유입에 대한 격려와 코칭 내용을 작성하세요."></textarea>
+        </div>
+        <div class="flex justify-end gap-2">
+          <button type="button" onclick="closeCoachingModal()" class="px-4 py-2 rounded-xl border border-ivory-border text-xs font-bold text-espresso-muted">취소</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-espresso text-ivory text-xs font-bold">코칭 피드백 저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ===================================================================== -->
+  <!-- APPLICATION JAVASCRIPT ENGINE                                         -->
+  <!-- ===================================================================== -->
+  <script>
+    // -----------------------------------------------------------------------
+    // 1. STORAGE KEYS & INITIAL SEED DATA FOR YUROSO HAIR 3 BRANCHES
+    // -----------------------------------------------------------------------
+    const STORAGE_KEY_STATE = 'yuroso_hair_enterprise_state_v1';
+    const STORAGE_KEY_SESSION = 'yuroso_hair_auth_session_v1';
+    const STORAGE_KEY_KAKAO_KEY = 'yuroso_hair_kakao_js_key_v1';
+
+    const BRANCH_NAMES = ['파주 운정점', '운정역점', '마곡발산점'];
+
+    function createInitialState() {
+      return {
+        targets: {
+          designerSales: 18000000,    // 월 목표 개인매출 1,800만원 (40%)
+          designerRevisitRate: 72,    // 목표 재방문 고객 비율 72% (30%)
+          designerAvgTicket: 100000,  // 목표 객단가 100,000원 (20%)
+          designerNewCustomers: 40    // 월 목표 신규 고객수 40명 (10%)
+        },
+        branches: {
+          '파주 운정점': {
+            id: 'b_unjeong1',
+            name: '파주 운정점',
+            badge: '1호점 · 본점',
+            managerName: '서윤 지점원장',
+            managerId: 'u_mgr_1',
+            targetMonthlySales: 95000000,     // 지점 월 목표 9,500만원
+            prevMonthSales: 86500000,         // 전월 지점 매출
+            operatingMarginRate: 28.5,        // 영업이익률 (%)
+            targetOperatingProfit: 26000000,  // 목표 영업이익
+            staffRetentionScore: 95.0,        // 직원 성장·유지 지수 (100점 만점)
+            leaderGrowthScore: 94.0,          // 리더·인재 성장 지수
+            naverRating: 4.94,
+            naverReviewCount: 1840
+          },
+          '운정역점': {
+            id: 'b_unjeong2',
+            name: '운정역점',
+            badge: '2호점 · 역세권',
+            managerName: '민준 지점원장',
+            managerId: 'u_mgr_2',
+            targetMonthlySales: 88000000,     // 지점 월 목표 8,800만원
+            prevMonthSales: 79000000,
+            operatingMarginRate: 27.2,
+            targetOperatingProfit: 23500000,
+            staffRetentionScore: 92.5,
+            leaderGrowthScore: 91.5,
+            naverRating: 4.91,
+            naverReviewCount: 1420
+          },
+          '마곡발산점': {
+            id: 'b_magok3',
+            name: '마곡발산점',
+            badge: '3호점 · 서울 강서',
+            managerName: '지현 지점원장',
+            managerId: 'u_mgr_3',
+            targetMonthlySales: 105000000,    // 지점 월 목표 1억 500만원
+            prevMonthSales: 94000000,
+            operatingMarginRate: 29.4,
+            targetOperatingProfit: 29500000,
+            staffRetentionScore: 94.0,
+            leaderGrowthScore: 95.5,
+            naverRating: 4.95,
+            naverReviewCount: 1690
+          }
+        },
+        users: [
+          // 최상위 관리자: 대표원장
+          {
+            id: 'u_ceo',
+            name: '영화',
+            title: '대표원장',
+            role: '대표원장',
+            branch: '파주 운정점',
+            isCustom: false,
+            sales: 26500000,
+            totalCustomers: 210,
+            newCustomers: 38,
+            revisitCustomers: 172,
+            avgTicket: 126190,
+            prevSales: 24500000,
+            coachingNote: '전 지점 프리미엄 클리닉 & 텍스처 펌 브랜딩 총괄'
+          },
+          // 3대 지점 지점원장
+          {
+            id: 'u_mgr_1',
+            name: '서윤',
+            title: '지점원장',
+            role: '지점원장',
+            branch: '파주 운정점',
+            isCustom: false,
+            sales: 24200000,
+            totalCustomers: 215,
+            newCustomers: 45,
+            revisitCustomers: 170,
+            avgTicket: 112558,
+            prevSales: 21800000,
+            coachingNote: '파주 운정점 재방문 고객 비율 1위 유지 및 인턴 승급 교육 리드'
+          },
+          {
+            id: 'u_mgr_2',
+            name: '민준',
+            title: '지점원장',
+            role: '지점원장',
+            branch: '운정역점',
+            isCustom: false,
+            sales: 22800000,
+            totalCustomers: 208,
+            newCustomers: 48,
+            revisitCustomers: 160,
+            avgTicket: 109615,
+            prevSales: 20500000,
+            coachingNote: '운정역점 신규 유입 고객의 2차 재방문 정착률 집중 케어'
+          },
+          {
+            id: 'u_mgr_3',
+            name: '지현',
+            title: '지점원장',
+            role: '지점원장',
+            branch: '마곡발산점',
+            isCustom: false,
+            sales: 26800000,
+            totalCustomers: 230,
+            newCustomers: 52,
+            revisitCustomers: 178,
+            avgTicket: 116521,
+            prevSales: 24000000,
+            coachingNote: '마곡 오피스 상권 맞춤형 프리미엄 헤드스파 결합 객단가 상승 견인'
+          },
+          // 파주 운정점 (1호점) 소속 디자이너 4명
+          {
+            id: 'u_des_101',
+            name: '지우',
+            title: '수석디자이너',
+            role: '디자이너',
+            branch: '파주 운정점',
+            isCustom: false,
+            sales: 21500000,
+            totalCustomers: 198,
+            newCustomers: 42,
+            revisitCustomers: 156,
+            avgTicket: 108585,
+            prevSales: 19200000,
+            coachingNote: '재방문율 78.8%로 매우 우수함. 시그니처 컬러 시술 비중 확대 권장.'
+          },
+          {
+            id: 'u_des_102',
+            name: '하은',
+            title: '디자이너',
+            role: '디자이너',
+            branch: '파주 운정점',
+            isCustom: false,
+            sales: 18400000,
+            totalCustomers: 184,
+            newCustomers: 44,
+            revisitCustomers: 140,
+            avgTicket: 100000,
+            prevSales: 16800000,
+            coachingNote: '신규 고객 유입이 활발하며 네이버 플레이스 포토리뷰 응답률 우수.'
+          },
+          {
+            id: 'u_des_103',
+            name: '도윤',
+            title: '디자이너',
+            role: '디자이너',
+            branch: '파주 운정점',
+            isCustom: false,
+            sales: 16900000,
+            totalCustomers: 176,
+            newCustomers: 39,
+            revisitCustomers: 137,
+            avgTicket: 96022,
+            prevSales: 15500000,
+            coachingNote: '남성 맨즈펌 재방문율이 높음. 두피 케어 패키지 제안으로 객단가 보완.'
+          },
+          {
+            id: 'u_des_104',
+            name: '시우',
+            title: '디자이너',
+            role: '디자이너',
+            branch: '파주 운정점',
+            isCustom: false,
+            sales: 15200000,
+            totalCustomers: 162,
+            newCustomers: 41,
+            revisitCustomers: 121,
+            avgTicket: 93827,
+            prevSales: 14000000,
+            coachingNote: '신규 첫방문 고객 해피콜 CRM 메시지로 2회차 재방문 전환율 향상 중.'
+          },
+          // 운정역점 (2호점) 소속 디자이너 4명
+          {
+            id: 'u_des_201',
+            name: '유나',
+            title: '수석디자이너',
+            role: '디자이너',
+            branch: '운정역점',
+            isCustom: false,
+            sales: 20400000,
+            totalCustomers: 192,
+            newCustomers: 43,
+            revisitCustomers: 149,
+            avgTicket: 106250,
+            prevSales: 18400000,
+            coachingNote: '운정역점 매출 에이스. 레이어드펌 & 클리닉 재방문 주기 관리 탁월.'
+          },
+          {
+            id: 'u_des_202',
+            name: '준서',
+            title: '디자이너',
+            role: '디자이너',
+            branch: '운정역점',
+            isCustom: false,
+            sales: 17600000,
+            totalCustomers: 180,
+            newCustomers: 45,
+            revisitCustomers: 135,
+            avgTicket: 97777,
+            prevSales: 16100000,
+            coachingNote: '역세권 퇴근 시간대 예약 가동률 95% 달성.'
+          },
+          {
+            id: 'u_des_203',
+            name: '채원',
+            title: '디자이너',
+            role: '디자이너',
+            branch: '운정역점',
+            isCustom: false,
+            sales: 16200000,
+            totalCustomers: 168,
+            newCustomers: 38,
+            revisitCustomers: 130,
+            avgTicket: 96428,
+            prevSales: 14900000,
+            coachingNote: '고객 상담 만족도가 높으며 재방문 비율 77.4% 달성.'
+          },
+          {
+            id: 'u_des_204',
+            name: '건우',
+            title: '디자이너',
+            role: '디자이너',
+            branch: '운정역점',
+            isCustom: false,
+            sales: 14800000,
+            totalCustomers: 158,
+            newCustomers: 42,
+            revisitCustomers: 116,
+            avgTicket: 93670,
+            prevSales: 13500000,
+            coachingNote: '신규 고객 유입 목표 초과 달성(42명). 재방문 정착률 75% 목표 코칭.'
+          },
+          // 마곡발산점 (3호점) 소속 디자이너 4명
+          {
+            id: 'u_des_301',
+            name: '소율',
+            title: '수석디자이너',
+            role: '디자이너',
+            branch: '마곡발산점',
+            isCustom: false,
+            sales: 23400000,
+            totalCustomers: 205,
+            newCustomers: 46,
+            revisitCustomers: 159,
+            avgTicket: 114146,
+            prevSales: 21000000,
+            coachingNote: '전 지점 디자이너 중 최고 매출 및 객단가 기록! 마곡 직장인 고정층 탄탄.'
+          },
+          {
+            id: 'u_des_302',
+            name: '현우',
+            title: '디자이너',
+            role: '디자이너',
+            branch: '마곡발산점',
+            isCustom: false,
+            sales: 19800000,
+            totalCustomers: 186,
+            newCustomers: 44,
+            revisitCustomers: 142,
+            avgTicket: 106451,
+            prevSales: 17900000,
+            coachingNote: '개인매출 및 객단가 목표 모두 초과 달성.'
+          },
+          {
+            id: 'u_des_303',
+            name: '다은',
+            title: '디자이너',
+            role: '디자이너',
+            branch: '마곡발산점',
+            isCustom: false,
+            sales: 18100000,
+            totalCustomers: 178,
+            newCustomers: 41,
+            revisitCustomers: 137,
+            avgTicket: 101685,
+            prevSales: 16500000,
+            coachingNote: '4대 KPI 모든 항목에서 고른 달성률을 기록 중.'
+          },
+          {
+            id: 'u_des_304',
+            name: '태윤',
+            title: '디자이너',
+            role: '디자이너',
+            branch: '마곡발산점',
+            isCustom: false,
+            sales: 16500000,
+            totalCustomers: 165,
+            newCustomers: 40,
+            revisitCustomers: 125,
+            avgTicket: 100000,
+            prevSales: 15100000,
+            coachingNote: '객단가 10만원 달성 완료. 다음 달 개인매출 1,800만원 돌파 목표.'
+          }
+        ],
+        crmHistory: [
+          { id: 'h1', period: '2026-10', userId: 'u_des_101', userName: '지우', branch: '파주 운정점', sales: 21500000, totalCustomers: 198, newCustomers: 42, revisitCustomers: 156, avgTicket: 108585 },
+          { id: 'h2', period: '2026-10', userId: 'u_des_102', userName: '하은', branch: '파주 운정점', sales: 18400000, totalCustomers: 184, newCustomers: 44, revisitCustomers: 140, avgTicket: 100000 },
+          { id: 'h3', period: '2026-10', userId: 'u_des_201', userName: '유나', branch: '운정역점', sales: 20400000, totalCustomers: 192, newCustomers: 43, revisitCustomers: 149, avgTicket: 106250 },
+          { id: 'h4', period: '2026-10', userId: 'u_des_301', userName: '소율', branch: '마곡발산점', sales: 23400000, totalCustomers: 205, newCustomers: 46, revisitCustomers: 159, avgTicket: 114146 },
+          { id: 'h5', period: '2026-09', userId: 'u_des_101', userName: '지우', branch: '파주 운정점', sales: 19200000, totalCustomers: 185, newCustomers: 38, revisitCustomers: 147, avgTicket: 103783 },
+          { id: 'h6', period: '2026-09', userId: 'u_des_301', userName: '소율', branch: '마곡발산점', sales: 21000000, totalCustomers: 190, newCustomers: 41, revisitCustomers: 149, avgTicket: 110526 }
+        ]
+      };
+    }
+
+    // -----------------------------------------------------------------------
+    // 2. APPLICATION STATE & SAFE LOCALSTORAGE HELPERS
+    // -----------------------------------------------------------------------
+    let appState = createInitialState();
+    let currentSession = null; // { userId, role, branch, name, keepLoggedIn }
+    let activeViewContext = {
+      role: '대표원장',          // '대표원장' | '지점원장' | '디자이너'
+      branch: '파주 운정점',     // 지점원장일 때 열람 지점
+      designerId: 'u_des_101', // 디자이너일 때 열람 디자이너 ID
+      strictLock: false
+    };
+    let currentMainTab = 'dashboard';
+    let globalPeriod = 'monthly'; // 'daily' | 'monthly' | 'yearly'
+
+    // Chart.js instances
+    let primaryChartInstance = null;
+    let secondaryChartInstance = null;
+    let allDesignersChartInstance = null;
+    let branchFinancialChartInstance = null;
+    let branchRadarChartInstance = null;
+
+    function safeGetStorage(key) {
+      try {
+        return localStorage.getItem(key);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function safeSetStorage(key, value) {
+      try {
+        localStorage.setItem(key, value);
+      } catch (e) {
+        // Ignore storage error in restricted iframe
+      }
+    }
+
+    function safeRemoveStorage(key) {
+      try {
+        localStorage.removeItem(key);
+      } catch (e) {
+        // Ignore
+      }
+    }
+
+    function loadAppState() {
+      const raw = safeGetStorage(STORAGE_KEY_STATE);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.users && parsed.branches && parsed.targets) {
+            appState = parsed;
+          }
+        } catch (e) {
+          appState = createInitialState();
+        }
+      }
+    }
+
+    function saveAppState() {
+      safeSetStorage(STORAGE_KEY_STATE, JSON.stringify(appState));
+    }
+
+    // -----------------------------------------------------------------------
+    // 3. KPI & CRM MATHEMATICAL CALCULATION ENGINE
+    // -----------------------------------------------------------------------
+    // 디자이너 5대 지표 -> 재방문 고객 비율 & 디자이너 KPI 점수(40/30/20/10) 자동계산
+    function calculateDesignerKPI(user, targets = appState.targets) {
+      const sales = Number(user.sales) || 0;
+      const totalCust = Math.max(1, Number(user.totalCustomers) || 1);
+      const newCust = Number(user.newCustomers) || 0;
+      const revisitCust = Number(user.revisitCustomers) || 0;
+      const avgTicket = Number(user.avgTicket) || Math.round(sales / totalCust);
+
+      // 재방문 고객 비율 = (재방문 고객수 ÷ 총 고객수) * 100
+      const revisitRate = Math.min(100, (revisitCust / totalCust) * 100);
+
+      // 각 항목별 점수 계산 (상한: 배점 만점, 달성률은 100% 초과도 별도 표시)
+      const salesRatio = sales / Math.max(1, targets.designerSales);
+      const revisitRatio = revisitRate / Math.max(1, targets.designerRevisitRate);
+      const ticketRatio = avgTicket / Math.max(1, targets.designerAvgTicket);
+      const newCustRatio = newCust / Math.max(1, targets.designerNewCustomers);
+
+      const salesScore = Math.min(40, salesRatio * 40);
+      const revisitScore = Math.min(30, revisitRatio * 30);
+      const ticketScore = Math.min(20, ticketRatio * 20);
+      const newCustScore = Math.min(10, newCustRatio * 10);
+
+      const totalScore = salesScore + revisitScore + ticketScore + newCustScore;
+
+      let grade = 'B';
+      if (totalScore >= 95) grade = 'S';
+      else if (totalScore >= 90) grade = 'A+';
+      else if (totalScore >= 82) grade = 'A';
+      else if (totalScore >= 75) grade = 'B+';
+
+      const salesGrowthRate = user.prevSales > 0 ? ((sales - user.prevSales) / user.prevSales) * 100 : 12.0;
+
+      return {
+        sales,
+        totalCust,
+        newCust,
+        revisitCust,
+        avgTicket,
+        revisitRate,
+        salesScore,
+        revisitScore,
+        ticketScore,
+        newCustScore,
+        totalScore,
+        grade,
+        salesGrowthRate
+      };
+    }
+
+    // 지점별 집계 & 지점원장 KPI (지점매출 35% / 디자이너 평균매출 성장 30% / 재방문 비율 20% / 직원 성장·유지 15%)
+    function calculateBranchSummary(branchName) {
+      const bMeta = appState.branches[branchName];
+      const branchMembers = appState.users.filter(u => u.branch === branchName && u.role !== '대표원장');
+      const designersOnly = branchMembers.filter(u => u.role === '디자이너');
+      const activeList = designersOnly.length > 0 ? designersOnly : branchMembers;
+
+      const totalBranchSales = branchMembers.reduce((sum, u) => sum + (Number(u.sales) || 0), 0);
+      const prevBranchSales = branchMembers.reduce((sum, u) => sum + (Number(u.prevSales) || (Number(u.sales) * 0.9)), 0);
+      const totalCustomers = branchMembers.reduce((sum, u) => sum + (Number(u.totalCustomers) || 0), 0);
+      const totalNewCustomers = branchMembers.reduce((sum, u) => sum + (Number(u.newCustomers) || 0), 0);
+      const totalRevisitCustomers = branchMembers.reduce((sum, u) => sum + (Number(u.revisitCustomers) || 0), 0);
+
+      const avgRevisitRate = totalCustomers > 0 ? (totalRevisitCustomers / totalCustomers) * 100 : 0;
+      const avgTicket = totalCustomers > 0 ? Math.round(totalBranchSales / totalCustomers) : 0;
+
+      const avgDesignerSales = activeList.length > 0
+        ? activeList.reduce((s, u) => s + Number(u.sales), 0) / activeList.length
+        : 0;
+      const prevAvgDesignerSales = activeList.length > 0
+        ? activeList.reduce((s, u) => s + (Number(u.prevSales) || Number(u.sales) * 0.9), 0) / activeList.length
+        : 1;
+
+      const designerAvgGrowthRate = prevAvgDesignerSales > 0
+        ? ((avgDesignerSales - prevAvgDesignerSales) / prevAvgDesignerSales) * 100
+        : 10.0;
+
+      const salesAchievementRate = (totalBranchSales / Math.max(1, bMeta.targetMonthlySales)) * 100;
+      const operatingProfit = Math.round(totalBranchSales * (bMeta.operatingMarginRate / 100));
+      const profitAchievementRate = (operatingProfit / Math.max(1, bMeta.targetOperatingProfit)) * 100;
+
+      // 지점원장 4대 KPI 점수 산출 (100점 만점)
+      // 1) 지점 매출 (35%): 목표 매출 대비 달성률 * 35
+      const scoreBranchSales = Math.min(35, (salesAchievementRate / 100) * 35);
+      // 2) 디자이너 평균매출 성장 (30%): 월 목표 성장률(10%) 대비 달성도 (기본 80% + 성장률 가산)
+      const growthNormalized = Math.min(1, Math.max(0.5, (designerAvgGrowthRate + 2) / 12));
+      const scoreDesignerGrowth = Math.min(30, growthNormalized * 30);
+      // 3) 재방문 고객 비율 (20%): 목표 재방문율 대비 * 20
+      const scoreRevisit = Math.min(20, (avgRevisitRate / Math.max(1, appState.targets.designerRevisitRate)) * 20);
+      // 4) 직원 성장·유지 (15%): 지점 유지율 점수 기반 * 15
+      const scoreRetention = Math.min(15, (bMeta.staffRetentionScore / 100) * 15);
+
+      const managerTotalScore = scoreBranchSales + scoreDesignerGrowth + scoreRevisit + scoreRetention;
+      let managerGrade = 'A';
+      if (managerTotalScore >= 94) managerGrade = 'S';
+      else if (managerTotalScore >= 89) managerGrade = 'A+';
+      else if (managerTotalScore >= 82) managerGrade = 'A';
+      else managerGrade = 'B+';
+
+      const branchGrowthRate = prevBranchSales > 0 ? ((totalBranchSales - prevBranchSales) / prevBranchSales) * 100 : 10.5;
+
+      return {
+        branchName,
+        meta: bMeta,
+        memberCount: branchMembers.length,
+        designerCount: designersOnly.length,
+        totalBranchSales,
+        prevBranchSales,
+        branchGrowthRate,
+        operatingProfit,
+        profitAchievementRate,
+        salesAchievementRate,
+        totalCustomers,
+        totalNewCustomers,
+        totalRevisitCustomers,
+        avgRevisitRate,
+        avgTicket,
+        avgDesignerSales,
+        designerAvgGrowthRate,
+        scoreBranchSales,
+        scoreDesignerGrowth,
+        scoreRevisit,
+        scoreRetention,
+        managerTotalScore,
+        managerGrade
+      };
+    }
+
+    // 대표원장 (영화 대표원장) 전 지점 통합 KPI
+    // 전 지점 매출 성장(30%) / 영업이익(30%) / 지점 목표 달성(20%) / 리더·인재 성장(20%)
+    function calculateCEOEnterpriseKPI() {
+      const summaries = BRANCH_NAMES.map(b => calculateBranchSummary(b));
+      const totalAllSales = summaries.reduce((s, b) => s + b.totalBranchSales, 0);
+      const totalPrevSales = summaries.reduce((s, b) => s + b.prevBranchSales, 0);
+      const totalTargetSales = summaries.reduce((s, b) => s + b.meta.targetMonthlySales, 0);
+      const totalOperatingProfit = summaries.reduce((s, b) => s + b.operatingProfit, 0);
+      const totalTargetProfit = summaries.reduce((s, b) => s + b.meta.targetOperatingProfit, 0);
+
+      const allSalesGrowthRate = totalPrevSales > 0 ? ((totalAllSales - totalPrevSales) / totalPrevSales) * 100 : 11.2;
+      const allTargetAchievementRate = (totalAllSales / Math.max(1, totalTargetSales)) * 100;
+      const allProfitAchievementRate = (totalOperatingProfit / Math.max(1, totalTargetProfit)) * 100;
+      const avgLeaderGrowthIndex = summaries.reduce((s, b) => s + b.meta.leaderGrowthScore, 0) / summaries.length;
+
+      // 대표원장 4대 가중치 점수 (30 / 30 / 20 / 20)
+      const growthRatio = Math.min(1, Math.max(0.6, (allSalesGrowthRate + 2) / 13));
+      const scoreSalesGrowth = Math.min(30, growthRatio * 30);
+      const scoreOperatingProfit = Math.min(30, (allProfitAchievementRate / 100) * 30);
+      const scoreTargetAchievement = Math.min(20, (allTargetAchievementRate / 100) * 20);
+      const scoreLeaderGrowth = Math.min(20, (avgLeaderGrowthIndex / 100) * 20);
+
+      const ceoTotalScore = scoreSalesGrowth + scoreOperatingProfit + scoreTargetAchievement + scoreLeaderGrowth;
+      let ceoGrade = 'S';
+      if (ceoTotalScore < 94) ceoGrade = 'A+';
+      if (ceoTotalScore < 88) ceoGrade = 'A';
+
+      return {
+        summaries,
+        totalAllSales,
+        totalPrevSales,
+        totalTargetSales,
+        totalOperatingProfit,
+        totalTargetProfit,
+        allSalesGrowthRate,
+        allTargetAchievementRate,
+        allProfitAchievementRate,
+        avgLeaderGrowthIndex,
+        scoreSalesGrowth,
+        scoreOperatingProfit,
+        scoreTargetAchievement,
+        scoreLeaderGrowth,
+        ceoTotalScore,
+        ceoGrade
+      };
+    }
+
+    // -----------------------------------------------------------------------
+    // 4. FORMATTING UTILITIES
+    // -----------------------------------------------------------------------
+    function formatKRW(num) {
+      return Number(Math.round(num || 0)).toLocaleString('ko-KR') + '원';
+    }
+
+    function formatManwon(num) {
+      const man = Math.round((Number(num) || 0) / 10000);
+      return man.toLocaleString('ko-KR') + '만원';
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      const bgClass = type === 'error'
+        ? 'bg-red-900 text-white border-red-500'
+        : type === 'kakao'
+        ? 'bg-kakao text-kakao-text border-yellow-500'
+        : 'bg-espresso text-ivory border-champagne';
+      toast.className = `pointer-events-auto px-4 py-3 rounded-xl border shadow-xl text-xs font-bold flex items-center justify-between gap-3 transition-all duration-300 ${bgClass}`;
+      toast.innerHTML = `
+        <span>${message}</span>
+        <button type="button" onclick="this.parentElement.remove()" class="opacity-70 hover:opacity-100 font-extrabold text-sm">&times;</button>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        if (toast.parentElement) toast.remove();
+      }, 3800);
+    }
+
+    // -----------------------------------------------------------------------
+    // 5. AUTHENTICATION, KAKAO LOGIN, SIGNUP & PERSISTENT SESSION
+    // -----------------------------------------------------------------------
+    function switchAuthTab(tab) {
+      const loginPanel = document.getElementById('authLoginPanel');
+      const signupPanel = document.getElementById('authSignupPanel');
+      const loginBtn = document.getElementById('authTabLoginBtn');
+      const signupBtn = document.getElementById('authTabSignupBtn');
+
+      if (tab === 'login') {
+        loginPanel.classList.remove('hidden');
+        signupPanel.classList.add('hidden');
+        loginBtn.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-espresso text-ivory shadow-sm transition';
+        signupBtn.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg text-espresso-muted hover:text-espresso transition';
+      } else {
+        loginPanel.classList.add('hidden');
+        signupPanel.classList.remove('hidden');
+        signupBtn.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-espresso text-ivory shadow-sm transition';
+        loginBtn.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg text-espresso-muted hover:text-espresso transition';
+      }
+    }
+
+    function selectSignupBranchCard(branch) {
+      document.getElementById('signupBranchSelect').value = branch;
+      BRANCH_NAMES.forEach(b => {
+        const btn = document.getElementById('branchCard_' + b);
+        if (!btn) return;
+        if (b === branch) {
+          btn.className = 'py-2 px-2 rounded-lg border-2 border-champagne bg-champagne-bg text-xs font-bold text-espresso transition';
+        } else {
+          btn.className = 'py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition';
+        }
+      });
+    }
+
+    function selectSignupRoleCard(role) {
+      document.getElementById('signupRoleSelect').value = role;
+      ['디자이너', '지점원장', '대표원장'].forEach(r => {
+        const btn = document.getElementById('roleCard_' + r);
+        if (!btn) return;
+        if (r === role) {
+          btn.className = 'py-2 px-2 rounded-lg border-2 border-champagne bg-champagne-bg text-xs font-bold text-espresso transition';
+        } else {
+          btn.className = 'py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition';
+        }
+      });
+    }
+
+    function openKakaoAuthModal() {
+      populateKakaoModalSelect();
+      const modal = document.getElementById('kakaoAuthModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeKakaoAuthModal() {
+      const modal = document.getElementById('kakaoAuthModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function proceedKakaoToSignup() {
+      closeKakaoAuthModal();
+      switchAuthTab('signup');
+      const nameInput = document.getElementById('signupNameInput');
+      if (nameInput) nameInput.focus();
+      showToast('💬 카카오 계정이 인증되었습니다. 이름·지점·직급을 선택해 회원가입을 완료해주세요!', 'kakao');
+    }
+
+    function populateKakaoModalSelect() {
+      const sel = document.getElementById('kakaoModalUserSelect');
+      if (!sel) return;
+      sel.innerHTML = appState.users.map(u => {
+        const badge = u.isCustom ? ' [신규가입]' : '';
+        return `<option value="${u.id}">[${u.role}] ${u.branch} — ${u.name} ${u.title}${badge}</option>`;
+      }).join('');
+    }
+
+    function confirmKakaoExistingLogin() {
+      const sel = document.getElementById('kakaoModalUserSelect');
+      if (!sel || !sel.value) return;
+      closeKakaoAuthModal();
+      quickLoginAs(sel.value);
+    }
+
+    function quickLoginAs(userId) {
+      const user = appState.users.find(u => u.id === userId) || appState.users[0];
+      const keepCheckbox = document.getElementById('keepLoggedInCheckbox');
+      const keepLoggedIn = keepCheckbox ? keepCheckbox.checked : true;
+
+      establishUserSession(user, keepLoggedIn);
+      showToast(`💬 카카오톡 계정(${user.name} ${user.title})으로 로그인되었습니다. 기기 로그인이 유지됩니다.`, 'kakao');
+    }
+
+    function registerNewMember(name, branch, role, keepLoggedIn = true) {
+      const trimmedName = name.trim();
+      const newId = 'u_custom_' + Date.now();
+      const newUser = {
+        id: newId,
+        name: trimmedName,
+        title: role,
+        role: role,
+        branch: branch,
+        isCustom: true,
+        sales: 18000000,
+        totalCustomers: 180,
+        newCustomers: 40,
+        revisitCustomers: 140,
+        avgTicket: 100000,
+        prevSales: 16200000,
+        coachingNote: `${branch} ${trimmedName} ${role}님 신규 가입 완료! CRM 5대 지표 탭에서 본인의 고객 데이터를 입력해보세요.`
+      };
+
+      appState.users.push(newUser);
+
+      // 지점원장으로 가입한 경우 해당 지점 메타에도 반영 가능
+      if (role === '지점원장' && appState.branches[branch]) {
+        appState.branches[branch].managerName = `${trimmedName} 지점원장`;
+        appState.branches[branch].managerId = newId;
+      }
+
+      // 초기 CRM 히스토리 1건 생성
+      appState.crmHistory.unshift({
+        id: 'h_' + Date.now(),
+        period: '2026-10',
+        userId: newId,
+        userName: trimmedName,
+        branch: branch,
+        sales: newUser.sales,
+        totalCustomers: newUser.totalCustomers,
+        newCustomers: newUser.newCustomers,
+        revisitCustomers: newUser.revisitCustomers,
+        avgTicket: newUser.avgTicket
+      });
+
+      saveAppState();
+      renderCustomRegisteredAccountsOnLogin();
+      return newUser;
+    }
+
+    function handleSignupSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('signupNameInput').value.trim();
+      const branch = document.getElementById('signupBranchSelect').value;
+      const role = document.getElementById('signupRoleSelect').value;
+      const keepLoggedIn = document.getElementById('signupKeepLoggedIn').checked;
+
+      if (!name) {
+        showToast('이름을 입력해주세요.', 'error');
+        return;
+      }
+
+      const newUser = registerNewMember(name, branch, role, keepLoggedIn);
+      document.getElementById('signupNameInput').value = '';
+      establishUserSession(newUser, keepLoggedIn);
+      showToast(`🎉 환영합니다! [${branch}] ${name} ${role}님 회원가입 및 기기 로그인 유지 설정이 완료되었습니다.`);
+    }
+
+    function establishUserSession(user, keepLoggedIn = true) {
+      currentSession = {
+        userId: user.id,
+        name: user.name,
+        title: user.title,
+        role: user.role,
+        branch: user.branch,
+        keepLoggedIn: keepLoggedIn,
+        loginAt: new Date().toISOString()
+      };
+
+      if (keepLoggedIn) {
+        safeSetStorage(STORAGE_KEY_SESSION, JSON.stringify(currentSession));
+      } else {
+        safeRemoveStorage(STORAGE_KEY_SESSION);
+      }
+
+      // RBAC 컨텍스트를 로그인한 사용자의 직급·지점·ID로 즉시 설정
+      activeViewContext.role = user.role;
+      activeViewContext.branch = user.branch;
+      if (user.role === '디자이너') {
+        activeViewContext.designerId = user.id;
+      } else {
+        const firstDes = appState.users.find(u => u.branch === user.branch && u.role === '디자이너') || user;
+        activeViewContext.designerId = firstDes.id;
+      }
+
+      // 화면 전환: Auth Gate 숨기고 Workspace 표시
+      document.getElementById('authGateView').classList.add('hidden');
+      document.getElementById('appWorkspaceView').classList.remove('hidden');
+
+      syncAllSelectorsAndRender();
+    }
+
+    function handleLogout() {
+      currentSession = null;
+      safeRemoveStorage(STORAGE_KEY_SESSION);
+      document.getElementById('appWorkspaceView').classList.add('hidden');
+      document.getElementById('authGateView').classList.remove('hidden');
+      switchAuthTab('login');
+      renderCustomRegisteredAccountsOnLogin();
+      showToast('로그아웃되었습니다. 다시 접속하려면 카카오톡 로그인을 진행해주세요.');
+    }
+
+    function renderCustomRegisteredAccountsOnLogin() {
+      const box = document.getElementById('customRegisteredAccountsBox');
+      const list = document.getElementById('customRegisteredAccountsList');
+      if (!box || !list) return;
+      const customUsers = appState.users.filter(u => u.isCustom);
+      if (customUsers.length === 0) {
+        box.classList.add('hidden');
+        return;
+      }
+      box.classList.remove('hidden');
+      list.innerHTML = customUsers.map(u => `
+        <button type="button" onclick="quickLoginAs('${u.id}')" class="px-3 py-1.5 rounded-lg bg-sage text-white text-xs font-bold hover:bg-sage-dark transition flex items-center gap-1.5 shadow-sm">
+          <span>💬 ${u.name} ${u.role} (${u.branch})</span>
+          <span>&rarr;</span>
+        </button>
+      `).join('');
+    }
+
+    // -----------------------------------------------------------------------
+    // 6. RBAC ROLE SWITCHER & NAVIGATION SYNC
+    // -----------------------------------------------------------------------
+    function populateRBACSelectors() {
+      const desSelect = document.getElementById('rbacDesignerUserSelect');
+      if (desSelect) {
+        const designers = appState.users.filter(u => u.role === '디자이너' || u.isCustom);
+        desSelect.innerHTML = designers.map(u => `
+          <option value="${u.id}" ${u.id === activeViewContext.designerId ? 'selected' : ''}>
+            ${u.name} (${u.branch})
+          </option>
+        `).join('');
+      }
+
+      const mgrBranchSelect = document.getElementById('rbacManagerBranchSelect');
+      if (mgrBranchSelect) {
+        mgrBranchSelect.value = activeViewContext.branch;
+      }
+    }
+
+    function switchRBACRole(targetRole) {
+      if (activeViewContext.strictLock && currentSession && currentSession.role !== targetRole) {
+        showToast(`🔒 '계정 권한 고정'이 켜져 있어 현재 로그인된 [${currentSession.role}] 외 직급으로 전환할 수 없습니다.`, 'error');
+        return;
+      }
+      activeViewContext.role = targetRole;
+      if (targetRole === '지점원장') {
+        const b = document.getElementById('rbacManagerBranchSelect').value || '파주 운정점';
+        activeViewContext.branch = b;
+      } else if (targetRole === '디자이너') {
+        const dId = document.getElementById('rbacDesignerUserSelect').value;
+        const dUser = appState.users.find(u => u.id === dId) || appState.users.find(u => u.role === '디자이너');
+        if (dUser) {
+          activeViewContext.designerId = dUser.id;
+          activeViewContext.branch = dUser.branch;
+        }
+      }
+      syncAllSelectorsAndRender();
+      showToast(`권한 뷰가 [${targetRole}] 모드로 전환되었습니다.`);
+    }
+
+    function handleRBACBranchChange(branchName) {
+      if (activeViewContext.strictLock && currentSession && currentSession.role === '지점원장' && currentSession.branch !== branchName) {
+        document.getElementById('rbacManagerBranchSelect').value = currentSession.branch;
+        showToast(`🔒 지점원장은 본인 소속 지점(${currentSession.branch})만 열람할 수 있습니다.`, 'error');
+        return;
+      }
+      activeViewContext.branch = branchName;
+      activeViewContext.role = '지점원장';
+      syncAllSelectorsAndRender();
+      showToast(`🏢 [${branchName}] 지점원장 전용 열람 뷰로 전환되었습니다.`);
+    }
+
+    function handleRBACDesignerChange(designerId) {
+      if (activeViewContext.strictLock && currentSession && currentSession.role === '디자이너' && currentSession.userId !== designerId) {
+        document.getElementById('rbacDesignerUserSelect').value = currentSession.userId;
+        showToast(`🔒 디자이너는 본인의 데이터(${currentSession.name})만 열람할 수 있습니다.`, 'error');
+        return;
+      }
+      const user = appState.users.find(u => u.id === designerId);
+      if (user) {
+        activeViewContext.role = '디자이너';
+        activeViewContext.designerId = user.id;
+        activeViewContext.branch = user.branch;
+        syncAllSelectorsAndRender();
+        showToast(`✂️ [${user.branch} · ${user.name} ${user.title}] 개인 KPI & CRM 뷰로 전환되었습니다.`);
+      }
+    }
+
+    function toggleStrictRbacLock(locked) {
+      activeViewContext.strictLock = locked;
+      if (locked && currentSession) {
+        activeViewContext.role = currentSession.role;
+        activeViewContext.branch = currentSession.branch;
+        if (currentSession.role === '디자이너') {
+          activeViewContext.designerId = currentSession.userId;
+        }
+        syncAllSelectorsAndRender();
+        showToast(`🔒 계정 권한 고정이 활성화되어 [${currentSession.name} ${currentSession.role}] 권한으로 고정되었습니다.`);
+      } else {
+        showToast('🔓 상단 RBAC 권한 전환 바에서 모든 직급을 자유롭게 체험할 수 있습니다.');
+      }
+    }
+
+    function switchMainTab(tabName) {
+      currentMainTab = tabName;
+      ['dashboard', 'crm', 'branches', 'members'].forEach(t => {
+        const section = document.getElementById('tabView_' + t);
+        const btn = document.getElementById('navTab_' + t);
+        if (section) {
+          if (t === tabName) section.classList.remove('hidden');
+          else section.classList.add('hidden');
+        }
+        if (btn) {
+          if (t === tabName) {
+            btn.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-champagne text-white transition whitespace-nowrap flex items-center gap-1.5';
+          } else {
+            btn.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap flex items-center gap-1.5';
+          }
+        }
+      });
+
+      if (tabName === 'dashboard') renderDashboardView();
+      if (tabName === 'crm') renderCrmCalculatorView();
+      if (tabName === 'branches') renderBranchesComparisonView();
+      if (tabName === 'members') renderMembersCoachingView();
+    }
+
+    function setGlobalPeriod(period) {
+      globalPeriod = period;
+      ['daily', 'monthly', 'yearly'].forEach(p => {
+        const btn = document.getElementById('periodBtn_' + p);
+        if (!btn) return;
+        if (p === period) {
+          btn.className = 'px-2.5 py-1 rounded-md text-xs font-bold bg-champagne text-white transition';
+        } else {
+          btn.className = 'px-2.5 py-1 rounded-md text-xs font-medium text-ivory/75 hover:text-white transition';
+        }
+      });
+      renderDashboardView();
+      if (currentMainTab === 'branches') renderBranchesComparisonView();
+    }
+
+    function syncAllSelectorsAndRender() {
+      populateRBACSelectors();
+
+      // Highlight active RBAC button in top bar
+      const btnCEO = document.getElementById('rbacBtnCEO');
+      const btnMgr = document.getElementById('rbacBtnManager');
+      const btnDes = document.getElementById('rbacBtnDesigner');
+      const activeCls = 'px-3 py-1 rounded-lg text-xs font-extrabold transition bg-champagne text-white shadow-sm';
+      const inactiveCls = 'px-3 py-1 rounded-lg text-xs font-bold transition border border-white/15 bg-white/10 hover:bg-champagne hover:text-white';
+
+      if (btnCEO) btnCEO.className = activeViewContext.role === '대표원장' ? activeCls : inactiveCls;
+      if (btnMgr) btnMgr.className = activeViewContext.role === '지점원장' ? 'px-2.5 py-1 text-xs font-extrabold bg-champagne text-white' : 'px-2.5 py-1 text-xs font-bold text-ivory/80 hover:text-white';
+      if (btnDes) btnDes.className = activeViewContext.role === '디자이너' ? 'px-2.5 py-1 text-xs font-extrabold bg-champagne text-white' : 'px-2.5 py-1 text-xs font-bold text-ivory/80 hover:text-white';
+
+      // Header User & Role Status
+      const roleBadge = document.getElementById('headerCurrentRoleBadge');
+      const branchBadge = document.getElementById('headerCurrentBranchBadge');
+      const scopeDesc = document.getElementById('headerAccessScopeDesc');
+      const bannerIcon = document.getElementById('rbacBannerIcon');
+      const bannerTitle = document.getElementById('rbacBannerTitle');
+      const bannerWeight = document.getElementById('rbacBannerWeightTag');
+      const bannerSub = document.getElementById('rbacBannerSubtitle');
+
+      if (currentSession) {
+        document.getElementById('loggedInUserNameDisplay').textContent = `${currentSession.name} ${currentSession.role} (${currentSession.branch})`;
+        document.getElementById('loggedInDeviceStatus').textContent = currentSession.keepLoggedIn
+          ? '카카오 연동 · 기기 로그인 유지 중'
+          : '카카오 연동 · 일회성 세션';
+      }
+
+      if (activeViewContext.role === '대표원장') {
+        roleBadge.textContent = '대표원장 (최상위 관리자)';
+        branchBadge.textContent = '3대 전 지점 통합 열람';
+        scopeDesc.textContent = '최상위 관리자 권한: 전 지점 매출성장(30%) · 영업이익(30%) · 지점목표달성(20%) · 리더인재성장(20%) 및 모든 원장·디자이너 비교';
+        bannerIcon.textContent = '👑';
+        bannerTitle.textContent = '영화 대표원장님 — 전 지점 통합 KPI & 원장·디자이너 비교 대시보드';
+        bannerWeight.textContent = '대표원장 KPI: 전 지점 매출 성장(30%) / 영업이익(30%) / 지점 목표 달성(20%) / 리더·인재 성장(20%)';
+        bannerSub.textContent = '파주 운정점(1호점), 운정역점(2호점), 마곡발산점(3호점) 3개 지점의 모든 원장·디자이너 일·월·년 비교 그래프를 통합 조회합니다.';
+      } else if (activeViewContext.role === '지점원장') {
+        const bSummary = calculateBranchSummary(activeViewContext.branch);
+        roleBadge.textContent = '지점원장';
+        branchBadge.textContent = `${activeViewContext.branch} 전용`;
+        scopeDesc.textContent = `지점원장 권한(${activeViewContext.branch}): 본인 소속 지점 데이터 및 소속 디자이너 성과만 열람 가능 (타 지점 상세 열람 제한)`;
+        bannerIcon.textContent = '🏢';
+        bannerTitle.textContent = `${activeViewContext.branch} (${bSummary.meta.managerName}) — 지점 전용 KPI & 소속 디자이너 대시보드`;
+        bannerWeight.textContent = '지점원장 KPI: 지점 매출(35%) / 디자이너 평균매출 성장(30%) / 재방문 고객 비율(20%) / 직원 성장·유지(15%)';
+        bannerSub.textContent = `본인 소속 지점(${activeViewContext.branch})의 KPI 달성 현황과 소속 디자이너(${bSummary.designerCount}명) 비교 그래프를 확인합니다.`;
+      } else {
+        const desUser = appState.users.find(u => u.id === activeViewContext.designerId) || appState.users.find(u => u.role === '디자이너');
+        roleBadge.textContent = '디자이너';
+        branchBadge.textContent = `${desUser.branch} · ${desUser.name}`;
+        scopeDesc.textContent = `디자이너 권한(${desUser.name}): 본인의 개인 KPI 대시보드와 CRM 5대 지표 입력 내역만 열람 가능 (타 디자이너 열람 차단)`;
+        bannerIcon.textContent = '✂️';
+        bannerTitle.textContent = `${desUser.branch} ${desUser.name} ${desUser.title}님 — 개인 KPI 대시보드 & CRM 내역`;
+        bannerWeight.textContent = '디자이너 KPI: 개인매출(40%) / 재방문 비율(30%) / 객단가(20%) / 신규 고객수(10%)';
+        bannerSub.textContent = '본인의 개인 KPI 달성 현황과 고객관리(CRM) 5대 지표 자동계산 내역만 안전하게 열람합니다.';
+      }
+
+      renderDashboardView();
+      renderCrmCalculatorView();
+      renderBranchesComparisonView();
+      renderMembersCoachingView();
+    }
+
+    // -----------------------------------------------------------------------
+    // 7. RENDER TAB 1: ROLE-BASED KPI DASHBOARD & CHARTS
+    // -----------------------------------------------------------------------
+    function renderDashboardView() {
+      const kpiGrid = document.getElementById('roleKpiCardsGrid');
+      const totalBar = document.getElementById('roleTotalKpiSummaryCard');
+      const allDesCard = document.getElementById('allDesignersChartCard');
+      const branchFilterSelect = document.getElementById('designerChartBranchFilter');
+
+      if (!kpiGrid || !totalBar) return;
+
+      if (activeViewContext.role === '대표원장') {
+        const ceo = calculateCEOEnterpriseKPI();
+        kpiGrid.innerHTML = `
+          <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-champagne">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-espresso-muted">① 전 지점 매출 성장</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark">가중치 30%</span>
+            </div>
+            <p class="text-2xl font-extrabold text-espresso">${formatManwon(ceo.totalAllSales)}</p>
+            <p class="text-xs text-sage-dark font-bold mt-1">▲ 전월 대비 +${ceo.allSalesGrowthRate.toFixed(1)}% 성장</p>
+            <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs">
+              <span class="text-espresso-muted">환산 점수</span>
+              <span class="font-extrabold text-espresso">${ceo.scoreSalesGrowth.toFixed(1)} / 30.0점</span>
+            </div>
+          </div>
+
+          <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-espresso">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-espresso-muted">② 전 지점 영업이익</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark">가중치 30%</span>
+            </div>
+            <p class="text-2xl font-extrabold text-espresso">${formatManwon(ceo.totalOperatingProfit)}</p>
+            <p class="text-xs text-sage-dark font-bold mt-1">목표 이익 달성률 ${ceo.allProfitAchievementRate.toFixed(1)}%</p>
+            <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs">
+              <span class="text-espresso-muted">환산 점수</span>
+              <span class="font-extrabold text-espresso">${ceo.scoreOperatingProfit.toFixed(1)} / 30.0점</span>
+            </div>
+          </div>
+
+          <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-sage">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-espresso-muted">③ 3대 지점 목표 달성</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-sage-bg text-sage-dark">가중치 20%</span>
+            </div>
+            <p class="text-2xl font-extrabold text-espresso">${ceo.allTargetAchievementRate.toFixed(1)}%</p>
+            <p class="text-xs text-espresso-muted mt-1">목표 합계: ${formatManwon(ceo.totalTargetSales)}</p>
+            <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs">
+              <span class="text-espresso-muted">환산 점수</span>
+              <span class="font-extrabold text-espresso">${ceo.scoreTargetAchievement.toFixed(1)} / 20.0점</span>
+            </div>
+          </div>
+
+          <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-champagne-light">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-espresso-muted">④ 리더·인재 성장 지수</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-sage-bg text-sage-dark">가중치 20%</span>
+            </div>
+            <p class="text-2xl font-extrabold text-espresso">${ceo.avgLeaderGrowthIndex.toFixed(1)}점</p>
+            <p class="text-xs text-espresso-muted mt-1">3개 지점 원장·디자이너 정착/승급</p>
+            <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs">
+              <span class="text-espresso-muted">환산 점수</span>
+              <span class="font-extrabold text-espresso">${ceo.scoreLeaderGrowth.toFixed(1)} / 20.0점</span>
+            </div>
+          </div>
+        `;
+
+        totalBar.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-xs font-bold text-champagne-light uppercase">REPRESENTATIVE DIRECTOR KPI EVALUATION</span>
+              <h3 class="text-lg sm:text-xl font-bold mt-0.5">영화 대표원장 종합 KPI 달성 점수: <span class="text-kakao">${ceo.ceoTotalScore.toFixed(1)}점</span> / 100점 (${ceo.ceoGrade}등급)</h3>
+              <p class="text-xs text-ivory/75 mt-1">전 지점 매출 성장(30%) + 영업이익(30%) + 지점 목표 달성(20%) + 리더·인재 성장(20%) 통합 산출</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <button type="button" onclick="switchMainTab('branches')" class="px-4 py-2.5 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-bold transition shadow-md">
+                3대 지점장 KPI 상세 비교 분석 &rarr;
+              </button>
+            </div>
+          </div>
+        `;
+
+        allDesCard.classList.remove('hidden');
+        branchFilterSelect.disabled = false;
+      } else if (activeViewContext.role === '지점원장') {
+        const b = calculateBranchSummary(activeViewContext.branch);
+        kpiGrid.innerHTML = `
+          <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-champagne">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-espresso-muted">① 지점 매출 달성</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark">가중치 35%</span>
+            </div>
+            <p class="text-2xl font-extrabold text-espresso">${formatManwon(b.totalBranchSales)}</p>
+            <p class="text-xs text-sage-dark font-bold mt-1">지점 목표 대비 ${b.salesAchievementRate.toFixed(1)}%</p>
+            <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs">
+              <span class="text-espresso-muted">환산 점수</span>
+              <span class="font-extrabold text-espresso">${b.scoreBranchSales.toFixed(1)} / 35.0점</span>
+            </div>
+          </div>
+
+          <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-espresso">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-espresso-muted">② 디자이너 평균매출 성장</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark">가중치 30%</span>
+            </div>
+            <p class="text-2xl font-extrabold text-espresso">+${b.designerAvgGrowthRate.toFixed(1)}%</p>
+            <p class="text-xs text-espresso-muted mt-1">인당 평균: ${formatManwon(b.avgDesignerSales)}</p>
+            <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs">
+              <span class="text-espresso-muted">환산 점수</span>
+              <span class="font-extrabold text-espresso">${b.scoreDesignerGrowth.toFixed(1)} / 30.0점</span>
+            </div>
+          </div>
+
+          <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-sage">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-espresso-muted">③ 지점 재방문 고객 비율</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-sage-bg text-sage-dark">가중치 20%</span>
+            </div>
+            <p class="text-2xl font-extrabold text-espresso">${b.avgRevisitRate.toFixed(1)}%</p>
+            <p class="text-xs text-espresso-muted mt-1">재방문 ${b.totalRevisitCustomers}명 / 총 ${b.totalCustomers}명</p>
+            <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs">
+              <span class="text-espresso-muted">환산 점수</span>
+              <span class="font-extrabold text-espresso">${b.scoreRevisit.toFixed(1)} / 20.0점</span>
+            </div>
+          </div>
+
+          <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-champagne-light">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-espresso-muted">④ 직원 성장·유지</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-sage-bg text-sage-dark">가중치 15%</span>
+            </div>
+            <p class="text-2xl font-extrabold text-espresso">${b.meta.staffRetentionScore.toFixed(1)}점</p>
+            <p class="text-xs text-espresso-muted mt-1">소속 디자이너 ${b.designerCount}명 전원 재직</p>
+            <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs">
+              <span class="text-espresso-muted">환산 점수</span>
+              <span class="font-extrabold text-espresso">${b.scoreRetention.toFixed(1)} / 15.0점</span>
+            </div>
+          </div>
+        `;
+
+        totalBar.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-xs font-bold text-champagne-light uppercase">BRANCH DIRECTOR KPI (${b.branchName} 전용 열람)</span>
+              <h3 class="text-lg sm:text-xl font-bold mt-0.5">${b.branchName} ${b.meta.managerName} 종합 KPI 점수: <span class="text-kakao">${b.managerTotalScore.toFixed(1)}점</span> / 100점 (${b.managerGrade}등급)</h3>
+              <p class="text-xs text-ivory/75 mt-1">지점 매출(35%) + 디자이너 평균매출 성장(30%) + 재방문 고객 비율(20%) + 직원 성장·유지(15%) 합산</p>
+            </div>
+            <span class="px-3 py-1.5 rounded-xl bg-white/10 text-xs font-semibold text-champagne-light">
+              🔒 타 지점 데이터 열람 제한 적용됨
+            </span>
+          </div>
+        `;
+
+        allDesCard.classList.remove('hidden');
+        branchFilterSelect.value = activeViewContext.branch;
+        branchFilterSelect.disabled = true;
+      } else {
+        // 디자이너 뷰 (본인 데이터만 열람)
+        const desUser = appState.users.find(u => u.id === activeViewContext.designerId) || appState.users.find(u => u.role === '디자이너');
+        const kpi = calculateDesignerKPI(desUser);
+
+        kpiGrid.innerHTML = `
+          <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-champagne">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-espresso-muted">① 개인매출 (목표 ${formatManwon(appState.targets.designerSales)})</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark">가중치 40%</span>
+            </div>
+            <p class="text-2xl font-extrabold text-espresso">${formatKRW(kpi.sales)}</p>
+            <p class="text-xs text-sage-dark font-bold mt-1">전월 대비 +${kpi.salesGrowthRate.toFixed(1)}%</p>
+            <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs">
+              <span class="text-espresso-muted">환산 점수</span>
+              <span class="font-extrabold text-espresso">${kpi.salesScore.toFixed(1)} / 40.0점</span>
+            </div>
+          </div>
+
+          <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-sage">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-espresso-muted">② 재방문 고객 비율 (목표 ${appState.targets.designerRevisitRate}%)</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-sage-bg text-sage-dark">가중치 30%</span>
+            </div>
+            <p class="text-2xl font-extrabold text-espresso">${kpi.revisitRate.toFixed(1)}%</p>
+            <p class="text-xs text-espresso-muted mt-1">재방문 ${kpi.revisitCust}명 ÷ 총 ${kpi.totalCust}명</p>
+            <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs">
+              <span class="text-espresso-muted">환산 점수</span>
+              <span class="font-extrabold text-espresso">${kpi.revisitScore.toFixed(1)} / 30.0점</span>
+            </div>
+          </div>
+
+          <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-espresso">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-espresso-muted">③ 객단가 (목표 ${formatKRW(appState.targets.designerAvgTicket)})</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark">가중치 20%</span>
+            </div>
+            <p class="text-2xl font-extrabold text-espresso">${formatKRW(kpi.avgTicket)}</p>
+            <p class="text-xs text-espresso-muted mt-1">고객 1인당 평균 시술단가</p>
+            <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs">
+              <span class="text-espresso-muted">환산 점수</span>
+              <span class="font-extrabold text-espresso">${kpi.ticketScore.toFixed(1)} / 20.0점</span>
+            </div>
+          </div>
+
+          <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-champagne-light">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-espresso-muted">④ 신규 고객수 (목표 ${appState.targets.designerNewCustomers}명)</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-sage-bg text-sage-dark">가중치 10%</span>
+            </div>
+            <p class="text-2xl font-extrabold text-espresso">${kpi.newCust}명</p>
+            <p class="text-xs text-espresso-muted mt-1">네이버 플레이스·소개 신규 유입</p>
+            <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs">
+              <span class="text-espresso-muted">환산 점수</span>
+              <span class="font-extrabold text-espresso">${kpi.newCustScore.toFixed(1)} / 10.0점</span>
+            </div>
+          </div>
+        `;
+
+        totalBar.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-xs font-bold text-champagne-light uppercase">PERSONAL DESIGNER KPI (${desUser.branch} · ${desUser.name} 전용)</span>
+              <h3 class="text-lg sm:text-xl font-bold mt-0.5">${desUser.name} ${desUser.title}님의 개인 KPI 총점: <span class="text-kakao">${kpi.totalScore.toFixed(1)}점</span> / 100점 (${kpi.grade}등급)</h3>
+              <p class="text-xs text-ivory/80 mt-1">💬 원장님 코칭 노트: "${desUser.coachingNote || '꾸준한 성장을 응원합니다!'}"</p>
+            </div>
+            <button type="button" onclick="switchMainTab('crm')" class="px-4 py-2.5 rounded-xl bg-kakao hover:bg-kakao-hover text-kakao-text text-xs font-extrabold transition shadow-md">
+              내 CRM 5대 지표 입력·수정하기 &rarr;
+            </button>
+          </div>
+        `;
+
+        // 디자이너는 타 디자이너 비교 차트를 숨김 (본인 결과값만 열람)
+        allDesCard.classList.add('hidden');
+      }
+
+      renderDashboardCharts();
+      renderDashboardTable();
+    }
+
+    function renderDashboardCharts() {
+      const metric = document.getElementById('dashboardMetricFilter')
+        ? document.getElementById('dashboardMetricFilter').value
+        : 'sales';
+
+      // Period labels (일별 / 월별 / 연별)
+      let periodLabels = [];
+      let periodMultipliers = [];
+      if (globalPeriod === 'daily') {
+        periodLabels = ['10/22(목)', '10/23(금)', '10/24(토)', '10/25(일)', '10/26(월)', '10/27(화)', '10/28(수)'];
+        periodMultipliers = [0.031, 0.036, 0.048, 0.045, 0.028, 0.032, 0.035];
+      } else if (globalPeriod === 'monthly') {
+        periodLabels = ['5월', '6월', '7월', '8월', '9월', '10월(현재)'];
+        periodMultipliers = [0.84, 0.88, 0.91, 0.94, 0.90, 1.0];
+      } else {
+        periodLabels = ['2024년', '2025년', '2026년(누적환산)'];
+        periodMultipliers = [9.8, 11.1, 12.0];
+      }
+
+      const ctx1 = document.getElementById('primaryDashboardChart');
+      const ctx2 = document.getElementById('secondaryDashboardChart');
+      if (!ctx1 || !ctx2 || typeof Chart === 'undefined') return;
+
+      if (primaryChartInstance) primaryChartInstance.destroy();
+      if (secondaryChartInstance) secondaryChartInstance.destroy();
+
+      const periodNameKor = globalPeriod === 'daily' ? '일별' : globalPeriod === 'monthly' ? '월별' : '연별';
+
+      if (activeViewContext.role === '대표원장') {
+        document.getElementById('mainChartTitle').textContent = `3대 지점 ${periodNameKor} 성과 추이 통합 비교`;
+        document.getElementById('secondaryChartTitle').textContent = '3대 지점원장 KPI 종합 점수 및 달성률 비교';
+        document.getElementById('secondaryChartScopeTag').textContent = '대표원장 총괄 뷰';
+
+        const bColors = ['#B08968', '#6B7F6E', '#2C221E'];
+        const datasets1 = BRANCH_NAMES.map((bName, idx) => {
+          const sum = calculateBranchSummary(bName);
+          const baseVal = metric === 'sales'
+            ? Math.round(sum.totalBranchSales / 10000)
+            : metric === 'kpiScore'
+            ? Number(sum.managerTotalScore.toFixed(1))
+            : metric === 'revisitRate'
+            ? Number(sum.avgRevisitRate.toFixed(1))
+            : sum.avgTicket;
+
+          const dataArr = periodMultipliers.map((m, i) => {
+            if (metric === 'sales') return Math.round(baseVal * m * (1 + (idx - 1) * 0.015));
+            const drift = (i - periodMultipliers.length + 1) * 0.6;
+            return Number(Math.min(100, Math.max(50, baseVal + drift)).toFixed(1));
+          });
+
+          return {
+            label: bName,
+            data: dataArr,
+            borderColor: bColors[idx],
+            backgroundColor: bColors[idx] + '22',
+            borderWidth: 2.5,
+            tension: 0.35,
+            fill: true
+          };
+        });
+
+        primaryChartInstance = new Chart(ctx1, {
+          type: 'line',
+          data: { labels: periodLabels, datasets: datasets1 },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } }
+          }
+        });
+
+        const summaries = BRANCH_NAMES.map(b => calculateBranchSummary(b));
+        secondaryChartInstance = new Chart(ctx2, {
+          type: 'bar',
+          data: {
+            labels: summaries.map(s => `${s.branchName}\n(${s.meta.managerName})`),
+            datasets: [
+              {
+                label: '지점원장 KPI 점수 (100점 만점)',
+                data: summaries.map(s => Number(s.managerTotalScore.toFixed(1))),
+                backgroundColor: ['#B08968', '#6B7F6E', '#2C221E'],
+                borderRadius: 8
+              },
+              {
+                label: '지점 매출 목표 달성률 (%)',
+                data: summaries.map(s => Number(s.salesAchievementRate.toFixed(1))),
+                backgroundColor: '#E6DEC8',
+                borderRadius: 8
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } },
+            scales: { y: { beginAtZero: true, max: 115 } }
+          }
+        });
+      } else if (activeViewContext.role === '지점원장') {
+        const bName = activeViewContext.branch;
+        const bSum = calculateBranchSummary(bName);
+        const branchDesigners = appState.users.filter(u => u.branch === bName && u.role !== '대표원장');
+
+        document.getElementById('mainChartTitle').textContent = `${bName} ${periodNameKor} 매출 추이 및 목표 비교`;
+        document.getElementById('secondaryChartTitle').textContent = `${bName} 소속 디자이너 KPI 종합 점수 비교`;
+        document.getElementById('secondaryChartScopeTag').textContent = `${bName} 전용`;
+
+        const baseManwon = Math.round(bSum.totalBranchSales / 10000);
+        const targetManwon = Math.round(bSum.meta.targetMonthlySales / 10000);
+
+        primaryChartInstance = new Chart(ctx1, {
+          type: 'bar',
+          data: {
+            labels: periodLabels,
+            datasets: [
+              {
+                label: `${bName} 실적 매출(만원)`,
+                data: periodMultipliers.map(m => Math.round(baseManwon * m)),
+                backgroundColor: '#B08968',
+                borderRadius: 8
+              },
+              {
+                label: `목표 매출(만원)`,
+                data: periodMultipliers.map(m => Math.round(targetManwon * m)),
+                backgroundColor: '#E6DEC8',
+                borderRadius: 8
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } }
+          }
+        });
+
+        secondaryChartInstance = new Chart(ctx2, {
+          type: 'bar',
+          data: {
+            labels: branchDesigners.map(u => `${u.name} ${u.title}`),
+            datasets: [
+              {
+                label: '디자이너 KPI 점수 (100점 만점)',
+                data: branchDesigners.map(u => Number(calculateDesignerKPI(u).totalScore.toFixed(1))),
+                backgroundColor: '#6B7F6E',
+                borderRadius: 6
+              },
+              {
+                label: '재방문 고객 비율 (%)',
+                data: branchDesigners.map(u => Number(calculateDesignerKPI(u).revisitRate.toFixed(1))),
+                backgroundColor: '#B08968',
+                borderRadius: 6
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } },
+            scales: { y: { beginAtZero: true, max: 105 } }
+          }
+        });
+      } else {
+        // 디자이너 개인 차트
+        const desUser = appState.users.find(u => u.id === activeViewContext.designerId) || appState.users.find(u => u.role === '디자이너');
+        const kpi = calculateDesignerKPI(desUser);
+
+        document.getElementById('mainChartTitle').textContent = `${desUser.name} ${desUser.title}님의 ${periodNameKor} 개인매출 추이`;
+        document.getElementById('secondaryChartTitle').textContent = `${desUser.name}님의 4대 KPI 배점 대비 달성 구조`;
+        document.getElementById('secondaryChartScopeTag').textContent = '본인 결과값 전용';
+
+        const baseManwon = Math.round(kpi.sales / 10000);
+        primaryChartInstance = new Chart(ctx1, {
+          type: 'line',
+          data: {
+            labels: periodLabels,
+            datasets: [
+              {
+                label: `${desUser.name} 개인매출 (만원)`,
+                data: periodMultipliers.map(m => Math.round(baseManwon * m)),
+                borderColor: '#B08968',
+                backgroundColor: 'rgba(176, 137, 104, 0.2)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.35
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } }
+          }
+        });
+
+        secondaryChartInstance = new Chart(ctx2, {
+          type: 'bar',
+          data: {
+            labels: ['개인매출(40점)', '재방문비율(30점)', '객단가(20점)', '신규고객(10점)'],
+            datasets: [
+              {
+                label: '내 획득 점수',
+                data: [
+                  Number(kpi.salesScore.toFixed(1)),
+                  Number(kpi.revisitScore.toFixed(1)),
+                  Number(kpi.ticketScore.toFixed(1)),
+                  Number(kpi.newCustScore.toFixed(1))
+                ],
+                backgroundColor: ['#B08968', '#6B7F6E', '#2C221E', '#C8A688'],
+                borderRadius: 6
+              },
+              {
+                label: '배점 만점',
+                data: [40, 30, 20, 10],
+                backgroundColor: '#E6DEC8',
+                borderRadius: 6
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } },
+            scales: { y: { beginAtZero: true, max: 45 } }
+          }
+        });
+      }
+
+      // Render All Designers & Managers Comparison Chart (for CEO & Branch Manager)
+      const ctxAll = document.getElementById('allDesignersComparisonChart');
+      if (ctxAll && activeViewContext.role !== '디자이너') {
+        if (allDesignersChartInstance) allDesignersChartInstance.destroy();
+        const branchFilter = activeViewContext.role === '지점원장'
+          ? activeViewContext.branch
+          : (document.getElementById('designerChartBranchFilter').value || 'ALL');
+
+        const targetUsers = appState.users.filter(u => {
+          if (branchFilter === 'ALL') return true;
+          return u.branch === branchFilter;
+        });
+
+        allDesignersChartInstance = new Chart(ctxAll, {
+          type: 'bar',
+          data: {
+            labels: targetUsers.map(u => `[${u.branch.replace('파주 ', '')}] ${u.name}`),
+            datasets: [
+              {
+                label: '개인매출 (백만원)',
+                data: targetUsers.map(u => Number((u.sales / 1000000).toFixed(2))),
+                backgroundColor: '#2C221E',
+                borderRadius: 5,
+                yAxisID: 'y'
+              },
+              {
+                label: '종합 KPI 점수 (점)',
+                data: targetUsers.map(u => Number(calculateDesignerKPI(u).totalScore.toFixed(1))),
+                backgroundColor: '#B08968',
+                borderRadius: 5,
+                yAxisID: 'y1'
+              },
+              {
+                label: '재방문 고객 비율 (%)',
+                data: targetUsers.map(u => Number(calculateDesignerKPI(u).revisitRate.toFixed(1))),
+                backgroundColor: '#6B7F6E',
+                borderRadius: 5,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } },
+            scales: {
+              y: {
+                type: 'linear',
+                position: 'left',
+                title: { display: true, text: '개인매출 (백만원)' },
+                beginAtZero: true
+              },
+              y1: {
+                type: 'linear',
+                position: 'right',
+                title: { display: true, text: 'KPI 점수 / 재방문율 (%)' },
+                beginAtZero: true,
+                max: 105,
+                grid: { drawOnChartArea: false }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function getVisibleUsersForCurrentRole() {
+      if (activeViewContext.role === '대표원장') {
+        return appState.users;
+      } else if (activeViewContext.role === '지점원장') {
+        return appState.users.filter(u => u.branch === activeViewContext.branch && u.role !== '대표원장');
+      } else {
+        return appState.users.filter(u => u.id === activeViewContext.designerId);
+      }
+    }
+
+    function renderDashboardTable() {
+      const tbody = document.getElementById('dashboardPerformanceTableBody');
+      if (!tbody) return;
+
+      const query = (document.getElementById('dashboardSearchInput')?.value || '').trim().toLowerCase();
+      const visibleUsers = getVisibleUsersForCurrentRole().filter(u => {
+        if (!query) return true;
+        return u.name.toLowerCase().includes(query) || u.branch.toLowerCase().includes(query) || u.role.toLowerCase().includes(query);
+      });
+
+      tbody.innerHTML = visibleUsers.map(u => {
+        const kpi = calculateDesignerKPI(u);
+        const roleBadgeCls = u.role === '대표원장'
+          ? 'bg-espresso text-ivory'
+          : u.role === '지점원장'
+          ? 'bg-champagne text-white'
+          : 'bg-sage-bg text-sage-dark border border-sage/30';
+        const customBadge = u.isCustom ? '<span class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-kakao text-kakao-text font-extrabold">신규가입</span>' : '';
+
+        return `
+          <tr class="hover:bg-ivory/70 transition">
+            <td class="py-3.5 px-4">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-espresso">${u.name}</span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${roleBadgeCls}">${u.title}</span>
+                ${customBadge}
+              </div>
+            </td>
+            <td class="py-3.5 px-4 font-medium text-espresso-muted">${u.branch}</td>
+            <td class="py-3.5 px-4 text-right font-bold text-espresso">${formatKRW(kpi.sales)}</td>
+            <td class="py-3.5 px-4 text-right text-espresso">${kpi.totalCust}명</td>
+            <td class="py-3.5 px-4 text-right text-espresso">${kpi.newCust}명</td>
+            <td class="py-3.5 px-4 text-right text-espresso">${kpi.revisitCust}명</td>
+            <td class="py-3.5 px-4 text-right">
+              <span class="font-bold text-sage-dark">${kpi.revisitRate.toFixed(1)}%</span>
+            </td>
+            <td class="py-3.5 px-4 text-right font-semibold text-espresso">${formatKRW(kpi.avgTicket)}</td>
+            <td class="py-3.5 px-4 text-right">
+              <span class="font-extrabold text-espresso text-base">${kpi.totalScore.toFixed(1)}점</span>
+            </td>
+            <td class="py-3.5 px-4 text-center">
+              <div class="inline-flex items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded text-xs font-extrabold bg-champagne-bg text-champagne-dark">${kpi.grade}</span>
+                <button type="button" onclick="jumpToCrmForUser('${u.id}')" class="px-2.5 py-1 rounded-lg bg-espresso hover:bg-espresso-light text-ivory text-xs font-bold transition">
+                  CRM 수정
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function jumpToCrmForUser(userId) {
+      const user = appState.users.find(u => u.id === userId);
+      if (!user) return;
+      switchMainTab('crm');
+      const sel = document.getElementById('crmDesignerSelect');
+      if (sel) {
+        sel.value = user.id;
+        handleCrmDesignerSelectChange();
+      }
+    }
+
+    // -----------------------------------------------------------------------
+    // 8. RENDER TAB 2: DESIGNER CRM 5-METRIC AUTO CALCULATOR
+    // -----------------------------------------------------------------------
+    function renderCrmCalculatorView() {
+      const sel = document.getElementById('crmDesignerSelect');
+      if (!sel) return;
+
+      const editableUsers = getVisibleUsersForCurrentRole();
+      const currentVal = sel.value;
+      sel.innerHTML = editableUsers.map(u => `
+        <option value="${u.id}">[${u.branch}] ${u.name} ${u.title}</option>
+      `).join('');
+
+      if (editableUsers.some(u => u.id === currentVal)) {
+        sel.value = currentVal;
+      } else if (activeViewContext.role === '디자이너') {
+        sel.value = activeViewContext.designerId;
+      } else if (editableUsers.length > 0) {
+        sel.value = editableUsers[0].id;
+      }
+
+      // 디자이너 직급일 때는 본인만 선택 가능하도록 고정
+      sel.disabled = (activeViewContext.role === '디자이너');
+
+      // Update target labels
+      document.getElementById('crmTargetSalesLabel').textContent = `목표 개인매출: ${formatKRW(appState.targets.designerSales)}`;
+      document.getElementById('crmTargetNewLabel').textContent = `목표 신규: ${appState.targets.designerNewCustomers}명`;
+      document.getElementById('crmTargetTicketLabel').textContent = `목표 객단가: ${formatKRW(appState.targets.designerAvgTicket)}`;
+
+      loadCurrentDesignerCrmToForm();
+      renderCrmHistoryTable();
+    }
+
+    function handleCrmDesignerSelectChange() {
+      loadCurrentDesignerCrmToForm();
+    }
+
+    function loadCurrentDesignerCrmToForm() {
+      const sel = document.getElementById('crmDesignerSelect');
+      if (!sel) return;
+      const user = appState.users.find(u => u.id === sel.value) || appState.users[0];
+      if (!user) return;
+
+      document.getElementById('crmBranchReadonly').value = user.branch;
+      document.getElementById('crmInputSales').value = user.sales;
+      document.getElementById('crmInputTotalCustomers').value = user.totalCustomers;
+      document.getElementById('crmInputNewCustomers').value = user.newCustomers;
+      document.getElementById('crmInputRevisitCustomers').value = user.revisitCustomers;
+      document.getElementById('crmInputAvgTicket').value = user.avgTicket;
+      document.getElementById('crmCalcDesignerBadge').textContent = `${user.branch} · ${user.name} ${user.title}`;
+
+      recalculateCrmLive();
+    }
+
+    function autoFillRevisitCustomers() {
+      const total = Math.max(0, Number(document.getElementById('crmInputTotalCustomers').value) || 0);
+      const newC = Math.max(0, Number(document.getElementById('crmInputNewCustomers').value) || 0);
+      const revisit = Math.max(0, total - newC);
+      document.getElementById('crmInputRevisitCustomers').value = revisit;
+      recalculateCrmLive();
+      showToast(`재방문 고객수가 (총 고객 ${total}명 - 신규 ${newC}명) = ${revisit}명으로 자동 입력되었습니다.`);
+    }
+
+    function autoFillAvgTicket() {
+      const sales = Math.max(0, Number(document.getElementById('crmInputSales').value) || 0);
+      const total = Math.max(1, Number(document.getElementById('crmInputTotalCustomers').value) || 1);
+      const ticket = Math.round(sales / total);
+      document.getElementById('crmInputAvgTicket').value = ticket;
+      recalculateCrmLive();
+      showToast(`객단가가 (개인매출 ÷ 총 고객수) = ${formatKRW(ticket)}으로 자동 계산되었습니다.`);
+    }
+
+    function recalculateCrmLive() {
+      const sales = Math.max(0, Number(document.getElementById('crmInputSales').value) || 0);
+      const totalCustomers = Math.max(1, Number(document.getElementById('crmInputTotalCustomers').value) || 1);
+      const newCustomers = Math.max(0, Number(document.getElementById('crmInputNewCustomers').value) || 0);
+      const revisitCustomers = Math.max(0, Number(document.getElementById('crmInputRevisitCustomers').value) || 0);
+      const avgTicket = Math.max(0, Number(document.getElementById('crmInputAvgTicket').value) || 0);
+
+      document.getElementById('crmSalesKoreanText').textContent = `환산 금액: 약 ${formatManwon(sales)}`;
+
+      const sumHint = document.getElementById('crmCustomerSumHint');
+      if (newCustomers + revisitCustomers === totalCustomers) {
+        sumHint.textContent = `✅ 신규(${newCustomers}명) + 재방문(${revisitCustomers}명) = 총 고객수(${totalCustomers}명) 일치`;
+        sumHint.className = 'text-sage-dark font-semibold';
+      } else {
+        sumHint.textContent = `ℹ️ 참고: 신규+재방문 합계(${newCustomers + revisitCustomers}명)와 총 고객수(${totalCustomers}명)가 다릅니다.`;
+        sumHint.className = 'text-champagne-dark font-medium';
+      }
+
+      const result = calculateDesignerKPI({
+        sales,
+        totalCustomers,
+        newCustomers,
+        revisitCustomers,
+        avgTicket,
+        prevSales: sales * 0.9
+      });
+
+      document.getElementById('crmLiveRevisitRate').textContent = result.revisitRate.toFixed(1);
+      document.getElementById('crmLiveTotalKpiScore').textContent = result.totalScore.toFixed(1);
+      document.getElementById('crmLiveGradeBadge').textContent = `${result.grade}등급`;
+
+      document.getElementById('crmLiveScoreSales').textContent = `${result.salesScore.toFixed(1)} / 40.0점`;
+      document.getElementById('crmLiveScoreRevisit').textContent = `${result.revisitScore.toFixed(1)} / 30.0점`;
+      document.getElementById('crmLiveScoreTicket').textContent = `${result.ticketScore.toFixed(1)} / 20.0점`;
+      document.getElementById('crmLiveScoreNew').textContent = `${result.newCustScore.toFixed(1)} / 10.0점`;
+
+      document.getElementById('crmBarSales').style.width = `${Math.min(100, (result.salesScore / 40) * 100)}%`;
+      document.getElementById('crmBarRevisit').style.width = `${Math.min(100, (result.revisitScore / 30) * 100)}%`;
+      document.getElementById('crmBarTicket').style.width = `${Math.min(100, (result.ticketScore / 20) * 100)}%`;
+      document.getElementById('crmBarNew').style.width = `${Math.min(100, (result.newCustScore / 10) * 100)}%`;
+
+      const coachingEl = document.getElementById('crmLiveCoachingText');
+      if (result.totalScore >= 95) {
+        coachingEl.textContent = `최상위 S등급 성과입니다! 재방문 비율(${result.revisitRate.toFixed(1)}%)과 개인매출 모두 목표치를 훌륭히 달성하고 있습니다.`;
+      } else if (result.revisitRate < appState.targets.designerRevisitRate) {
+        coachingEl.textContent = `재방문 고객 비율(${result.revisitRate.toFixed(1)}%)을 목표(${appState.targets.designerRevisitRate}%)까지 높이면 KPI 점수가 크게 상승합니다. 시술 후 2주 차 케어 알림톡을 추천합니다.`;
+      } else {
+        coachingEl.textContent = `안정적인 재방문율(${result.revisitRate.toFixed(1)}%)을 유지 중입니다. 프리미엄 클리닉 결합으로 객단가를 높이면 S등급 진입이 가능합니다.`;
+      }
+    }
+
+    function handleSaveCrmRecord(e) {
+      e.preventDefault();
+      const sel = document.getElementById('crmDesignerSelect');
+      if (!sel || !sel.value) return;
+
+      const user = appState.users.find(u => u.id === sel.value);
+      if (!user) return;
+
+      const sales = Math.max(0, Number(document.getElementById('crmInputSales').value) || 0);
+      const totalCustomers = Math.max(1, Number(document.getElementById('crmInputTotalCustomers').value) || 1);
+      const newCustomers = Math.max(0, Number(document.getElementById('crmInputNewCustomers').value) || 0);
+      const revisitCustomers = Math.max(0, Number(document.getElementById('crmInputRevisitCustomers').value) || 0);
+      const avgTicket = Math.max(0, Number(document.getElementById('crmInputAvgTicket').value) || 0);
+      const period = document.getElementById('crmRecordPeriodInput').value || '2026-10';
+
+      user.prevSales = user.sales || sales * 0.9;
+      user.sales = sales;
+      user.totalCustomers = totalCustomers;
+      user.newCustomers = newCustomers;
+      user.revisitCustomers = revisitCustomers;
+      user.avgTicket = avgTicket;
+
+      appState.crmHistory.unshift({
+        id: 'h_' + Date.now(),
+        period,
+        userId: user.id,
+        userName: user.name,
+        branch: user.branch,
+        sales,
+        totalCustomers,
+        newCustomers,
+        revisitCustomers,
+        avgTicket
+      });
+
+      saveAppState();
+      renderCrmHistoryTable();
+      renderDashboardView();
+      const kpi = calculateDesignerKPI(user);
+      showToast(`✅ [${user.branch} · ${user.name}] CRM 5대 지표가 저장되었습니다! (재방문율 ${kpi.revisitRate.toFixed(1)}%, KPI 총점 ${kpi.totalScore.toFixed(1)}점)`);
+    }
+
+    function renderCrmHistoryTable() {
+      const tbody = document.getElementById('crmHistoryTableBody');
+      const countBadge = document.getElementById('crmHistoryCountBadge');
+      if (!tbody) return;
+
+      const allowedUserIds = new Set(getVisibleUsersForCurrentRole().map(u => u.id));
+      const filteredHistory = appState.crmHistory.filter(h => allowedUserIds.has(h.userId));
+
+      if (countBadge) countBadge.textContent = `열람 가능 기록 총 ${filteredHistory.length}건`;
+
+      tbody.innerHTML = filteredHistory.map(h => {
+        const kpi = calculateDesignerKPI({
+          sales: h.sales,
+          totalCustomers: h.totalCustomers,
+          newCustomers: h.newCustomers,
+          revisitCustomers: h.revisitCustomers,
+          avgTicket: h.avgTicket
+        });
+        return `
+          <tr class="hover:bg-ivory/60 transition">
+            <td class="py-3 px-4 font-semibold text-espresso">${h.period}</td>
+            <td class="py-3 px-4 font-bold text-espresso">${h.userName}</td>
+            <td class="py-3 px-4 text-espresso-muted">${h.branch}</td>
+            <td class="py-3 px-4 text-right font-bold text-espresso">${formatKRW(h.sales)}</td>
+            <td class="py-3 px-4 text-right">${h.totalCustomers}명</td>
+            <td class="py-3 px-4 text-right">${h.newCustomers}명</td>
+            <td class="py-3 px-4 text-right">${h.revisitCustomers}명</td>
+            <td class="py-3 px-4 text-right font-bold text-sage-dark">${kpi.revisitRate.toFixed(1)}%</td>
+            <td class="py-3 px-4 text-right">${formatKRW(h.avgTicket)}</td>
+            <td class="py-3 px-4 text-right font-extrabold text-espresso">${kpi.totalScore.toFixed(1)}점 (${kpi.grade})</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // -----------------------------------------------------------------------
+    // 9. RENDER TAB 3: 3-BRANCH COMPARATIVE ANALYSIS DASHBOARD (REQUIREMENT 10)
+    // -----------------------------------------------------------------------
+    function renderBranchesComparisonView() {
+      const cardsContainer = document.getElementById('threeBranchComparisonCards');
+      const matrixBody = document.getElementById('branchMatrixTableBody');
+      const notice = document.getElementById('branchTabRestrictionNotice');
+      if (!cardsContainer || !matrixBody) return;
+
+      const isRestricted = activeViewContext.role !== '대표원장';
+      if (notice) {
+        if (isRestricted) notice.classList.remove('hidden');
+        else notice.classList.add('hidden');
+      }
+
+      const summaries = BRANCH_NAMES.map(b => calculateBranchSummary(b));
+      const ceo = calculateCEOEnterpriseKPI();
+
+      cardsContainer.innerHTML = summaries.map(s => {
+        const isMyBranch = activeViewContext.role === '대표원장' || activeViewContext.branch === s.branchName;
+        const borderCls = isMyBranch ? 'border-2 border-champagne' : 'border border-ivory-border opacity-85';
+
+        return `
+          <div class="card-luxury rounded-2xl p-6 ${borderCls} flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-espresso text-champagne-light">${s.meta.badge}</span>
+                <span class="text-xs font-extrabold px-2.5 py-0.5 rounded bg-sage-bg text-sage-dark">네이버 ★ ${s.meta.naverRating}</span>
+              </div>
+              <h4 class="text-xl font-bold text-espresso">${s.branchName}</h4>
+              <p class="text-xs text-espresso-muted mt-0.5">지점 총괄: <strong class="text-espresso">${s.meta.managerName}</strong> · 소속 디자이너 ${s.designerCount}명</p>
+
+              <!-- Manager Total KPI Score Box -->
+              <div class="mt-4 p-4 rounded-xl bg-ivory border border-ivory-border flex items-center justify-between">
+                <div>
+                  <p class="text-xs text-espresso-muted font-medium">지점원장 KPI 종합 달성도</p>
+                  <p class="text-2xl font-extrabold text-espresso mt-0.5">${s.managerTotalScore.toFixed(1)}점 <span class="text-xs font-bold text-champagne-dark">(${s.managerGrade}등급)</span></p>
+                </div>
+                <div class="text-right">
+                  <p class="text-xs text-espresso-muted">지점 매출 달성률</p>
+                  <p class="text-base font-extrabold text-sage-dark">${s.salesAchievementRate.toFixed(1)}%</p>
+                </div>
+              </div>
+
+              <!-- 4 Branch Manager Weighted KPI Progress -->
+              <div class="mt-4 space-y-2.5 text-xs">
+                <div class="flex justify-between">
+                  <span class="text-espresso-muted">① 지점 매출 (35%)</span>
+                  <span class="font-bold text-espresso">${formatManwon(s.totalBranchSales)} (${s.scoreBranchSales.toFixed(1)}점)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-espresso-muted">② 디자이너 평균매출 성장 (30%)</span>
+                  <span class="font-bold text-sage-dark">+${s.designerAvgGrowthRate.toFixed(1)}% (${s.scoreDesignerGrowth.toFixed(1)}점)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-espresso-muted">③ 재방문 고객 비율 (20%)</span>
+                  <span class="font-bold text-espresso">${s.avgRevisitRate.toFixed(1)}% (${s.scoreRevisit.toFixed(1)}점)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-espresso-muted">④ 직원 성장·유지 (15%)</span>
+                  <span class="font-bold text-espresso">${s.meta.staffRetentionScore.toFixed(1)}점 (${s.scoreRetention.toFixed(1)}점)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-ivory-border flex items-center justify-between text-xs">
+              <span class="text-espresso-muted">영업이익 (${s.meta.operatingMarginRate}%)</span>
+              <span class="font-extrabold text-espresso">${formatManwon(s.operatingProfit)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Matrix Table
+      const [s1, s2, s3] = summaries;
+      const avgRevisitAll = ((s1.avgRevisitRate + s2.avgRevisitRate + s3.avgRevisitRate) / 3).toFixed(1);
+      const avgTicketAll = Math.round((s1.avgTicket + s2.avgTicket + s3.avgTicket) / 3);
+      const avgMgrScoreAll = ((s1.managerTotalScore + s2.managerTotalScore + s3.managerTotalScore) / 3).toFixed(1);
+
+      matrixBody.innerHTML = `
+        <tr>
+          <td class="py-3 px-4 font-bold text-espresso">지점 총 매출 (목표 대비 달성률)</td>
+          <td class="py-3 px-4 text-right font-bold">${formatKRW(s1.totalBranchSales)} (${s1.salesAchievementRate.toFixed(1)}%)</td>
+          <td class="py-3 px-4 text-right font-bold">${formatKRW(s2.totalBranchSales)} (${s2.salesAchievementRate.toFixed(1)}%)</td>
+          <td class="py-3 px-4 text-right font-bold">${formatKRW(s3.totalBranchSales)} (${s3.salesAchievementRate.toFixed(1)}%)</td>
+          <td class="py-3 px-4 text-right font-extrabold bg-champagne-bg/40 text-espresso">${formatKRW(ceo.totalAllSales)} (${ceo.allTargetAchievementRate.toFixed(1)}%)</td>
+        </tr>
+        <tr>
+          <td class="py-3 px-4 font-bold text-espresso">영업이익 (대표원장 KPI 30%)</td>
+          <td class="py-3 px-4 text-right">${formatKRW(s1.operatingProfit)} (${s1.meta.operatingMarginRate}%)</td>
+          <td class="py-3 px-4 text-right">${formatKRW(s2.operatingProfit)} (${s2.meta.operatingMarginRate}%)</td>
+          <td class="py-3 px-4 text-right">${formatKRW(s3.operatingProfit)} (${s3.meta.operatingMarginRate}%)</td>
+          <td class="py-3 px-4 text-right font-extrabold bg-champagne-bg/40 text-sage-dark">${formatKRW(ceo.totalOperatingProfit)}</td>
+        </tr>
+        <tr>
+          <td class="py-3 px-4 font-bold text-espresso">디자이너 1인당 평균매출 (성장률)</td>
+          <td class="py-3 px-4 text-right">${formatManwon(s1.avgDesignerSales)} (+${s1.designerAvgGrowthRate.toFixed(1)}%)</td>
+          <td class="py-3 px-4 text-right">${formatManwon(s2.avgDesignerSales)} (+${s2.designerAvgGrowthRate.toFixed(1)}%)</td>
+          <td class="py-3 px-4 text-right">${formatManwon(s3.avgDesignerSales)} (+${s3.designerAvgGrowthRate.toFixed(1)}%)</td>
+          <td class="py-3 px-4 text-right font-bold bg-champagne-bg/40">+${ceo.allSalesGrowthRate.toFixed(1)}% 성장</td>
+        </tr>
+        <tr>
+          <td class="py-3 px-4 font-bold text-espresso">평균 재방문 고객 비율 (지점원장 20% / 디자이너 30%)</td>
+          <td class="py-3 px-4 text-right font-bold text-sage-dark">${s1.avgRevisitRate.toFixed(1)}%</td>
+          <td class="py-3 px-4 text-right font-bold text-sage-dark">${s2.avgRevisitRate.toFixed(1)}%</td>
+          <td class="py-3 px-4 text-right font-bold text-sage-dark">${s3.avgRevisitRate.toFixed(1)}%</td>
+          <td class="py-3 px-4 text-right font-extrabold bg-champagne-bg/40 text-sage-dark">${avgRevisitAll}%</td>
+        </tr>
+        <tr>
+          <td class="py-3 px-4 font-bold text-espresso">평균 객단가 (디자이너 KPI 20%)</td>
+          <td class="py-3 px-4 text-right">${formatKRW(s1.avgTicket)}</td>
+          <td class="py-3 px-4 text-right">${formatKRW(s2.avgTicket)}</td>
+          <td class="py-3 px-4 text-right">${formatKRW(s3.avgTicket)}</td>
+          <td class="py-3 px-4 text-right font-bold bg-champagne-bg/40">${formatKRW(avgTicketAll)}</td>
+        </tr>
+        <tr>
+          <td class="py-3 px-4 font-bold text-espresso">지점원장 종합 KPI 평가 점수 (100점 만점)</td>
+          <td class="py-3 px-4 text-right font-extrabold text-espresso">${s1.managerTotalScore.toFixed(1)}점 (${s1.managerGrade})</td>
+          <td class="py-3 px-4 text-right font-extrabold text-espresso">${s2.managerTotalScore.toFixed(1)}점 (${s2.managerGrade})</td>
+          <td class="py-3 px-4 text-right font-extrabold text-espresso">${s3.managerTotalScore.toFixed(1)}점 (${s3.managerGrade})</td>
+          <td class="py-3 px-4 text-right font-extrabold bg-champagne-bg/40 text-espresso">평균 ${avgMgrScoreAll}점 / 대표원장 ${ceo.ceoTotalScore.toFixed(1)}점</td>
+        </tr>
+      `;
+
+      // Render Branch Charts
+      const ctxFin = document.getElementById('branchFinancialChart');
+      const ctxRad = document.getElementById('branchRadarChart');
+      if (!ctxFin || !ctxRad || typeof Chart === 'undefined') return;
+
+      if (branchFinancialChartInstance) branchFinancialChartInstance.destroy();
+      if (branchRadarChartInstance) branchRadarChartInstance.destroy();
+
+      branchFinancialChartInstance = new Chart(ctxFin, {
+        type: 'bar',
+        data: {
+          labels: summaries.map(s => s.branchName),
+          datasets: [
+            {
+              label: '실제 달성 매출 (만원)',
+              data: summaries.map(s => Math.round(s.totalBranchSales / 10000)),
+              backgroundColor: '#2C221E',
+              borderRadius: 8
+            },
+            {
+              label: '월 목표 매출 (만원)',
+              data: summaries.map(s => Math.round(s.meta.targetMonthlySales / 10000)),
+              backgroundColor: '#E6DEC8',
+              borderRadius: 8
+            },
+            {
+              label: '영업이익 (만원)',
+              data: summaries.map(s => Math.round(s.operatingProfit / 10000)),
+              backgroundColor: '#B08968',
+              borderRadius: 8
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+
+      branchRadarChartInstance = new Chart(ctxRad, {
+        type: 'radar',
+        data: {
+          labels: ['지점매출 달성도', '디자이너 평균성장', '재방문 고객비율', '직원 성장·유지', '영업이익률'],
+          datasets: summaries.map((s, idx) => {
+            const colors = ['#B08968', '#6B7F6E', '#2C221E'];
+            return {
+              label: s.branchName,
+              data: [
+                Math.min(100, Number(s.salesAchievementRate.toFixed(1))),
+                Math.min(100, Number(((s.scoreDesignerGrowth / 30) * 100).toFixed(1))),
+                Math.min(100, Number(((s.scoreRevisit / 20) * 100).toFixed(1))),
+                s.meta.staffRetentionScore,
+                Math.min(100, s.meta.operatingMarginRate * 3.2)
+              ],
+              borderColor: colors[idx],
+              backgroundColor: colors[idx] + '22',
+              borderWidth: 2
+            };
+          })
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } },
+          scales: { r: { beginAtZero: true, max: 100 } }
+        }
+      });
+    }
+
+    // -----------------------------------------------------------------------
+    // 10. RENDER TAB 4: MEMBERS & COACHING BOARD
+    // -----------------------------------------------------------------------
+    function renderMembersCoachingView() {
+      const grid = document.getElementById('memberCardsGrid');
+      if (!grid) return;
+
+      const visibleUsers = getVisibleUsersForCurrentRole();
+      const canEditCoaching = activeViewContext.role === '대표원장' || activeViewContext.role === '지점원장';
+
+      grid.innerHTML = visibleUsers.map(u => {
+        const kpi = calculateDesignerKPI(u);
+        return `
+          <div class="card-luxury rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-10 h-10 rounded-xl bg-espresso text-champagne-light font-bold flex items-center justify-center text-sm">
+                    ${u.name.slice(0, 1)}
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-1.5">
+                      <h4 class="font-bold text-espresso text-base">${u.name} ${u.title}</h4>
+                      ${u.isCustom ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-kakao text-kakao-text font-extrabold">신규가입</span>' : ''}
+                    </div>
+                    <p class="text-xs text-espresso-muted">${u.branch}</p>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-lg bg-champagne-bg text-champagne-dark font-extrabold text-xs">
+                  ${kpi.totalScore.toFixed(1)}점 (${kpi.grade})
+                </span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 p-3 rounded-xl bg-ivory text-xs mb-3">
+                <div>
+                  <span class="text-espresso-muted">개인매출:</span>
+                  <p class="font-bold text-espresso">${formatManwon(kpi.sales)}</p>
+                </div>
+                <div>
+                  <span class="text-espresso-muted">재방문율:</span>
+                  <p class="font-bold text-sage-dark">${kpi.revisitRate.toFixed(1)}% (${kpi.revisitCust}/${kpi.totalCust}명)</p>
+                </div>
+                <div>
+                  <span class="text-espresso-muted">객단가:</span>
+                  <p class="font-bold text-espresso">${formatKRW(kpi.avgTicket)}</p>
+                </div>
+                <div>
+                  <span class="text-espresso-muted">신규 고객수:</span>
+                  <p class="font-bold text-espresso">${kpi.newCust}명</p>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-xl bg-sage-bg/70 border border-sage/20 text-xs">
+                <p class="font-bold text-sage-dark mb-1">💬 성장 코칭 노트</p>
+                <p class="text-espresso leading-relaxed">${u.coachingNote || '등록된 코칭 메모가 없습니다.'}</p>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-ivory-border flex items-center justify-between gap-2">
+              <button type="button" onclick="jumpToCrmForUser('${u.id}')" class="flex-1 py-2 px-3 rounded-xl bg-espresso hover:bg-espresso-light text-ivory text-xs font-bold transition">
+                CRM 5대 지표 입력
+              </button>
+              ${canEditCoaching ? `
+                <button type="button" onclick="openCoachingModal('${u.id}')" class="py-2 px-3 rounded-xl border border-champagne text-champagne-dark hover:bg-champagne-bg text-xs font-bold transition">
+                  코칭 작성
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // -----------------------------------------------------------------------
+    // 11. MODAL HANDLERS & EXPORT / RESET UTILITIES
+    // -----------------------------------------------------------------------
+    function openQuickSignupModal() {
+      const m = document.getElementById('quickSignupModal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+
+    function closeQuickSignupModal() {
+      const m = document.getElementById('quickSignupModal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function handleModalSignupSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('modalSignupName').value.trim();
+      const branch = document.getElementById('modalSignupBranch').value;
+      const role = document.getElementById('modalSignupRole').value;
+      const switchNow = document.getElementById('modalSwitchToNewUser').checked;
+
+      if (!name) return;
+      const newUser = registerNewMember(name, branch, role, true);
+      document.getElementById('modalSignupName').value = '';
+      closeQuickSignupModal();
+
+      if (switchNow) {
+        establishUserSession(newUser, true);
+        showToast(`🎉 [${branch}] ${name} ${role}님으로 회원가입 및 계정 전환이 완료되었습니다!`);
+      } else {
+        syncAllSelectorsAndRender();
+        showToast(`✅ [${branch}] ${name} ${role}님이 유로소 헤어 시스템에 등록되었습니다.`);
+      }
+    }
+
+    function openTargetSettingsModal() {
+      document.getElementById('targetSalesInput').value = appState.targets.designerSales;
+      document.getElementById('targetRevisitRateInput').value = appState.targets.designerRevisitRate;
+      document.getElementById('targetTicketInput').value = appState.targets.designerAvgTicket;
+      document.getElementById('targetNewCustInput').value = appState.targets.designerNewCustomers;
+      const m = document.getElementById('targetSettingsModal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+
+    function closeTargetSettingsModal() {
+      const m = document.getElementById('targetSettingsModal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function handleSaveTargetSettings(e) {
+      e.preventDefault();
+      appState.targets.designerSales = Math.max(1000000, Number(document.getElementById('targetSalesInput').value) || 18000000);
+      appState.targets.designerRevisitRate = Math.max(10, Number(document.getElementById('targetRevisitRateInput').value) || 72);
+      appState.targets.designerAvgTicket = Math.max(10000, Number(document.getElementById('targetTicketInput').value) || 100000);
+      appState.targets.designerNewCustomers = Math.max(1, Number(document.getElementById('targetNewCustInput').value) || 40);
+
+      saveAppState();
+      closeTargetSettingsModal();
+      syncAllSelectorsAndRender();
+      showToast('⚙️ 디자이너 KPI 목표 기준치가 저장되어 전사 점수가 재산출되었습니다.');
+    }
+
+    function openVercelModal() {
+      const savedKey = safeGetStorage(STORAGE_KEY_KAKAO_KEY) || '';
+      const input = document.getElementById('kakaoJsKeyInput');
+      if (input) input.value = savedKey;
+      const m = document.getElementById('vercelModal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+
+    function closeVercelModal() {
+      const m = document.getElementById('vercelModal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function saveKakaoJsKey() {
+      const val = (document.getElementById('kakaoJsKeyInput')?.value || '').trim();
+      safeSetStorage(STORAGE_KEY_KAKAO_KEY, val);
+      showToast('카카오 JavaScript App Key가 브라우저에 저장되었습니다.', 'kakao');
+    }
+
+    function copyVercelJson() {
+      const text = document.getElementById('vercelJsonCodeBlock')?.textContent || '';
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+        }
+        showToast('vercel.json 설정 코드가 클립보드에 복사되었습니다!');
+      } catch (e) {
+        showToast('복사 완료!');
+      }
+    }
+
+    function openCoachingModal(userId) {
+      const user = appState.users.find(u => u.id === userId);
+      if (!user) return;
+      document.getElementById('coachingTargetUserId').value = user.id;
+      document.getElementById('coachingModalTitle').textContent = `[${user.branch}] ${user.name} ${user.title} 1:1 코칭 작성`;
+      document.getElementById('coachingNoteTextarea').value = user.coachingNote || '';
+      const m = document.getElementById('coachingModal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+
+    function closeCoachingModal() {
+      const m = document.getElementById('coachingModal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function handleSaveCoachingNote(e) {
+      e.preventDefault();
+      const userId = document.getElementById('coachingTargetUserId').value;
+      const note = document.getElementById('coachingNoteTextarea').value.trim();
+      const user = appState.users.find(u => u.id === userId);
+      if (user) {
+        user.coachingNote = note;
+        saveAppState();
+        renderMembersCoachingView();
+        renderDashboardView();
+        showToast(`💬 ${user.name} ${user.title}님에게 코칭 피드백이 저장되었습니다.`);
+      }
+      closeCoachingModal();
+    }
+
+    function exportCurrentDataCSV() {
+      const users = getVisibleUsersForCurrentRole();
+      const headers = ['이름', '직급', '소속지점', '개인매출(원)', '총고객수(명)', '신규고객수(명)', '재방문고객수(명)', '재방문율(%)', '객단가(원)', 'KPI종합점수', '등급'];
+      const rows = users.map(u => {
+        const k = calculateDesignerKPI(u);
+        return [
+          u.name,
+          u.role,
+          u.branch,
+          k.sales,
+          k.totalCust,
+          k.newCust,
+          k.revisitCust,
+          k.revisitRate.toFixed(1),
+          k.avgTicket,
+          k.totalScore.toFixed(1),
+          k.grade
+        ].join(',');
+      });
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `유로소헤어_KPI_CRM_${activeViewContext.role}_리포트.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast('📥 현재 권한의 KPI & CRM 성과 데이터가 CSV 파일로 다운로드되었습니다.');
+    }
+
+    function resetDemoDataConfirm() {
+      appState = createInitialState();
+      saveAppState();
+      syncAllSelectorsAndRender();
+      showToast('초기 유로소 헤어 3대 지점 데이터로 복원되었습니다.');
+    }
+
+    // -----------------------------------------------------------------------
+    // 12. INITIALIZATION ON WINDOW LOAD
+    // -----------------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAppState();
+      renderCustomRegisteredAccountsOnLogin();
+
+      // Check if device already has a saved login session (Requirement 1 & 3)
+      const savedSessionRaw = safeGetStorage(STORAGE_KEY_SESSION);
+      if (savedSessionRaw) {
+        try {
+          const parsedSession = JSON.parse(savedSessionRaw);
+          const matchedUser = appState.users.find(u => u.id === parsedSession.userId);
+          if (matchedUser && parsedSession.keepLoggedIn) {
+            establishUserSession(matchedUser, true);
+            showToast(`👋 기기 자동 로그인 유지로 [${matchedUser.name} ${matchedUser.title}] 계정에 접속되었습니다.`);
+            return;
+          }
+        } catch (e) {
+          safeRemoveStorage(STORAGE_KEY_SESSION);
+        }
+      }
+
+      // If not logged in, enforce Login Gate (Requirement 1)
+      document.getElementById('authGateView').classList.remove('hidden');
+      document.getElementById('appWorkspaceView').classList.add('hidden');
+    });
+  </script>
+</body>
+</html>

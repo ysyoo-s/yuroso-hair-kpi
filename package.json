@@ -1,0 +1,9 @@
+{
+  "name": "yuroso-hair-kpi-crm",
+  "version": "1.0.0",
+  "private": true,
+  "description": "유로소 헤어(YUROSO HAIR) 3대 지점 직급별 KPI & CRM 5대 지표 자동계산 통합 웹 애플리케이션",
+  "scripts": {
+    "start": "npx serve ."
+  }
+}
