@@ -6,6 +6,7 @@
   <title>YUROSO HAIR | 유로소 헤어 통합 KPI & CRM 경영 시스템</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
@@ -742,29 +743,29 @@
           </div>
         </div>
 
-        <!-- CEO & CREATOR EXCLUSIVE SUBSCRIBER LIST & MEMBER WITHDRAWAL SECTION (대표원장·제작자 전용 가입자 리스트 및 회원탈퇴 관리란) -->
+        <!-- ROLE-BASED SUBSCRIBER LIST & MEMBER MANAGEMENT SECTION (직급별 맞춤 가입자 목록 및 계정 관리란) -->
         <div id="adminSubscriberManagementCard" class="card-luxury rounded-2xl overflow-hidden border-2 border-champagne">
           <div class="p-5 sm:p-6 bg-espresso text-ivory flex flex-wrap items-center justify-between gap-3">
             <div>
               <div class="flex items-center gap-2">
-                <span class="text-[11px] px-2.5 py-0.5 rounded bg-goldaccent text-goldaccent-text font-extrabold">👑 대표원장 · 🛠️ 제작자 전용 열람</span>
-                <span class="text-xs text-champagne-light font-semibold">지점원장 · 디자이너에게는 이 가입자 리스트 란이 보이지 않습니다</span>
+                <span id="subscriberCardRoleBadge" class="text-[11px] px-2.5 py-0.5 rounded bg-goldaccent text-goldaccent-text font-extrabold">👑 대표원장 · 🛠️ 제작자 전체 열람</span>
+                <span id="subscriberCardScopeHint" class="text-xs text-champagne-light font-semibold">Supabase 실시간 클라우드 DB 연동됨</span>
               </div>
-              <h3 class="text-base sm:text-lg font-bold mt-1">
-                👥 전체 가입자 리스트 및 디자이너 · 지점원장 회원탈퇴 관리
+              <h3 id="subscriberCardTitle" class="text-base sm:text-lg font-bold mt-1">
+                👥 가입자 리스트 및 직급별 인원 현황 (대표원장·제작자: 전체 / 지점원장: 본인 지점 / 디자이너: 본인)
               </h3>
-              <p class="text-xs text-ivory/75 mt-0.5">
-                이름·비밀번호 설정과 사내 가입 코드(Yuroso1007)로 가입한 디자이너 및 지점원장 목록입니다. 대표원장과 제작자만 열람 및 즉시 회원탈퇴 처리가 가능합니다.
+              <p id="subscriberCardDesc" class="text-xs text-ivory/75 mt-0.5">
+                사이트에서 기입·가입된 모든 데이터는 Supabase 클라우드 DB에 실시간 저장되며, 현재 로그인한 직급 권한에 맞는 가입자 목록이 표시됩니다.
               </p>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
               <span id="adminSubscriberCountBadge" class="px-3 py-1.5 rounded-xl bg-white/10 text-champagne-light text-xs font-extrabold">
-                가입 인원 0명
+                열람 인원 0명
               </span>
               <button type="button" onclick="openQuickSignupModal()" class="px-3.5 py-2 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-bold transition">
                 + 인원 추가 등록
               </button>
-              <button type="button" onclick="clearAllRegisteredDesigners()" class="px-3.5 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-200 border border-red-400/30 text-xs font-bold transition">
+              <button type="button" id="btnClearAllSubscribers" onclick="clearAllRegisteredDesigners()" class="px-3.5 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-200 border border-red-400/30 text-xs font-bold transition">
                 🗑️ 전체 가입자 일괄 회원탈퇴
               </button>
             </div>
@@ -775,10 +776,10 @@
                 <tr class="bg-ivory-soft text-espresso-muted text-xs uppercase border-b border-ivory-border">
                   <th class="py-3 px-4 font-bold">이름 / 직급</th>
                   <th class="py-3 px-4 font-bold">소속 지점</th>
-                  <th class="py-3 px-4 font-bold">로그인 이름 / 설정 비밀번호</th>
+                  <th class="py-3 px-4 font-bold">로그인 이름 / 계정 정보</th>
                   <th class="py-3 px-4 font-bold">가입일 / 인증방식</th>
                   <th class="py-3 px-4 font-bold text-center">데이터 열람 상태</th>
-                  <th class="py-3 px-4 font-bold text-center">회원탈퇴 관리 (대표원장·제작자 전용)</th>
+                  <th class="py-3 px-4 font-bold text-center">계정 및 CRM 관리</th>
                 </tr>
               </thead>
               <tbody id="adminSubscriberTableBody" class="divide-y divide-ivory-border text-xs sm:text-sm"></tbody>
@@ -1837,8 +1838,17 @@
     }
 
     // -----------------------------------------------------------------------
-    // 2. APPLICATION STATE & SAFE LOCALSTORAGE HELPERS
+    // 2. SUPABASE CLOUD DB 연동 & APPLICATION STATE HELPERS
     // -----------------------------------------------------------------------
+    const SUPABASE_URL = 'https://kveohlhceddavohapgnd.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2ZW9obGhjZWRkYXZvaGFwZ25kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxODczOTEsImV4cCI6MjEwODc2MzM5MX0.BVjVZNScYblGHfcEMvzWyTs4O6tT4Xmom6gYl0SCjDw';
+    const SUPABASE_TABLE = 'yuroso_app_state';
+    const SUPABASE_ROW_ID = 'main_enterprise_state';
+
+    const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY)
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
+
     let appState = createInitialState();
     let currentSession = null;
     let activeViewContext = {
@@ -1880,55 +1890,193 @@
       }
     }
 
-    function loadAppState() {
-      // 이전 버전(v1, v2)의 기본 입력 디자이너 및 지점원장 캐시 완전 제거
+    function normalizeStateData(parsed) {
+      if (!parsed || !parsed.users || !parsed.branches || !parsed.targets) {
+        return createInitialState();
+      }
+      parsed.users = parsed.users.filter(u => (u.role === '대표원장' || u.role === '제작자') || u.isCustom === true);
+      if (!parsed.users.some(u => u.id === 'u_ceo')) {
+        parsed.users.unshift({
+          id: 'u_ceo',
+          name: '영화',
+          title: '대표원장',
+          role: '대표원장',
+          branch: '파주 운정점',
+          isCustom: false,
+          canViewData: true,
+          sales: 0,
+          totalCustomers: 0,
+          newCustomers: 0,
+          revisitCustomers: 0,
+          avgTicket: 0,
+          prevSales: 0,
+          coachingNote: '전 지점 총괄 대표원장 (모든 데이터 및 설정 관리 권한)'
+        });
+      }
+      if (!parsed.users.some(u => u.id === 'u_creator')) {
+        parsed.users.push({
+          id: 'u_creator',
+          name: '제작자',
+          title: '제작자',
+          role: '제작자',
+          branch: '파주 운정점',
+          isCustom: false,
+          canViewData: true,
+          sales: 0,
+          totalCustomers: 0,
+          newCustomers: 0,
+          revisitCustomers: 0,
+          avgTicket: 0,
+          prevSales: 0,
+          coachingNote: '시스템 제작자 총괄 관리자 (대표원장과 동일한 최상위 관리 권한)'
+        });
+      }
+      if (!parsed.visibilitySettings) {
+        parsed.visibilitySettings = createDefaultVisibilitySettings();
+      } else {
+        parsed.visibilitySettings = Object.assign(createDefaultVisibilitySettings(), parsed.visibilitySettings);
+      }
+      if (!Array.isArray(parsed.crmHistory)) {
+        parsed.crmHistory = [];
+      }
+      // 지점별 최신 등록 지점원장 동기화
+      BRANCH_NAMES.forEach(bName => {
+        if (parsed.branches && parsed.branches[bName]) {
+          const mgrs = parsed.users.filter(u => u.branch === bName && u.role === '지점원장' && u.isCustom);
+          if (mgrs.length > 0) {
+            const latestMgr = mgrs[mgrs.length - 1];
+            parsed.branches[bName].managerName = `${latestMgr.name} 지점원장`;
+            parsed.branches[bName].managerId = latestMgr.id;
+          } else {
+            parsed.branches[bName].managerName = '원장 미등록';
+            parsed.branches[bName].managerId = '';
+          }
+        }
+      });
+      return parsed;
+    }
+
+    // 로컬 캐시와 클라우드(Supabase) 데이터를 병합하여 데이터 유실 방지
+    function mergeLocalAndCloudStates(localSt, cloudSt) {
+      if (!cloudSt) return normalizeStateData(localSt);
+      if (!localSt) return normalizeStateData(cloudSt);
+
+      const merged = normalizeStateData(JSON.parse(JSON.stringify(cloudSt)));
+      const localNorm = normalizeStateData(localSt);
+
+      const cloudUserMap = new Map(merged.users.map(u => [u.id, u]));
+      localNorm.users.forEach(lu => {
+        if (!cloudUserMap.has(lu.id) && lu.isCustom) {
+          merged.users.push(lu);
+        }
+      });
+
+      const cloudHistIds = new Set((merged.crmHistory || []).map(h => h.id));
+      (localNorm.crmHistory || []).forEach(lh => {
+        if (!cloudHistIds.has(lh.id)) {
+          merged.crmHistory.push(lh);
+        }
+      });
+
+      return normalizeStateData(merged);
+    }
+
+    async function loadAppState(preferCloudOnly = false) {
       safeRemoveStorage('yuroso_hair_enterprise_state_v1');
       safeRemoveStorage('yuroso_hair_auth_session_v1');
       safeRemoveStorage('yuroso_hair_enterprise_state_v2');
       safeRemoveStorage('yuroso_hair_auth_session_v2');
 
-
+      let localParsed = null;
       const raw = safeGetStorage(STORAGE_KEY_STATE);
       if (raw) {
         try {
-          const parsed = JSON.parse(raw);
-          if (parsed && parsed.users && parsed.branches && parsed.targets) {
-            // 직접 가입하지 않은(isCustom !== true) 지점원장이나 디자이너가 남아있다면 모두 제거
-            parsed.users = parsed.users.filter(u => (u.role === '대표원장' || u.role === '제작자') || u.isCustom === true);
-            // 제작자 계정이 없으면 자동 추가
-            if (!parsed.users.some(u => u.id === 'u_creator')) {
-              parsed.users.push({
-                id: 'u_creator',
-                name: '제작자',
-                title: '제작자',
-                role: '제작자',
-                branch: '파주 운정점',
-                isCustom: false,
-                canViewData: true,
-                sales: 0,
-                totalCustomers: 0,
-                newCustomers: 0,
-                revisitCustomers: 0,
-                avgTicket: 0,
-                prevSales: 0,
-                coachingNote: '시스템 제작자 총괄 관리자 (대표원장과 동일한 최상위 관리 권한)'
-              });
-            }
-            if (!parsed.visibilitySettings) {
-              parsed.visibilitySettings = createDefaultVisibilitySettings();
-            } else {
-              parsed.visibilitySettings = Object.assign(createDefaultVisibilitySettings(), parsed.visibilitySettings);
-            }
-            appState = parsed;
-          }
+          localParsed = normalizeStateData(JSON.parse(raw));
+          appState = localParsed;
         } catch (e) {
           appState = createInitialState();
         }
       }
+
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from(SUPABASE_TABLE)
+            .select('state_data')
+            .eq('id', SUPABASE_ROW_ID)
+            .maybeSingle();
+
+          if (!error && data && data.state_data) {
+            if (preferCloudOnly) {
+              appState = normalizeStateData(data.state_data);
+            } else {
+              const cloudNorm = normalizeStateData(data.state_data);
+              const cloudCustomCount = cloudNorm.users.filter(u => u.isCustom).length;
+              const localCustomCount = localParsed ? localParsed.users.filter(u => u.isCustom).length : 0;
+
+              if (cloudCustomCount === 0 && localCustomCount > 0) {
+                appState = mergeLocalAndCloudStates(localParsed, cloudNorm);
+                await saveAppState();
+              } else {
+                appState = cloudNorm;
+              }
+            }
+            safeSetStorage(STORAGE_KEY_STATE, JSON.stringify(appState));
+          } else if (!error && !data) {
+            await saveAppState();
+          }
+        } catch (err) {
+          console.error('Supabase 데이터 로드 오류:', err);
+        }
+      }
     }
 
-    function saveAppState() {
+    async function saveAppState() {
+      appState = normalizeStateData(appState);
       safeSetStorage(STORAGE_KEY_STATE, JSON.stringify(appState));
+
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient
+            .from(SUPABASE_TABLE)
+            .upsert({
+              id: SUPABASE_ROW_ID,
+              state_data: appState,
+              updated_at: new Date().toISOString()
+            });
+          if (error) {
+            console.error('Supabase 저장 실패:', error);
+          }
+        } catch (err) {
+          console.error('Supabase 통신 오류:', err);
+        }
+      }
+    }
+
+    function subscribeRealtimeState() {
+      if (!supabaseClient) return;
+      supabaseClient
+        .channel('yuroso_realtime_sync')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: SUPABASE_TABLE,
+            filter: `id=eq.${SUPABASE_ROW_ID}`
+          },
+          (payload) => {
+            if (payload.new && payload.new.state_data) {
+              appState = normalizeStateData(payload.new.state_data);
+              safeSetStorage(STORAGE_KEY_STATE, JSON.stringify(appState));
+              renderCustomRegisteredAccountsOnLogin();
+              if (currentSession) {
+                syncAllSelectorsAndRender();
+              }
+            }
+          }
+        )
+        .subscribe();
     }
 
     // -----------------------------------------------------------------------
@@ -2218,8 +2366,9 @@
     }
 
     // 대표원장(^^yuroso1004) 및 제작자(IPStor101`12__~!) 회원가입 없이 패스워드 직통 로그인
-    function handleAdminPasswordLogin(e) {
+    async function handleAdminPasswordLogin(e) {
       e.preventDefault();
+      await loadAppState(true);
       const pwInput = document.getElementById('adminDirectPasswordInput');
       const enteredPw = pwInput ? pwInput.value : '';
       const selectedRole = document.getElementById('selectedAdminLoginRole')?.value || '대표원장';
@@ -2248,8 +2397,9 @@
     }
 
     // 지점원장 · 디자이너 회원가입 시 작성한 이름 + 비밀번호로 로그인
-    function handleStaffLoginSubmit(e) {
+    async function handleStaffLoginSubmit(e) {
       e.preventDefault();
+      await loadAppState(true);
       const nameInput = document.getElementById('loginStaffNameInput');
       const pwInput = document.getElementById('loginStaffPasswordInput');
       const enteredName = nameInput ? nameInput.value.trim() : '';
@@ -2369,8 +2519,9 @@
       return newUser;
     }
 
-    function handleSignupSubmit(e) {
+    async function handleSignupSubmit(e) {
       e.preventDefault();
+      await loadAppState(true);
       const name = document.getElementById('signupNameInput').value.trim();
       const password = document.getElementById('signupPasswordInput').value;
       const inviteCode = document.getElementById('signupInviteCodeInput').value.trim();
@@ -2569,36 +2720,70 @@
       showToast('🔐 [볼 수 있는 데이터 설정]이 저장되어 전 직급에 즉시 적용되었습니다.');
     }
 
-    // 대표원장 & 제작자 전용 가입자 리스트 및 회원탈퇴 렌더링
+    // 직급별 가입자 리스트 렌더링 (대표원장·제작자: 모든 가입자 / 지점원장: 본인 지점 가입자만 / 디자이너: 본인만)
     function renderCeoRegisteredMembersManageList() {
       const modalContainer = document.getElementById('ceoRegisteredMembersManageList');
       const adminCard = document.getElementById('adminSubscriberManagementCard');
       const adminTbody = document.getElementById('adminSubscriberTableBody');
       const countBadge = document.getElementById('adminSubscriberCountBadge');
       const membersBtnVis = document.getElementById('membersTabBtnVisibility');
-
-      // 대표원장 또는 제작자가 아니면 가입자 리스트 란을 철저히 숨김!
-      if (!isCEOView()) {
-        if (adminCard) adminCard.classList.add('hidden');
-        if (membersBtnVis) membersBtnVis.classList.add('hidden');
-        return;
-      }
+      const roleBadgeEl = document.getElementById('subscriberCardRoleBadge');
+      const titleEl = document.getElementById('subscriberCardTitle');
+      const descEl = document.getElementById('subscriberCardDesc');
+      const btnClearAll = document.getElementById('btnClearAllSubscribers');
 
       if (adminCard) adminCard.classList.remove('hidden');
-      if (membersBtnVis) membersBtnVis.classList.remove('hidden');
 
-      const customMembers = appState.users.filter(u => u.isCustom);
-      if (countBadge) countBadge.textContent = `가입된 원장·디자이너 ${customMembers.length}명`;
+      if (isCEOView()) {
+        if (membersBtnVis) membersBtnVis.classList.remove('hidden');
+        if (btnClearAll) btnClearAll.classList.remove('hidden');
+        if (roleBadgeEl) roleBadgeEl.textContent = '👑 대표원장 · 🛠️ 제작자 — 전 지점 모든 가입자 열람';
+        if (titleEl) titleEl.textContent = '👥 전체 가입자 리스트 및 디자이너 · 지점원장 계정 관리 (전 지점 통합)';
+        if (descEl) descEl.textContent = '대표원장과 제작자는 3대 지점에 가입한 모든 지점원장 및 디자이너 목록을 열람하고 권한 및 회원탈퇴를 관리합니다.';
+      } else if (activeViewContext.role === '지점원장') {
+        if (membersBtnVis) membersBtnVis.classList.add('hidden');
+        if (btnClearAll) btnClearAll.classList.add('hidden');
+        if (roleBadgeEl) roleBadgeEl.textContent = `🏢 지점원장 권한 — [${activeViewContext.branch}] 소속 가입자 전용 열람`;
+        if (titleEl) titleEl.textContent = `👥 [${activeViewContext.branch}] 소속 가입 인원 리스트 (본인 지점 가입자만 표시)`;
+        if (descEl) descEl.textContent = `지점원장은 본인 소속 지점(${activeViewContext.branch})에 가입한 원장 및 디자이너 목록만 확인할 수 있습니다.`;
+      } else {
+        if (membersBtnVis) membersBtnVis.classList.add('hidden');
+        if (btnClearAll) btnClearAll.classList.add('hidden');
+        if (roleBadgeEl) roleBadgeEl.textContent = '✂️ 디자이너 권한 — 본인 가입 정보 전용 열람';
+        if (titleEl) titleEl.textContent = '👤 내 가입 계정 정보 확인 (디자이너 본인만 표시)';
+        if (descEl) descEl.textContent = '디자이너는 본인의 가입 프로필과 상태만 목록에서 확인할 수 있습니다.';
+      }
 
+      const allCustomMembers = appState.users.filter(u => u.isCustom);
+
+      // 현재 직급에 따라 목록에서 볼 수 있는 가입자 필터링
+      let visibleSubscribers = [];
+      if (isCEOView()) {
+        visibleSubscribers = allCustomMembers;
+      } else if (activeViewContext.role === '지점원장') {
+        visibleSubscribers = allCustomMembers.filter(u => u.branch === activeViewContext.branch);
+      } else {
+        visibleSubscribers = allCustomMembers.filter(u => u.id === activeViewContext.designerId && u.role === '디자이너');
+      }
+
+      if (countBadge) {
+        countBadge.textContent = isCEOView()
+          ? `전체 가입자 ${visibleSubscribers.length}명`
+          : activeViewContext.role === '지점원장'
+          ? `${activeViewContext.branch} 가입자 ${visibleSubscribers.length}명`
+          : `본인 계정 ${visibleSubscribers.length}명`;
+      }
+
+      // 모달 내부 리스트 (대표원장·제작자 전용 모달)
       if (modalContainer) {
-        if (customMembers.length === 0) {
+        if (allCustomMembers.length === 0) {
           modalContainer.innerHTML = `
             <div class="p-4 rounded-xl bg-white border border-ivory-border text-center text-xs text-espresso-muted">
               현재 회원가입한 지점원장·디자이너가 없습니다. 이름·비밀번호 및 사내 가입 코드(Yuroso1007)로 가입하면 이곳에 표시됩니다.
             </div>
           `;
         } else {
-          modalContainer.innerHTML = customMembers.map(u => `
+          modalContainer.innerHTML = allCustomMembers.map(u => `
             <div class="p-3 rounded-xl bg-white border border-ivory-border flex flex-wrap items-center justify-between gap-2">
               <div class="flex items-center gap-2">
                 <span class="px-2 py-0.5 rounded bg-espresso text-ivory text-[11px] font-bold">${u.role}</span>
@@ -2619,19 +2804,45 @@
       }
 
       if (adminTbody) {
-        if (customMembers.length === 0) {
+        if (visibleSubscribers.length === 0) {
           adminTbody.innerHTML = `
             <tr>
               <td colspan="6" class="py-6 px-4 text-center text-xs text-espresso-muted">
-                현재 가입된 지점원장 · 디자이너가 없습니다. 직원이 이름·비밀번호와 사내 가입 코드(<strong>Yuroso1007</strong>)로 회원가입하면 이 가입자 리스트에 표시되며, 대표원장님과 제작자님이 직접 <strong>회원탈퇴</strong>를 관리할 수 있습니다.
+                현재 해당 권한 범위에서 조회된 가입 인원이 없습니다. [+ 인원 추가 등록] 또는 회원가입을 통해 등록하면 실시간으로 DB에 저장되어 표시됩니다.
               </td>
             </tr>
           `;
         } else {
-          adminTbody.innerHTML = customMembers.map(u => {
+          adminTbody.innerHTML = visibleSubscribers.map(u => {
             const roleBadge = u.role === '지점원장'
               ? 'bg-champagne text-white'
               : 'bg-sage-bg text-sage-dark border border-sage/30';
+
+            const pwDisplay = isCEOView() || (activeViewContext.role === '디자이너' && u.id === activeViewContext.designerId)
+              ? `ID: <strong>${u.name}</strong> / PW: <span class="text-espresso-muted">${u.password || '-'}</span>`
+              : `로그인 이름: <strong>${u.name}</strong> <span class="text-[11px] text-espresso-muted">(PW 비공개)</span>`;
+
+            const statusControl = isCEOView()
+              ? `<button type="button" onclick="toggleMemberCanViewData('${u.id}')" class="px-2.5 py-1 rounded-lg text-xs font-bold ${u.canViewData !== false ? 'bg-sage text-white' : 'bg-amber-100 text-amber-900'}">
+                   ${u.canViewData !== false ? '✅ 열람 승인' : '🔒 열람 차단'}
+                 </button>`
+              : `<span class="px-2.5 py-1 rounded-lg text-xs font-bold ${u.canViewData !== false ? 'bg-sage-bg text-sage-dark' : 'bg-amber-100 text-amber-900'}">
+                   ${u.canViewData !== false ? '✅ 정상 승인' : '🔒 제한됨'}
+                 </span>`;
+
+            const actionControl = isCEOView()
+              ? `<div class="inline-flex items-center gap-1.5">
+                   <button type="button" onclick="jumpToCrmForUser('${u.id}')" class="px-2.5 py-1.5 rounded-lg bg-espresso hover:bg-espresso-light text-ivory text-xs font-bold transition">
+                     CRM 입력
+                   </button>
+                   <button type="button" onclick="deleteRegisteredMember('${u.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold shadow-sm transition">
+                     🚫 회원탈퇴
+                   </button>
+                 </div>`
+              : `<button type="button" onclick="jumpToCrmForUser('${u.id}')" class="px-3 py-1.5 rounded-lg bg-espresso hover:bg-espresso-light text-ivory text-xs font-bold transition">
+                   CRM 지표 보기/입력
+                 </button>`;
+
             return `
               <tr class="hover:bg-ivory/60 transition">
                 <td class="py-3 px-4">
@@ -2641,18 +2852,10 @@
                   </div>
                 </td>
                 <td class="py-3 px-4 font-semibold text-espresso">${u.branch}</td>
-                <td class="py-3 px-4 font-mono text-xs text-espresso">ID: <strong>${u.name}</strong> / PW: <span class="text-espresso-muted">${u.password || '-'}</span></td>
-                <td class="py-3 px-4 text-xs text-espresso-muted">${u.registeredAt || '2026-10-29'} · 사내코드(Yuroso1007) 가입</td>
-                <td class="py-3 px-4 text-center">
-                  <button type="button" onclick="toggleMemberCanViewData('${u.id}')" class="px-2.5 py-1 rounded-lg text-xs font-bold ${u.canViewData !== false ? 'bg-sage text-white' : 'bg-amber-100 text-amber-900'}">
-                    ${u.canViewData !== false ? '✅ 열람 승인' : '🔒 열람 차단'}
-                  </button>
-                </td>
-                <td class="py-3 px-4 text-center">
-                  <button type="button" onclick="deleteRegisteredMember('${u.id}')" class="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold shadow-sm transition">
-                    🚫 회원탈퇴 시키기
-                  </button>
-                </td>
+                <td class="py-3 px-4 font-mono text-xs text-espresso">${pwDisplay}</td>
+                <td class="py-3 px-4 text-xs text-espresso-muted">${u.registeredAt || '2026-10-29'} · 사내코드 가입</td>
+                <td class="py-3 px-4 text-center">${statusControl}</td>
+                <td class="py-3 px-4 text-center">${actionControl}</td>
               </tr>
             `;
           }).join('');
@@ -2784,9 +2987,18 @@
     }
 
     function populateRBACSelectors() {
+      const isTopAdminSession = !currentSession || currentSession.role === '대표원장' || currentSession.role === '제작자';
+
       const desSelect = document.getElementById('rbacDesignerUserSelect');
       if (desSelect) {
-        const designers = appState.users.filter(u => u.role === '디자이너' && u.isCustom);
+        let designers = appState.users.filter(u => u.role === '디자이너' && u.isCustom);
+        if (!isTopAdminSession && currentSession) {
+          if (currentSession.role === '지점원장') {
+            designers = designers.filter(u => u.branch === currentSession.branch);
+          } else if (currentSession.role === '디자이너') {
+            designers = designers.filter(u => u.id === currentSession.userId);
+          }
+        }
         if (designers.length === 0) {
           desSelect.innerHTML = `<option value="">등록된 디자이너 없음 (직접 가입 필요)</option>`;
         } else {
@@ -2803,7 +3015,10 @@
 
       const mgrBranchSelect = document.getElementById('rbacManagerBranchSelect');
       if (mgrBranchSelect) {
-        mgrBranchSelect.innerHTML = BRANCH_NAMES.map(bName => {
+        const allowedBranches = (!isTopAdminSession && currentSession && currentSession.role !== '대표원장' && currentSession.role !== '제작자')
+          ? BRANCH_NAMES.filter(b => b === currentSession.branch)
+          : BRANCH_NAMES;
+        mgrBranchSelect.innerHTML = allowedBranches.map(bName => {
           const mgrs = appState.users.filter(u => u.branch === bName && u.role === '지점원장' && u.isCustom);
           const mgrSuffix = mgrs.length > 0 ? ` (${mgrs[mgrs.length - 1].name} 원장)` : ' (원장 미등록)';
           return `<option value="${bName}" ${bName === activeViewContext.branch ? 'selected' : ''}>${bName}${mgrSuffix}</option>`;
@@ -2821,6 +3036,12 @@
       if ((targetRole === '대표원장' || targetRole === '제작자') &&
           (!currentSession || (currentSession.role !== '대표원장' && currentSession.role !== '제작자'))) {
         openAdminPasswordModal(targetRole);
+        return;
+      }
+
+      // 디자이너로 로그인한 경우 지점원장 뷰 전환 차단 (디자이너는 본인만 열람 가능)
+      if (currentSession && currentSession.role === '디자이너' && targetRole === '지점원장') {
+        showToast('⛔ 디자이너 계정은 본인 데이터만 열람할 수 있습니다.', 'error');
         return;
       }
 
@@ -3654,16 +3875,15 @@
     }
 
     function getVisibleUsersForCurrentRole() {
-      const vis = appState.visibilitySettings || createDefaultVisibilitySettings();
       if (isCEOView()) {
+        // 대표원장과 제작자는 모든 가입자 열람 가능
         return appState.users;
       } else if (activeViewContext.role === '지점원장') {
-        return appState.users.filter(u => u.branch === activeViewContext.branch && u.role !== '대표원장' && u.role !== '제작자');
+        // 지점원장은 본인 지점에 가입한 인원만 목록에서 열람 가능
+        return appState.users.filter(u => u.branch === activeViewContext.branch && u.isCustom);
       } else {
-        if (vis.desViewBranchPeers) {
-          return appState.users.filter(u => u.branch === activeViewContext.branch && u.role === '디자이너');
-        }
-        return appState.users.filter(u => u.id === activeViewContext.designerId && u.role === '디자이너');
+        // 디자이너는 오직 본인만 목록에서 열람 가능
+        return appState.users.filter(u => u.id === activeViewContext.designerId && u.role === '디자이너' && u.isCustom);
       }
     }
 
@@ -4318,8 +4538,9 @@
       m.classList.remove('flex');
     }
 
-    function handleModalSignupSubmit(e) {
+    async function handleModalSignupSubmit(e) {
       e.preventDefault();
+      await loadAppState(true);
       const name = document.getElementById('modalSignupName').value.trim();
       const password = document.getElementById('modalSignupPassword').value;
       const inviteCode = document.getElementById('modalSignupInviteCode').value.trim();
@@ -4460,10 +4681,11 @@
     }
 
     // -----------------------------------------------------------------------
-    // 13. INITIALIZATION ON WINDOW LOAD
+    // 13. INITIALIZATION ON WINDOW LOAD (SUPABASE CLOUD DB + REALTIME SYNC)
     // -----------------------------------------------------------------------
-    window.addEventListener('DOMContentLoaded', () => {
-      loadAppState();
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadAppState();
+      subscribeRealtimeState();
       renderCustomRegisteredAccountsOnLogin();
 
       const savedSessionRaw = safeGetStorage(STORAGE_KEY_SESSION);
@@ -4473,7 +4695,7 @@
           const matchedUser = appState.users.find(u => u.id === parsedSession.userId);
           if (matchedUser && parsedSession.keepLoggedIn && matchedUser.canViewData !== false) {
             establishUserSession(matchedUser, true);
-            showToast(`👋 기기 자동 로그인 유지로 [${matchedUser.name} ${matchedUser.title}] 계정에 접속되었습니다.`);
+            showToast(`👋 Supabase 클라우드 DB 연동 완료 · [${matchedUser.name} ${matchedUser.title}] 계정에 접속되었습니다.`);
             return;
           }
         } catch (e) {
