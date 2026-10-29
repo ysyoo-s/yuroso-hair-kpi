@@ -139,8 +139,8 @@
       </div>
       <div class="flex items-center gap-2 shrink-0">
         <button type="button" onclick="openSupabaseModal()" class="px-3 py-1.5 rounded-xl bg-espresso text-ivory hover:bg-espresso-light text-xs font-bold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap">
-          <span id="authSupabaseDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
-          <span id="authSupabaseLabel">☁️ Supabase DB 연동 설정</span>
+          <span id="authSupabaseDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="authSupabaseLabel">☁️ Supabase DB 실시간 연동 중</span>
         </button>
       </div>
     </header>
@@ -563,8 +563,8 @@
 
           <!-- SUPABASE CLOUD DB SYNC BUTTON -->
           <button type="button" id="btnOpenSupabaseModal" onclick="openSupabaseModal()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-ivory border border-white/15 text-xs font-bold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap shrink-0">
-            <span id="headerSupabaseDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
-            <span id="headerSupabaseLabel">☁️ DB 연동</span>
+            <span id="headerSupabaseDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="headerSupabaseLabel">☁️ DB 연동됨</span>
           </button>
 
           <!-- CEO & CREATOR EXCLUSIVE TARGET SETTINGS BUTTON (대표원장만 매장·지점원장·디자이너 목표치 수정 가능) -->
@@ -1917,8 +1917,8 @@ create policy "Allow public read write" on public.yuroso_app_state
     const STORAGE_KEY_SESSION = 'yuroso_hair_auth_session_v3';
     const STORAGE_KEY_SUPABASE = 'yuroso_hair_supabase_cfg_v1';
     // 기본 내장 Supabase 설정 (사용자 URL/Key 입력 시 자동 저장 및 연동)
-    const DEFAULT_SUPABASE_URL = '';
-    const DEFAULT_SUPABASE_ANON_KEY = '';
+    const DEFAULT_SUPABASE_URL = 'https://kveohlhceddavohapgnd.supabase.co';
+    const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2ZW9obGhjZWRkYXZvaGFwZ25kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxODczOTEsImV4cCI6MjEwODc2MzM5MX0.BVjVZNScYblGHfcEMvzWyTs4O6tT4Xmom6gYl0SCjDw';
     const DEFAULT_SUPABASE_TABLE = 'yuroso_app_state';
 
     let supabaseClient = null;
@@ -2755,8 +2755,11 @@ create policy "Allow public read write" on public.yuroso_app_state
       showToast(`⛔ [${selectedRole}] 패스워드가 일치하지 않습니다. 대소문자 및 특수문자를 확인해주세요.`, 'error');
     }
 
-    function handleStaffLoginSubmit(e) {
+    async function handleStaffLoginSubmit(e) {
       e.preventDefault();
+      if (supabaseClient) {
+        await pullStateFromSupabase(false);
+      }
       const nameInput = document.getElementById('loginStaffNameInput');
       const pwInput = document.getElementById('loginStaffPasswordInput');
       const enteredName = nameInput ? nameInput.value.trim() : '';
@@ -2877,8 +2880,11 @@ create policy "Allow public read write" on public.yuroso_app_state
       return newUser;
     }
 
-    function handleSignupSubmit(e) {
+    async function handleSignupSubmit(e) {
       e.preventDefault();
+      if (supabaseClient) {
+        await pullStateFromSupabase(false);
+      }
       const name = document.getElementById('signupNameInput').value.trim();
       const password = document.getElementById('signupPasswordInput').value;
       const inviteCode = document.getElementById('signupInviteCodeInput').value.trim();
@@ -4922,8 +4928,11 @@ create policy "Allow public read write" on public.yuroso_app_state
       m.classList.remove('flex');
     }
 
-    function handleModalSignupSubmit(e) {
+    async function handleModalSignupSubmit(e) {
       e.preventDefault();
+      if (supabaseClient) {
+        await pullStateFromSupabase(false);
+      }
       const name = document.getElementById('modalSignupName').value.trim();
       const password = document.getElementById('modalSignupPassword').value;
       const inviteCode = document.getElementById('modalSignupInviteCode').value.trim();
