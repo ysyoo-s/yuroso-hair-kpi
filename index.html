@@ -13,6 +13,7 @@
   <title>YUROSO HAIR | 유로소 헤어 통합 KPI & CRM 경영 시스템</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
@@ -137,10 +138,10 @@
         </div>
       </div>
       <div class="flex items-center gap-2 shrink-0">
-        <span class="hidden sm:inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-sage-bg text-sage-dark font-medium border border-sage/20 whitespace-nowrap">
-          <span class="w-2 h-2 rounded-full bg-sage animate-pulse shrink-0"></span>
-          이름·비밀번호 로그인 & 사내 가입 코드 보안 적용 · 대표원장 전용 목표 관리
-        </span>
+        <button type="button" onclick="openSupabaseModal()" class="px-3 py-1.5 rounded-xl bg-espresso text-ivory hover:bg-espresso-light text-xs font-bold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap">
+          <span id="authSupabaseDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+          <span id="authSupabaseLabel">☁️ Supabase DB 연동 설정</span>
+        </button>
       </div>
     </header>
 
@@ -161,7 +162,7 @@
               통합 성과 관리 시스템
             </h1>
             <p class="text-xs sm:text-sm text-ivory/75 leading-relaxed mb-6">
-              <strong>대표원장</strong>과 <strong>제작자(관리자)</strong>는 별도 회원가입 없이 전용 패스워드 입력만으로 즉시 접속하며, <strong>지점원장</strong>과 <strong>디자이너</strong>는 <strong>사내 가입 코드</strong>를 통해 본인의 <strong>이름과 비밀번호</strong>를 설정하여 직접 가입 후 접속합니다.
+              유로소 헤어 파주 운정점 · 운정역점 · 마곡발산점 통합 KPI 및 고객관리(CRM) 시스템입니다.
             </p>
 
             <!-- 3 Branches Showcase (Live Registered Count) -->
@@ -431,8 +432,8 @@
                     required
                     class="w-full px-4 py-2.5 rounded-xl border border-ivory-border bg-ivory/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-champagne text-sm font-semibold text-espresso"
                   >
-                    <option value="디자이너">디자이너 (개인 KPI 대시보드 & CRM 5대 지표 입력·열람)</option>
-                    <option value="지점원장">지점원장 (소속 지점 KPI & 소속 디자이너 성과 열람)</option>
+                    <option value="디자이너">디자이너</option>
+                    <option value="지점원장">지점원장</option>
                   </select>
                   <div class="grid grid-cols-2 gap-2 mt-1.5">
                     <button type="button" onclick="selectSignupRoleCard('디자이너')" id="roleCard_디자이너" class="py-2 px-2 rounded-lg border-2 border-champagne bg-champagne-bg text-xs font-bold text-espresso transition whitespace-nowrap">
@@ -461,9 +462,8 @@
             </div>
           </div>
 
-          <div class="pt-4 mt-4 border-t border-ivory-border flex flex-wrap items-center justify-between gap-2 text-xs text-espresso-muted">
-            <span>※ 대표원장 · 제작자는 회원가입 없이 패스워드로 접속하며, 전사 목표치 및 가입자를 전용 관리합니다.</span>
-            <span class="font-medium text-espresso shrink-0">YUROSO HAIR CORP.</span>
+          <div class="pt-4 mt-4 border-t border-ivory-border flex items-center justify-end text-xs text-espresso-muted">
+            <span class="font-medium text-espresso">YUROSO HAIR CORP.</span>
           </div>
         </div>
       </div>
@@ -484,12 +484,8 @@
     <div id="topRbacSwitcherBar" class="bg-espresso-deep text-ivory border-b border-white/10 px-4 sm:px-6 py-2 no-print">
       <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-2 shrink-0">
-          <span class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-champagne text-white whitespace-nowrap">
-            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-            상단 RBAC 권한 전환 바
-          </span>
-          <span id="rbacNoticeText" class="text-[11px] text-ivory/75 hidden 2xl:inline whitespace-nowrap">
-            직급별 열람 권한 분리
+          <span class="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-md bg-champagne text-white whitespace-nowrap">
+            화면 보기 전환
           </span>
         </div>
 
@@ -526,11 +522,7 @@
             </select>
           </div>
 
-          <!-- Strict RBAC Lock Toggle -->
-          <label class="inline-flex items-center gap-1.5 text-[11px] text-champagne-light cursor-pointer ml-1 pl-2 border-l border-white/15 whitespace-nowrap shrink-0" title="체크 시 현재 로그인한 계정의 직급 외 타 직급 전환을 잠급니다">
-            <input type="checkbox" id="strictRbacLockCheckbox" onchange="toggleStrictRbacLock(this.checked)" class="w-3.5 h-3.5 rounded text-champagne focus:ring-0" />
-            <span>계정 권한 고정</span>
-          </label>
+
         </div>
       </div>
     </div>
@@ -554,9 +546,7 @@
                 전 지점 총괄
               </span>
             </div>
-            <p id="headerAccessScopeDesc" class="text-[11px] text-ivory/70 mt-0.5 whitespace-nowrap">
-              최상위 관리자 권한: 3대 지점 원장 및 전 디자이너 KPI 통합 조회 · 목표치 개별 설정
-            </p>
+
           </div>
         </div>
 
@@ -571,18 +561,24 @@
             </div>
           </div>
 
-          <!-- CEO & CREATOR EXCLUSIVE TARGET SETTINGS BUTTON (대표원장만 매장·지점장·디자이너 목표치 수정 가능) -->
+          <!-- SUPABASE CLOUD DB SYNC BUTTON -->
+          <button type="button" id="btnOpenSupabaseModal" onclick="openSupabaseModal()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-ivory border border-white/15 text-xs font-bold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap shrink-0">
+            <span id="headerSupabaseDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span id="headerSupabaseLabel">☁️ DB 연동</span>
+          </button>
+
+          <!-- CEO & CREATOR EXCLUSIVE TARGET SETTINGS BUTTON (대표원장만 매장·지점원장·디자이너 목표치 수정 가능) -->
           <button type="button" id="btnOpenTargetSettingsModal" onclick="openTargetSettingsModal('branches')" class="px-3.5 py-2 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap shrink-0">
-            <span id="btnTargetSettingsLabel">🎯 목표치 설정 (대표원장)</span>
+            <span id="btnTargetSettingsLabel">🎯 목표치 설정</span>
           </button>
 
           <!-- CEO & CREATOR DATA VISIBILITY SETTINGS BUTTON -->
           <button type="button" id="btnOpenDataVisibilityModal" onclick="openDataVisibilityModal()" class="px-3.5 py-2 rounded-xl bg-goldaccent hover:bg-goldaccent-hover text-goldaccent-text text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap shrink-0">
-            <span id="btnDataVisibilityLabel">🔐 열람 데이터 설정</span>
+            <span id="btnDataVisibilityLabel">🔐 데이터 설정</span>
           </button>
 
           <!-- New Member Registration Modal Button -->
-          <button type="button" onclick="openQuickSignupModal()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-ivory text-xs font-bold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap shrink-0">
+          <button type="button" id="btnHeaderQuickSignup" onclick="openQuickSignupModal()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-ivory text-xs font-bold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap shrink-0">
             <span>+ 신규 회원가입</span>
           </button>
 
@@ -606,7 +602,7 @@
               <span class="px-1.5 py-0.5 text-[10px] rounded bg-goldaccent text-goldaccent-text font-extrabold">핵심</span>
             </button>
             <button type="button" id="navTab_branches" onclick="switchMainTab('branches')" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
-              🏆 3대 지점장 & 총 결과 KPI 비교 분석
+              🏆 3대 지점원장 & 총 결과 KPI 비교 분석
             </button>
             <button type="button" id="navTab_members" onclick="switchMainTab('members')" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
               👥 소속 디자이너·원장 성과 및 코칭
@@ -658,17 +654,15 @@
                 가중치: 매출성장 30% · 영업이익 30% · 지점목표달성 20% · 리더·인재성장 20%
               </span>
             </div>
-            <p id="rbacBannerSubtitle" class="text-xs text-espresso-muted mt-0.5">
-              파주 운정점, 운정역점, 마곡발산점의 매장 목표치 및 각 지점장·디자이너 개별 목표치를 통합 관리합니다.
-            </p>
+
           </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <button type="button" id="bannerBtnTargetSettings" onclick="openTargetSettingsModal('branches')" class="px-3.5 py-2 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-extrabold transition whitespace-nowrap">
-            🎯 매장·지점장·디자이너 목표치 개별 설정
+            🎯 매장·지점원장·디자이너 목표치 개별 설정
           </button>
           <button type="button" id="bannerBtnDataVisibility" onclick="openDataVisibilityModal()" class="px-3.5 py-2 rounded-xl bg-champagne-bg hover:bg-champagne hover:text-white text-champagne-dark border border-champagne/40 text-xs font-extrabold transition whitespace-nowrap">
-            🔐 볼 수 있는 데이터 설정
+            🔐 데이터 설정
           </button>
           <button type="button" onclick="switchMainTab('crm')" class="px-3.5 py-2 rounded-xl bg-espresso hover:bg-espresso-light text-ivory text-xs font-bold transition whitespace-nowrap">
             CRM 5대 지표 계산기 &rarr;
@@ -719,7 +713,7 @@
             <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
               <div class="min-w-0">
                 <span id="secondaryChartBadge" class="text-[11px] font-bold uppercase tracking-wider text-sage-dark bg-sage-bg px-2 py-0.5 rounded whitespace-nowrap">
-                  직급별 권한 맞춤 비교
+                  항목별 KPI 분석
                 </span>
                 <h3 id="secondaryChartTitle" class="text-sm sm:text-base font-bold text-espresso mt-1">
                   소속 디자이너 KPI 종합 점수 비교
@@ -739,7 +733,7 @@
             <div class="min-w-0">
               <div class="flex items-center gap-2 whitespace-nowrap">
                 <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-espresso text-ivory whitespace-nowrap">직접 가입 원장·디자이너 통합 비교 그래프</span>
-                <span id="allDesignersChartRoleHint" class="text-xs text-champagne-dark font-semibold whitespace-nowrap">대표원장 · 제작자 · 지점원장 뷰</span>
+                
               </div>
               <h3 id="allDesignersChartHeading" class="text-sm sm:text-base font-bold text-espresso mt-1">
                 지점별 직접 가입 원장·디자이너 개인매출 · 재방문율 · KPI 종합점수 비교 그래프
@@ -763,23 +757,16 @@
         <div id="adminSubscriberManagementCard" class="card-luxury rounded-2xl overflow-hidden border-2 border-champagne">
           <div class="p-5 sm:p-6 bg-espresso text-ivory flex flex-wrap items-center justify-between gap-3">
             <div class="min-w-0">
-              <div class="flex items-center gap-2 whitespace-nowrap">
-                <span class="text-[11px] px-2.5 py-0.5 rounded bg-goldaccent text-goldaccent-text font-extrabold whitespace-nowrap">👑 대표원장 · 🛠️ 제작자 전용 열람</span>
-                <span class="text-xs text-champagne-light font-semibold whitespace-nowrap">지점원장 · 디자이너에게는 보이지 않습니다</span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold mt-1 whitespace-nowrap">
-                👥 전체 가입자 리스트 · 개별 목표치 설정 및 회원탈퇴 관리
+              <h3 class="text-base sm:text-lg font-bold whitespace-nowrap">
+                👥 전체 가입자 리스트 · 개별 목표치 및 회원탈퇴 관리
               </h3>
-              <p class="text-xs text-ivory/75 mt-0.5">
-                이름·비밀번호 설정과 사내 가입 코드(Yuroso1007)로 가입한 디자이너 및 지점원장 목록입니다. 대표원장만 개별 목표치 변경 및 회원탈퇴 처리가 가능합니다.
-              </p>
             </div>
             <div class="flex items-center gap-2 shrink-0 whitespace-nowrap">
               <span id="adminSubscriberCountBadge" class="px-3 py-1.5 rounded-xl bg-white/10 text-champagne-light text-xs font-extrabold whitespace-nowrap">
                 가입 인원 0명
               </span>
               <button type="button" onclick="openTargetSettingsModal('designers')" class="px-3.5 py-2 rounded-xl bg-goldaccent hover:bg-goldaccent-hover text-goldaccent-text text-xs font-extrabold transition whitespace-nowrap">
-                🎯 지점장·디자이너 개별 목표치 설정
+                🎯 지점원장·디자이너 개별 목표치 설정
               </button>
               <button type="button" onclick="openQuickSignupModal()" class="px-3.5 py-2 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-bold transition whitespace-nowrap">
                 + 인원 추가 등록
@@ -798,7 +785,7 @@
                   <th class="py-3 px-4 font-bold whitespace-nowrap">로그인 이름 / 비밀번호</th>
                   <th class="py-3 px-4 font-bold whitespace-nowrap">개별 목표치 (개인매출 / 재방문율 / 신규)</th>
                   <th class="py-3 px-4 font-bold text-center whitespace-nowrap">열람 상태</th>
-                  <th class="py-3 px-4 font-bold text-center whitespace-nowrap">목표 수정 · 회원탈퇴 (대표원장 전용)</th>
+                  <th class="py-3 px-4 font-bold text-center whitespace-nowrap">목표 수정 · 회원탈퇴</th>
                 </tr>
               </thead>
               <tbody id="adminSubscriberTableBody" class="divide-y divide-ivory-border text-xs sm:text-sm"></tbody>
@@ -811,13 +798,10 @@
           <div class="p-5 sm:p-6 border-b border-ivory-border flex flex-wrap items-center justify-between gap-3 bg-ivory/40">
             <div class="min-w-0">
               <h3 id="dashboardTableTitle" class="text-base sm:text-lg font-bold text-espresso whitespace-nowrap">
-                직급별 열람 허용 성과 데이터 명세표 (개별 목표치 자동 반영)
+                성과 데이터 명세표
               </h3>
-              <p id="dashboardTableSubtitle" class="text-xs text-espresso-muted mt-0.5">
-                대표원장이 각 지점장·디자이너에게 개별 설정한 목표치를 기준으로 KPI 달성 점수가 자동 산출됩니다.
-              </p>
             </div>
-            <div class="flex items-center gap-2 shrink-0 whitespace-nowrap">
+            <div id="dashboardTableActionsWrap" class="flex items-center gap-2 shrink-0 whitespace-nowrap">
               <input
                 type="text"
                 id="dashboardSearchInput"
@@ -825,7 +809,7 @@
                 placeholder="이름 또는 지점 검색..."
                 class="px-3 py-1.5 rounded-lg border border-ivory-border bg-white text-xs text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
               />
-              <button type="button" onclick="openQuickSignupModal()" class="px-3 py-1.5 rounded-lg bg-espresso text-ivory text-xs font-bold hover:bg-espresso-light transition whitespace-nowrap">
+              <button type="button" id="btnTableQuickSignup" onclick="openQuickSignupModal()" class="px-3 py-1.5 rounded-lg bg-espresso text-ivory text-xs font-bold hover:bg-espresso-light transition whitespace-nowrap">
                 + 원장·디자이너 직접 가입
               </button>
             </div>
@@ -874,7 +858,7 @@
                   가입된 원장·디자이너의 5대 지표를 입력하면 개별 적용된 목표치 기준으로 재방문 비율과 KPI 점수가 자동 계산됩니다.
                 </p>
               </div>
-              <button type="button" onclick="openQuickSignupModal()" class="px-3 py-1.5 rounded-xl bg-champagne text-white text-xs font-bold hover:bg-champagne-dark transition whitespace-nowrap shrink-0">
+              <button type="button" id="btnCrmQuickSignup" onclick="openQuickSignupModal()" class="px-3 py-1.5 rounded-xl bg-champagne text-white text-xs font-bold hover:bg-champagne-dark transition whitespace-nowrap shrink-0">
                 + 신규 인원 가입 등록
               </button>
             </div>
@@ -1216,7 +1200,7 @@
           </div>
           <div class="flex items-center gap-2 shrink-0 whitespace-nowrap">
             <button type="button" id="branchTabBtnEditTargets" onclick="openTargetSettingsModal('branches')" class="px-4 py-2.5 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-extrabold transition whitespace-nowrap">
-              🎯 매장별 · 지점장별 목표치 수정 (대표원장 전용)
+              🎯 매장별 · 지점원장별 목표치 수정
             </button>
             <div id="branchTabRestrictionNotice" class="hidden px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-semibold whitespace-nowrap">
               🔒 대표원장·제작자의 [열람 데이터 설정] 적용 중
@@ -1259,7 +1243,7 @@
           <div class="card-luxury rounded-2xl overflow-hidden">
             <div class="p-5 border-b border-ivory-border bg-ivory/40 flex items-center justify-between gap-2 whitespace-nowrap">
               <h4 class="text-base font-bold text-espresso whitespace-nowrap">📊 3대 지점 총 결과 KPI 달성 현황 비교 매트릭스</h4>
-              <span class="text-xs text-espresso-muted whitespace-nowrap">※ 매장 및 지점장 목표치는 대표원장만 수정 가능</span>
+              
             </div>
             <div class="overflow-x-auto custom-scrollbar">
               <table class="w-full text-left border-collapse">
@@ -1293,18 +1277,16 @@
             <h3 class="text-base sm:text-xl font-bold text-espresso mt-1.5">
               직접 가입한 지점원장 · 디자이너 프로필, 개별 목표치 및 1:1 성장 코칭 관리
             </h3>
-            <p class="text-xs text-espresso-muted mt-0.5">
-              직접 회원가입을 완료한 인원만 등록되며, 대표원장은 각 지점장·디자이너의 개인 목표치를 개별 설정·변경할 수 있습니다.
-            </p>
+
           </div>
           <div class="flex items-center gap-2 shrink-0 whitespace-nowrap">
             <button type="button" id="membersTabBtnTargetSettings" onclick="openTargetSettingsModal('designers')" class="px-4 py-2.5 rounded-xl bg-goldaccent hover:bg-goldaccent-hover text-goldaccent-text text-xs font-extrabold transition whitespace-nowrap">
-              🎯 지점장·디자이너 개별 목표치 설정 (대표원장)
+              🎯 지점원장·디자이너 개별 목표치 설정
             </button>
             <button type="button" id="membersTabBtnVisibility" onclick="openDataVisibilityModal()" class="px-4 py-2.5 rounded-xl bg-champagne text-white hover:bg-champagne-dark text-xs font-bold transition whitespace-nowrap">
               🔐 가입자 · 데이터 설정
             </button>
-            <button type="button" onclick="openQuickSignupModal()" class="px-4 py-2.5 rounded-xl bg-espresso hover:bg-espresso-light text-ivory text-xs font-bold transition whitespace-nowrap">
+            <button type="button" id="btnMembersQuickSignup" onclick="openQuickSignupModal()" class="px-4 py-2.5 rounded-xl bg-espresso hover:bg-espresso-light text-ivory text-xs font-bold transition whitespace-nowrap">
               + 새 디자이너/원장 등록
             </button>
           </div>
@@ -1423,7 +1405,7 @@
             <label class="flex items-start gap-2.5 cursor-pointer p-2 rounded-xl hover:bg-white transition">
               <input type="checkbox" id="vis_mgrViewThreeBranchTab" class="mt-0.5 w-4 h-4 rounded text-espresso focus:ring-champagne" />
               <div>
-                <p class="font-bold text-espresso text-xs">[3대 지점장 & 총 결과 KPI 비교 분석] 탭 열람 허용</p>
+                <p class="font-bold text-espresso text-xs">[3대 지점원장 & 총 결과 KPI 비교 분석] 탭 열람 허용</p>
                 <p class="text-[11px] text-espresso-muted">해제 시 지점원장은 타 지점 비교 대시보드 접근 차단</p>
               </div>
             </label>
@@ -1479,21 +1461,9 @@
               </div>
             </label>
 
-            <label class="flex items-start gap-2.5 cursor-pointer p-2 rounded-xl hover:bg-white transition">
-              <input type="checkbox" id="vis_desViewBranchPeers" class="mt-0.5 w-4 h-4 rounded text-espresso focus:ring-champagne" />
-              <div>
-                <p class="font-bold text-espresso text-xs">소속 지점 타 디자이너 성과 비교 열람 허용</p>
-                <p class="text-[11px] text-espresso-muted">기본 해제(본인 결과값만 열람) · 체크 시 소속 지점 동료 비교 허용</p>
-              </div>
-            </label>
-
-            <label class="flex items-start gap-2.5 cursor-pointer p-2 rounded-xl hover:bg-white transition">
-              <input type="checkbox" id="vis_desViewThreeBranchTab" class="mt-0.5 w-4 h-4 rounded text-espresso focus:ring-champagne" />
-              <div>
-                <p class="font-bold text-espresso text-xs">[3대 지점장 & 총 결과 KPI 비교 분석] 탭 열람 허용</p>
-                <p class="text-[11px] text-espresso-muted">기본 해제(디자이너는 전사 지점 비교 탭 열람 불가)</p>
-              </div>
-            </label>
+            <div class="p-2.5 rounded-xl bg-sage-bg/70 border border-sage/20 text-xs text-sage-dark font-semibold">
+              ✂️ 디자이너는 본인의 KPI 대시보드, 본인 CRM 입력 내역, 본인 프로필/코칭 노트만 확인할 수 있도록 고정되어 있습니다.
+            </div>
           </div>
 
         </div>
@@ -1668,7 +1638,7 @@
     </div>
   </div>
 
-  <!-- 3. CEO-EXCLUSIVE INTEGRATED TARGET SETTINGS MODAL (매장별 · 지점장별 · 디자이너별 개별 목표치 설정 모달) -->
+  <!-- 3. CEO-EXCLUSIVE INTEGRATED TARGET SETTINGS MODAL (매장별 · 지점원장별 · 디자이너별 개별 목표치 설정 모달) -->
   <div id="targetSettingsModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-5xl w-full overflow-hidden shadow-2xl border border-ivory-border max-h-[92vh] flex flex-col">
       <!-- Modal Header -->
@@ -1678,7 +1648,7 @@
             <span class="text-[11px] px-2.5 py-0.5 rounded bg-goldaccent text-goldaccent-text font-extrabold">👑 대표원장 전용 목표 관리</span>
             <span class="text-[11px] text-champagne-light font-bold">STORE · BRANCH DIRECTOR · DESIGNER TARGETS</span>
           </div>
-          <h3 class="text-base sm:text-lg font-bold mt-1 whitespace-nowrap">3대 매장 목표치 및 각 지점장 · 디자이너 개별 목표치 통합 설정</h3>
+          <h3 class="text-base sm:text-lg font-bold mt-1 whitespace-nowrap">3대 매장 목표치 및 각 지점원장 · 디자이너 개별 목표치 통합 설정</h3>
         </div>
         <button type="button" onclick="closeTargetSettingsModal()" class="text-ivory/70 hover:text-white text-2xl font-bold">&times;</button>
       </div>
@@ -1689,7 +1659,7 @@
           🏢 1. 3대 매장별 목표치 수정 (매출 · 영업이익)
         </button>
         <button type="button" id="targetModalTabBtn_managers" onclick="switchTargetModalTab('managers')" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-espresso-muted hover:text-espresso border border-ivory-border transition whitespace-nowrap">
-          👔 2. 각 지점장(지점원장) 개별 목표치 설정
+          👔 2. 각 지점원장 개별 목표치 설정
         </button>
         <button type="button" id="targetModalTabBtn_designers" onclick="switchTargetModalTab('designers')" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-espresso-muted hover:text-espresso border border-ivory-border transition whitespace-nowrap">
           ✂️ 3. 각 디자이너별 개별 목표치 설정
@@ -1708,22 +1678,22 @@
                 대표원장만 각 매장의 월 목표 매출액, 목표 영업이익, 예상 영업이익률을 수정할 수 있습니다.
               </p>
             </div>
-            <span class="text-xs font-extrabold px-2.5 py-1 rounded bg-espresso text-champagne-light whitespace-nowrap">대표원장 전용 권한</span>
+            
           </div>
 
           <div id="storeTargetsEditGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
         </div>
 
-        <!-- SUB-PANEL 2: 각 지점장(지점원장) 개별 목표치 설정 -->
+        <!-- SUB-PANEL 2: 각 지점원장 개별 목표치 설정 -->
         <div id="targetModalPanel_managers" class="space-y-4 hidden">
           <div class="p-4 rounded-2xl bg-sage-bg border border-sage/30 flex flex-wrap items-center justify-between gap-2">
             <div>
-              <p class="font-bold text-espresso text-sm whitespace-nowrap">👔 각 지점장(지점원장) KPI 개별 목표치 설정</p>
+              <p class="font-bold text-espresso text-sm whitespace-nowrap">👔 각 지점원장 KPI 개별 목표치 설정</p>
               <p class="text-xs text-espresso-muted mt-0.5">
-                지점별 지점장의 4대 KPI 평가 기준(지점 목표매출 35% / 디자이너 평균매출 목표성장률 30% / 지점 목표 재방문율 20% / 직원 성장·유지 점수 15%)과 가입된 지점원장의 개인 목표를 개별 설정합니다.
+                지점별 지점원장의 4대 KPI 평가 기준(지점 목표매출 35% / 디자이너 평균매출 목표성장률 30% / 지점 목표 재방문율 20% / 직원 성장·유지 점수 15%)과 가입된 지점원장의 개인 목표를 개별 설정합니다.
               </p>
             </div>
-            <span class="text-xs font-extrabold px-2.5 py-1 rounded bg-sage text-white whitespace-nowrap">지점장별 개별 적용</span>
+            <span class="text-xs font-extrabold px-2.5 py-1 rounded bg-sage text-white whitespace-nowrap">지점원장별 개별 적용</span>
           </div>
 
           <div id="managerTargetsEditGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
@@ -1763,11 +1733,11 @@
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-goldaccent text-goldaccent-text whitespace-nowrap">직접 가입 인원별 1:1 맞춤 목표</span>
-                <h4 class="font-bold text-espresso text-sm mt-1 whitespace-nowrap">✂️ 가입된 각 지점장 · 디자이너 개별 목표치 설정</h4>
+                <h4 class="font-bold text-espresso text-sm mt-1 whitespace-nowrap">✂️ 가입된 각 지점원장 · 디자이너 개별 목표치 설정</h4>
                 <p class="text-xs text-espresso-muted">각 인원마다 서로 다른 목표 매출, 목표 재방문 비율, 목표 신규 고객수를 개별 입력하여 차등 적용할 수 있습니다.</p>
               </div>
               <button type="button" onclick="closeTargetSettingsModal(); openQuickSignupModal();" class="px-3 py-1.5 rounded-xl bg-espresso text-ivory text-xs font-bold hover:bg-espresso-light transition whitespace-nowrap">
-                + 신규 디자이너·지점장 가입 등록
+                + 신규 디자이너·지점원장 가입 등록
               </button>
             </div>
 
@@ -1795,7 +1765,113 @@
           <div class="flex items-center gap-2 shrink-0">
             <button type="button" onclick="closeTargetSettingsModal()" class="px-4 py-2.5 rounded-xl border border-ivory-border text-xs font-bold text-espresso-muted whitespace-nowrap">닫기</button>
             <button type="submit" class="px-6 py-2.5 rounded-xl bg-espresso hover:bg-espresso-light text-ivory text-xs font-extrabold shadow-md whitespace-nowrap">
-              🎯 매장 · 지점장 · 디자이너 목표치 일괄 저장 및 적용
+              🎯 매장 · 지점원장 · 디자이너 목표치 일괄 저장 및 적용
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. SUPABASE DB CLOUD SYNC MODAL -->
+  <div id="supabaseConfigModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-ivory-border max-h-[92vh] flex flex-col">
+      <div class="bg-espresso text-ivory px-6 py-4 flex items-center justify-between shrink-0">
+        <div>
+          <div class="flex items-center gap-2 whitespace-nowrap">
+            <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500 text-white font-extrabold">SUPABASE CLOUD DB</span>
+            <span id="modalSupabaseStatusBadge" class="text-[11px] text-champagne-light font-bold">연결 상태 확인 중</span>
+          </div>
+          <h3 class="text-base sm:text-lg font-bold mt-1 whitespace-nowrap">☁️ Supabase 실시간 데이터베이스 연동 설정</h3>
+        </div>
+        <button type="button" onclick="closeSupabaseModal()" class="text-ivory/70 hover:text-white text-2xl font-bold">&times;</button>
+      </div>
+
+      <form id="supabaseConfigForm" onsubmit="handleSaveSupabaseConfig(event)" class="p-6 overflow-y-auto custom-scrollbar space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl bg-ivory border border-ivory-border space-y-1.5">
+          <p class="font-bold text-espresso text-xs sm:text-sm">💡 Supabase Project URL 및 Anon Key 연동</p>
+          <p class="text-xs text-espresso-muted leading-relaxed">
+            기존에 사용하시던 Supabase 프로젝트의 <strong>Project URL</strong>과 <strong>Anon Key (public)</strong>를 입력하면 회원가입, 목표치, CRM 5대 지표 데이터가 Supabase DB와 실시간 동기화됩니다.
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label for="supabaseUrlInput" class="block text-xs font-bold text-espresso mb-1">
+              1. Supabase Project URL <span class="text-red-600">*</span>
+            </label>
+            <input
+              type="url"
+              id="supabaseUrlInput"
+              required
+              placeholder="https://xxxxxxxxxxxxxxxxxxxx.supabase.co"
+              class="w-full px-4 py-2.5 rounded-xl border border-ivory-border bg-ivory/40 focus:bg-white text-xs sm:text-sm font-mono font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
+            />
+          </div>
+
+          <div>
+            <label for="supabaseAnonKeyInput" class="block text-xs font-bold text-espresso mb-1">
+              2. Supabase Anon Public Key (API Key) <span class="text-red-600">*</span>
+            </label>
+            <input
+              type="text"
+              id="supabaseAnonKeyInput"
+              required
+              placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... 또는 sb_publishable_..."
+              class="w-full px-4 py-2.5 rounded-xl border border-ivory-border bg-ivory/40 focus:bg-white text-xs sm:text-sm font-mono font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
+            />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="supabaseTableInput" class="block text-xs font-bold text-espresso mb-1">
+                3. 동기화 테이블명 (기본: yuroso_app_state)
+              </label>
+              <input
+                type="text"
+                id="supabaseTableInput"
+                value="yuroso_app_state"
+                required
+                class="w-full px-3.5 py-2 rounded-xl border border-ivory-border bg-ivory/40 focus:bg-white text-xs font-mono font-bold text-espresso"
+              />
+            </div>
+            <div class="flex items-end gap-2">
+              <button type="button" onclick="pullStateFromSupabase(true)" class="flex-1 py-2.5 px-3 rounded-xl bg-sage hover:bg-sage-dark text-white text-xs font-bold transition whitespace-nowrap">
+                📥 DB에서 최신 데이터 불러오기
+              </button>
+              <button type="button" onclick="pushStateToSupabase(true)" class="flex-1 py-2.5 px-3 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-bold transition whitespace-nowrap">
+                📤 현재 데이터 DB에 강제 저장
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SQL Helper Accordion -->
+        <div class="p-4 rounded-2xl bg-espresso text-ivory space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-bold text-champagne-light">📋 Supabase SQL Editor 초기 테이블 생성 쿼리 (최초 1회)</span>
+            <button type="button" onclick="copySupabaseSqlSnippet()" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-ivory text-[11px] font-bold transition">
+              SQL 복사하기
+            </button>
+          </div>
+          <pre id="supabaseSqlSnippetBox" class="text-[11px] font-mono text-ivory/85 bg-black/30 p-3 rounded-xl overflow-x-auto leading-relaxed">create table if not exists public.yuroso_app_state (
+  id text primary key,
+  state_json jsonb not null,
+  updated_at timestamptz default now()
+);
+alter table public.yuroso_app_state enable row level security;
+create policy "Allow public read write" on public.yuroso_app_state
+  for all using (true) with check (true);</pre>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-ivory-border">
+          <button type="button" onclick="disconnectSupabaseConfig()" class="px-3.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold transition">
+            연동 해제
+          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="closeSupabaseModal()" class="px-4 py-2.5 rounded-xl border border-ivory-border text-xs font-bold text-espresso-muted">닫기</button>
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-espresso hover:bg-espresso-light text-ivory text-xs font-extrabold shadow-md">
+              ☁️ Supabase DB 연동 저장 및 실시간 동기화 시작
             </button>
           </div>
         </div>
@@ -1839,6 +1915,16 @@
     // -----------------------------------------------------------------------
     const STORAGE_KEY_STATE = 'yuroso_hair_enterprise_state_v3';
     const STORAGE_KEY_SESSION = 'yuroso_hair_auth_session_v3';
+    const STORAGE_KEY_SUPABASE = 'yuroso_hair_supabase_cfg_v1';
+    // 기본 내장 Supabase 설정 (사용자 URL/Key 입력 시 자동 저장 및 연동)
+    const DEFAULT_SUPABASE_URL = '';
+    const DEFAULT_SUPABASE_ANON_KEY = '';
+    const DEFAULT_SUPABASE_TABLE = 'yuroso_app_state';
+
+    let supabaseClient = null;
+    let supabaseChannel = null;
+    let supabaseConnected = false;
+    let isPullingFromSupabase = false;
     const COMPANY_INVITE_CODE = 'Yuroso1007';
     const CEO_MASTER_PASSWORD = '^^yuroso1004';
     const CREATOR_MASTER_PASSWORD = "IPStor101`12__~!";
@@ -1946,7 +2032,7 @@
             targetSales: 18000000,
             targetRevisitRate: 72,
             targetNewCustomers: 40,
-            coachingNote: '전 지점 총괄 대표원장 (모든 매장·지점장·디자이너 목표치 및 데이터 권한 관리)'
+            coachingNote: '유로소 헤어 전 지점 총괄 대표원장'
           },
           {
             id: 'u_creator',
@@ -1965,7 +2051,7 @@
             targetSales: 18000000,
             targetRevisitRate: 72,
             targetNewCustomers: 40,
-            coachingNote: '시스템 제작자 총괄 관리자 (대표원장과 동일한 최상위 관리 권한)'
+            coachingNote: '유로소 헤어 시스템 총괄 관리'
           }
         ],
         crmHistory: []
@@ -2047,7 +2133,7 @@
                 targetSales: 18000000,
                 targetRevisitRate: 72,
                 targetNewCustomers: 40,
-                coachingNote: '시스템 제작자 총괄 관리자 (대표원장과 동일한 최상위 관리 권한)'
+                coachingNote: '유로소 헤어 시스템 총괄 관리'
               });
             }
             // Ensure each branch has manager target fields
@@ -2087,6 +2173,238 @@
 
     function saveAppState() {
       safeSetStorage(STORAGE_KEY_STATE, JSON.stringify(appState));
+      if (supabaseClient && !isPullingFromSupabase) {
+        pushStateToSupabase(false);
+      }
+    }
+
+    function getSupabaseConfig() {
+      const raw = safeGetStorage(STORAGE_KEY_SUPABASE);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.url && parsed.anonKey) return parsed;
+        } catch (e) {}
+      }
+      if (DEFAULT_SUPABASE_URL && DEFAULT_SUPABASE_ANON_KEY) {
+        return {
+          url: DEFAULT_SUPABASE_URL,
+          anonKey: DEFAULT_SUPABASE_ANON_KEY,
+          table: DEFAULT_SUPABASE_TABLE
+        };
+      }
+      return null;
+    }
+
+    function updateSupabaseStatusUI(status, labelText) {
+      const dots = [document.getElementById('headerSupabaseDot'), document.getElementById('authSupabaseDot')];
+      const labels = [document.getElementById('headerSupabaseLabel'), document.getElementById('authSupabaseLabel')];
+      const modalBadge = document.getElementById('modalSupabaseStatusBadge');
+
+      const dotColor = status === 'connected'
+        ? 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse'
+        : status === 'error'
+        ? 'w-2 h-2 rounded-full bg-red-500'
+        : 'w-2 h-2 rounded-full bg-amber-400';
+
+      dots.forEach(d => { if (d) d.className = dotColor; });
+      if (labels[0]) labels[0].textContent = status === 'connected' ? '☁️ DB 연동됨' : '☁️ DB 연동 설정';
+      if (labels[1]) labels[1].textContent = status === 'connected' ? '☁️ Supabase DB 실시간 연동 중' : '☁️ Supabase DB 연동 설정';
+      if (modalBadge) modalBadge.textContent = labelText || (status === 'connected' ? '✅ 실시간 연결됨' : '⚠️ 미연결 (URL/Key 입력 필요)');
+    }
+
+    async function initSupabaseConnection(showNotice = false) {
+      const cfg = getSupabaseConfig();
+      if (!cfg || !cfg.url || !cfg.anonKey || typeof window.supabase === 'undefined') {
+        supabaseClient = null;
+        supabaseConnected = false;
+        updateSupabaseStatusUI('disconnected', '⚠️ 미연결 (URL 및 Anon Key 입력 필요)');
+        return false;
+      }
+
+      try {
+        supabaseClient = window.supabase.createClient(cfg.url.trim(), cfg.anonKey.trim());
+        const ok = await pullStateFromSupabase(showNotice);
+        if (ok) {
+          subscribeSupabaseRealtime(cfg.table || DEFAULT_SUPABASE_TABLE);
+        }
+        return ok;
+      } catch (err) {
+        supabaseConnected = false;
+        updateSupabaseStatusUI('error', '❌ 연결 오류: ' + (err.message || '설정 확인 필요'));
+        if (showNotice) showToast('Supabase 연결 중 오류가 발생했습니다: ' + (err.message || ''), 'error');
+        return false;
+      }
+    }
+
+    async function pullStateFromSupabase(showNotice = false) {
+      const cfg = getSupabaseConfig();
+      if (!supabaseClient || !cfg) return false;
+      const tableName = (cfg.table || DEFAULT_SUPABASE_TABLE).trim();
+
+      try {
+        const { data, error } = await supabaseClient
+          .from(tableName)
+          .select('state_json, updated_at')
+          .eq('id', 'main')
+          .maybeSingle();
+
+        if (error) {
+          supabaseConnected = false;
+          updateSupabaseStatusUI('error', `❌ 테이블(${tableName}) 조회 실패: ${error.message}`);
+          if (showNotice) {
+            showToast(`⚠️ Supabase 조회 실패 (${error.message}). 모달 하단의 SQL 생성 쿼리를 Supabase SQL Editor에서 실행해주세요.`, 'error');
+          }
+          return false;
+        }
+
+        supabaseConnected = true;
+        updateSupabaseStatusUI('connected', `✅ ${tableName} 실시간 연동 중`);
+
+        if (data && data.state_json && typeof data.state_json === 'object') {
+          isPullingFromSupabase = true;
+          const remote = data.state_json;
+          if (remote.users && remote.branches && remote.targets) {
+            appState = remote;
+            safeSetStorage(STORAGE_KEY_STATE, JSON.stringify(appState));
+            renderCustomRegisteredAccountsOnLogin();
+            if (currentSession) {
+              syncAllSelectorsAndRender();
+            }
+          }
+          isPullingFromSupabase = false;
+          if (showNotice) showToast('☁️ Supabase DB에서 최신 데이터를 성공적으로 불러왔습니다!', 'highlight');
+        } else {
+          // Table exists but no "main" row yet -> seed initial/current state to Supabase
+          await pushStateToSupabase(false);
+          if (showNotice) showToast('☁️ Supabase DB 연결 성공! 현재 데이터가 클라우드에 초기 동기화되었습니다.', 'highlight');
+        }
+        return true;
+      } catch (e) {
+        isPullingFromSupabase = false;
+        supabaseConnected = false;
+        updateSupabaseStatusUI('error', '❌ 네트워크 또는 URL 오류');
+        if (showNotice) showToast('Supabase 통신 오류: URL과 Key를 확인해주세요.', 'error');
+        return false;
+      }
+    }
+
+    async function pushStateToSupabase(showNotice = false) {
+      const cfg = getSupabaseConfig();
+      if (!supabaseClient || !cfg) {
+        if (showNotice) showToast('먼저 Supabase URL과 Key를 입력해 연동해주세요.', 'error');
+        return false;
+      }
+      const tableName = (cfg.table || DEFAULT_SUPABASE_TABLE).trim();
+      try {
+        const { error } = await supabaseClient
+          .from(tableName)
+          .upsert({
+            id: 'main',
+            state_json: appState,
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'id' });
+
+        if (error) {
+          supabaseConnected = false;
+          updateSupabaseStatusUI('error', `❌ 저장 오류: ${error.message}`);
+          if (showNotice) showToast(`❌ Supabase 저장 실패: ${error.message}`, 'error');
+          return false;
+        }
+        supabaseConnected = true;
+        updateSupabaseStatusUI('connected', `✅ ${tableName} 실시간 동기화 완료`);
+        if (showNotice) showToast('☁️ 현재 데이터가 Supabase DB에 안전하게 저장되었습니다!', 'highlight');
+        return true;
+      } catch (e) {
+        if (showNotice) showToast('Supabase 저장 중 오류가 발생했습니다.', 'error');
+        return false;
+      }
+    }
+
+    function subscribeSupabaseRealtime(tableName) {
+      if (!supabaseClient) return;
+      try {
+        if (supabaseChannel) {
+          supabaseClient.removeChannel(supabaseChannel);
+        }
+        supabaseChannel = supabaseClient
+          .channel('yuroso_db_sync_channel')
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: tableName },
+            (payload) => {
+              if (payload && payload.new && payload.new.state_json) {
+                isPullingFromSupabase = true;
+                appState = payload.new.state_json;
+                safeSetStorage(STORAGE_KEY_STATE, JSON.stringify(appState));
+                renderCustomRegisteredAccountsOnLogin();
+                if (currentSession) {
+                  syncAllSelectorsAndRender();
+                }
+                isPullingFromSupabase = false;
+              }
+            }
+          )
+          .subscribe();
+      } catch (e) {}
+    }
+
+    function openSupabaseModal() {
+      const cfg = getSupabaseConfig();
+      const urlEl = document.getElementById('supabaseUrlInput');
+      const keyEl = document.getElementById('supabaseAnonKeyInput');
+      const tblEl = document.getElementById('supabaseTableInput');
+      if (urlEl) urlEl.value = cfg ? cfg.url : '';
+      if (keyEl) keyEl.value = cfg ? cfg.anonKey : '';
+      if (tblEl) tblEl.value = (cfg && cfg.table) ? cfg.table : DEFAULT_SUPABASE_TABLE;
+
+      const m = document.getElementById('supabaseConfigModal');
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
+    }
+
+    function closeSupabaseModal() {
+      const m = document.getElementById('supabaseConfigModal');
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
+    }
+
+    async function handleSaveSupabaseConfig(e) {
+      e.preventDefault();
+      const url = document.getElementById('supabaseUrlInput')?.value.trim() || '';
+      const anonKey = document.getElementById('supabaseAnonKeyInput')?.value.trim() || '';
+      const table = document.getElementById('supabaseTableInput')?.value.trim() || DEFAULT_SUPABASE_TABLE;
+
+      if (!url || !anonKey) {
+        showToast('Supabase Project URL과 Anon Key를 모두 입력해주세요.', 'error');
+        return;
+      }
+
+      safeSetStorage(STORAGE_KEY_SUPABASE, JSON.stringify({ url, anonKey, table }));
+      const ok = await initSupabaseConnection(true);
+      if (ok) {
+        closeSupabaseModal();
+      }
+    }
+
+    function disconnectSupabaseConfig() {
+      safeRemoveStorage(STORAGE_KEY_SUPABASE);
+      supabaseClient = null;
+      supabaseConnected = false;
+      updateSupabaseStatusUI('disconnected', '⚠️ 연동 해제됨');
+      showToast('Supabase DB 연동 설정이 초기화되었습니다.');
+    }
+
+    function copySupabaseSqlSnippet() {
+      const sql = document.getElementById('supabaseSqlSnippetBox')?.textContent || '';
+      if (navigator.clipboard && sql) {
+        navigator.clipboard.writeText(sql);
+        showToast('📋 Supabase SQL 테이블 생성 쿼리가 복사되었습니다! Supabase SQL Editor에 붙여넣고 Run을 눌러주세요.', 'highlight');
+      }
     }
 
     // -----------------------------------------------------------------------
@@ -3046,7 +3364,7 @@
       }
       activeViewContext.role = targetRole;
       syncAllSelectorsAndRender();
-      showToast(`권한 뷰가 [${targetRole}] 모드로 전환되었습니다.`);
+      showToast(`[${targetRole}] 화면으로 전환되었습니다.`);
     }
 
     function handleRBACBranchChange(branchName) {
@@ -3058,7 +3376,7 @@
       activeViewContext.branch = branchName;
       activeViewContext.role = '지점원장';
       syncAllSelectorsAndRender();
-      showToast(`🏢 [${branchName}] 지점원장 전용 열람 뷰로 전환되었습니다.`);
+      showToast(`🏢 [${branchName}] 지점원장 화면으로 전환되었습니다.`);
     }
 
     function handleRBACDesignerChange(designerId) {
@@ -3111,6 +3429,9 @@
           } else {
             btn.className = 'px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap flex items-center gap-1.5';
           }
+          if (t === 'branches' && activeViewContext.role === '디자이너') {
+            btn.classList.add('hidden');
+          }
         }
       });
 
@@ -3142,11 +3463,42 @@
 
       const topBar = document.getElementById('topRbacSwitcherBar');
       if (topBar) {
-        if (vis.hideRbacBarForStaff && currentSession && currentSession.role !== '대표원장' && currentSession.role !== '제작자') {
+        if (currentSession && currentSession.role !== '대표원장' && currentSession.role !== '제작자') {
           topBar.classList.add('hidden');
         } else {
           topBar.classList.remove('hidden');
         }
+      }
+
+      const navBranchesBtn = document.getElementById('navTab_branches');
+      const navMembersBtn = document.getElementById('navTab_members');
+      const btnHeaderSignup = document.getElementById('btnHeaderQuickSignup');
+      const btnTableSignup = document.getElementById('btnTableQuickSignup');
+      const searchInputEl = document.getElementById('dashboardSearchInput');
+      const btnCrmSignup = document.getElementById('btnCrmQuickSignup');
+      const btnMembersSignup = document.getElementById('btnMembersQuickSignup');
+
+      if (activeViewContext.role === '디자이너') {
+        if (navBranchesBtn) navBranchesBtn.classList.add('hidden');
+        if (navMembersBtn) navMembersBtn.textContent = '👤 내 프로필 및 코칭 노트';
+        if (btnHeaderSignup) btnHeaderSignup.classList.add('hidden');
+        if (btnTableSignup) btnTableSignup.classList.add('hidden');
+        if (searchInputEl) searchInputEl.classList.add('hidden');
+        if (btnCrmSignup) btnCrmSignup.classList.add('hidden');
+        if (btnMembersSignup) btnMembersSignup.classList.add('hidden');
+        if (currentMainTab === 'branches') {
+          currentMainTab = 'dashboard';
+          document.getElementById('tabView_branches')?.classList.add('hidden');
+          document.getElementById('tabView_dashboard')?.classList.remove('hidden');
+        }
+      } else {
+        if (navBranchesBtn) navBranchesBtn.classList.remove('hidden');
+        if (navMembersBtn) navMembersBtn.textContent = '👥 소속 디자이너·원장 성과 및 코칭';
+        if (btnHeaderSignup) btnHeaderSignup.classList.remove('hidden');
+        if (btnTableSignup) btnTableSignup.classList.remove('hidden');
+        if (searchInputEl) searchInputEl.classList.remove('hidden');
+        if (btnCrmSignup) btnCrmSignup.classList.remove('hidden');
+        if (btnMembersSignup) btnMembersSignup.classList.remove('hidden');
       }
 
       // 대표원장 전용: 목표치 설정 버튼 및 데이터 열람 설정 버튼 표시 제어
@@ -3154,6 +3506,7 @@
       const btnVisLabel = document.getElementById('btnDataVisibilityLabel');
       const bannerBtnVis = document.getElementById('bannerBtnDataVisibility');
       const btnTarget = document.getElementById('btnOpenTargetSettingsModal');
+      const btnSupa = document.getElementById('btnOpenSupabaseModal');
       const bannerBtnTarget = document.getElementById('bannerBtnTargetSettings');
 
       if (isCEOView()) {
@@ -3161,14 +3514,16 @@
           btnVis.classList.remove('hidden');
           btnVis.className = 'px-3.5 py-2 rounded-xl bg-goldaccent hover:bg-goldaccent-hover text-goldaccent-text text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap shrink-0';
         }
-        if (btnVisLabel) btnVisLabel.textContent = '🔐 열람 데이터 설정';
+        if (btnVisLabel) btnVisLabel.textContent = '🔐 데이터 설정';
         if (bannerBtnVis) bannerBtnVis.classList.remove('hidden');
         if (btnTarget) btnTarget.classList.remove('hidden');
+        if (btnSupa) btnSupa.classList.remove('hidden');
         if (bannerBtnTarget) bannerBtnTarget.classList.remove('hidden');
       } else {
         if (btnVis) btnVis.classList.add('hidden');
         if (bannerBtnVis) bannerBtnVis.classList.add('hidden');
         if (btnTarget) btnTarget.classList.add('hidden');
+        if (btnSupa) btnSupa.classList.add('hidden');
         if (bannerBtnTarget) bannerBtnTarget.classList.add('hidden');
       }
 
@@ -3186,12 +3541,10 @@
 
       const roleBadge = document.getElementById('headerCurrentRoleBadge');
       const branchBadge = document.getElementById('headerCurrentBranchBadge');
-      const scopeDesc = document.getElementById('headerAccessScopeDesc');
-      const bannerIcon = document.getElementById('rbacBannerIcon');
+            const bannerIcon = document.getElementById('rbacBannerIcon');
       const bannerTitle = document.getElementById('rbacBannerTitle');
       const bannerWeight = document.getElementById('rbacBannerWeightTag');
-      const bannerSub = document.getElementById('rbacBannerSubtitle');
-
+      
       if (currentSession) {
         const dispRole = currentSession.name === currentSession.role ? currentSession.name : `${currentSession.name} ${currentSession.role}`;
         document.getElementById('loggedInUserNameDisplay').textContent = `${dispRole} (${currentSession.branch})`;
@@ -3202,40 +3555,33 @@
 
       if (isCEOView()) {
         const regStaffCount = appState.users.filter(u => u.isCustom).length;
-        const adminTitleLabel = activeViewContext.role === '제작자' ? '제작자 (총괄관리)' : '대표원장 (총괄관리)';
+        const adminTitleLabel = activeViewContext.role === '제작자' ? '제작자' : '대표원장';
         roleBadge.textContent = adminTitleLabel;
         branchBadge.textContent = `전 지점 총괄 · 가입 인원 ${regStaffCount}명`;
-        scopeDesc.textContent = `3대 매장 · 지점장 · 디자이너 목표치 개별 설정 및 통합 조회`;
-        bannerIcon.textContent = activeViewContext.role === '제작자' ? '🛠️' : '👑';
+                bannerIcon.textContent = activeViewContext.role === '제작자' ? '🛠️' : '👑';
         bannerTitle.textContent = activeViewContext.role === '제작자'
           ? '제작자(총괄관리자)님 — 전 지점 통합 KPI & 개별 목표치 관리 대시보드'
-          : '영화 대표원장님 — 전 지점 통합 KPI & 매장·지점장·디자이너 목표치 총괄 대시보드';
+          : '영화 대표원장님 — 전 지점 통합 KPI & 매장·지점원장·디자이너 목표치 총괄 대시보드';
         bannerWeight.textContent = '총괄 KPI: 매출성장(30%) · 영업이익(30%) · 지점목표달성(20%) · 리더·인재성장(20%)';
-        bannerSub.textContent = `현재 가입된 지점원장·디자이너는 총 ${regStaffCount}명이며, [목표치 개별 설정]에서 각 매장·지점장·디자이너별 목표를 개별 적용할 수 있습니다.`;
-      } else if (activeViewContext.role === '지점원장') {
+              } else if (activeViewContext.role === '지점원장') {
         const bSummary = calculateBranchSummary(activeViewContext.branch);
         roleBadge.textContent = '지점원장';
         branchBadge.textContent = `${activeViewContext.branch} 전용`;
-        scopeDesc.textContent = `지점원장 권한(${activeViewContext.branch}): 대표원장이 설정한 지점 목표(${formatManwon(bSummary.meta.mgrTargetSales)}) 기준 성과 열람`;
-        bannerIcon.textContent = '🏢';
+                bannerIcon.textContent = '🏢';
         bannerTitle.textContent = `${activeViewContext.branch} (${bSummary.meta.managerName}) — 지점 전용 KPI & 소속 디자이너 대시보드`;
         bannerWeight.textContent = '지점원장 KPI: 지점매출(35%) · 평균매출성장(30%) · 재방문비율(20%) · 직원성장·유지(15%)';
-        bannerSub.textContent = `본인 소속 지점(${activeViewContext.branch})에 가입한 원장·디자이너(${bSummary.memberCount}명)의 성과를 확인합니다. (목표치 수정은 대표원장 전용)`;
-      } else {
+              } else {
         const desUser = appState.users.find(u => u.id === activeViewContext.designerId && u.role === '디자이너');
         const eff = getUserEffectiveTargets(desUser);
         roleBadge.textContent = '디자이너';
         branchBadge.textContent = desUser ? `${desUser.branch} · ${desUser.name}` : '미등록 (회원가입 필요)';
-        scopeDesc.textContent = desUser
-          ? `디자이너 권한(${desUser.name}): 개별 적용된 목표(매출 ${formatManwon(eff.sales)} · 재방문율 ${eff.revisitRate}% · 신규 ${eff.newCustomers}명) 기준 열람`
-          : '현재 직접 가입한 디자이너가 없습니다. [+ 신규 인원 회원가입]을 통해 디자이너를 등록해주세요.';
+
         bannerIcon.textContent = '✂️';
         bannerTitle.textContent = desUser
           ? `${desUser.branch} ${desUser.name} ${desUser.title}님 — 개인 KPI 대시보드 & CRM 내역`
           : '직접 가입한 디자이너가 없습니다 — 회원가입 후 이용해주세요';
         bannerWeight.textContent = '디자이너 KPI: 개인매출(40%) · 재방문 비율(30%) · 객단가(20%) · 신규 고객수(10%)';
-        bannerSub.textContent = '대표원장이 개별 설정한 목표치를 기준으로 내 KPI 점수가 자동 산출됩니다.';
-      }
+              }
 
       renderCeoRegisteredMembersManageList();
       renderDashboardView();
@@ -3260,7 +3606,7 @@
 
       if (isCEOView()) {
         const ceo = calculateCEOEnterpriseKPI();
-        const roleLabel = activeViewContext.role === '제작자' ? '제작자 (대표원장 동일 권한)' : '영화 대표원장';
+        const roleLabel = activeViewContext.role === '제작자' ? '제작자' : '영화 대표원장';
         kpiGrid.classList.remove('hidden');
         chartsGrid.classList.remove('hidden');
         detailTableCard.classList.remove('hidden');
@@ -3322,16 +3668,16 @@
         totalBar.innerHTML = `
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="min-w-0">
-              <span class="text-xs font-bold text-champagne-light uppercase whitespace-nowrap">TOP ADMINISTRATOR KPI EVALUATION (대표원장 · 제작자 공동 권한)</span>
+              <span class="text-xs font-bold text-champagne-light uppercase whitespace-nowrap">TOTAL KPI EVALUATION</span>
               <h3 class="text-base sm:text-xl font-bold mt-0.5">${roleLabel} 종합 KPI 달성 점수: <span class="text-goldaccent">${ceo.ceoTotalScore.toFixed(1)}점</span> / 100점 (${ceo.ceoGrade})</h3>
               <p class="text-xs text-ivory/75 mt-1">전 지점 매출 성장(30%) + 영업이익(30%) + 지점 목표 달성(20%) + 리더·인재 성장(20%) 통합 산출</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
               <button type="button" onclick="openTargetSettingsModal('branches')" class="px-4 py-2.5 rounded-xl bg-goldaccent hover:bg-goldaccent-hover text-goldaccent-text text-xs font-extrabold transition shadow-md whitespace-nowrap">
-                🎯 매장·지점장·디자이너 목표치 설정
+                🎯 매장·지점원장·디자이너 목표치 설정
               </button>
               <button type="button" onclick="switchMainTab('branches')" class="px-4 py-2.5 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-bold transition shadow-md whitespace-nowrap">
-                3대 지점장 KPI 비교 &rarr;
+                3대 지점원장 KPI 비교 &rarr;
               </button>
             </div>
           </div>
@@ -3351,7 +3697,7 @@
                 <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark shrink-0">35%</span>
               </div>
               <p class="text-xl sm:text-2xl font-extrabold text-espresso">${maskIfHidden('colSales', formatManwon(b.totalBranchSales))}</p>
-              <p class="text-xs text-sage-dark font-bold mt-1">지점장 목표 대비 ${b.mgrSalesAchievementRate.toFixed(1)}%</p>
+              <p class="text-xs text-sage-dark font-bold mt-1">지점원장 목표 대비 ${b.mgrSalesAchievementRate.toFixed(1)}%</p>
               <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs whitespace-nowrap">
                 <span class="text-espresso-muted">환산 점수</span>
                 <span class="font-extrabold text-espresso">${b.scoreBranchSales.toFixed(1)} / 35.0점</span>
@@ -3404,13 +3750,11 @@
         totalBar.innerHTML = `
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="min-w-0">
-              <span class="text-xs font-bold text-champagne-light uppercase whitespace-nowrap">BRANCH DIRECTOR KPI (${b.branchName} 전용 열람)</span>
+              <span class="text-xs font-bold text-champagne-light uppercase whitespace-nowrap">BRANCH DIRECTOR KPI (${b.branchName})</span>
               <h3 class="text-base sm:text-xl font-bold mt-0.5">${b.branchName} (${b.meta.managerName}) 종합 KPI 점수: <span class="text-goldaccent">${maskIfHidden('colKpiScore', b.managerTotalScore.toFixed(1) + '점')}</span> (${b.managerGrade})</h3>
               <p class="text-xs text-ivory/75 mt-1">지점 매출(35%) + 디자이너 평균매출 성장(30%) + 재방문 고객 비율(20%) + 직원 성장·유지(15%) 합산</p>
             </div>
-            <span class="px-3 py-1.5 rounded-xl bg-white/10 text-xs font-semibold text-champagne-light whitespace-nowrap shrink-0">
-              🔒 매장·지점장 목표치는 대표원장 전용 설정
-            </span>
+
           </div>
         `;
 
@@ -3541,7 +3885,7 @@
         totalBar.innerHTML = `
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="min-w-0">
-              <span class="text-xs font-bold text-champagne-light uppercase whitespace-nowrap">PERSONAL DESIGNER KPI (${desUser.branch} · ${desUser.name} 전용)</span>
+              <span class="text-xs font-bold text-champagne-light uppercase whitespace-nowrap">PERSONAL DESIGNER KPI (${desUser.branch} · ${desUser.name})</span>
               <h3 class="text-base sm:text-xl font-bold mt-0.5">${desUser.name} ${desUser.title}님의 개인 KPI 총점: <span class="text-goldaccent">${maskIfHidden('colKpiScore', kpi.totalScore.toFixed(1) + '점')}</span> (${kpi.grade})</h3>
               <p class="text-xs text-ivory/80 mt-1">${coachingLine}</p>
             </div>
@@ -3557,13 +3901,7 @@
           chartsGrid.classList.add('hidden');
         }
 
-        if (vis.desViewBranchPeers) {
-          allDesCard.classList.remove('hidden');
-          branchFilterSelect.value = desUser.branch;
-          branchFilterSelect.disabled = true;
-        } else {
-          allDesCard.classList.add('hidden');
-        }
+        allDesCard.classList.add('hidden');
 
         detailTableCard.classList.remove('hidden');
       }
@@ -3602,7 +3940,7 @@
       if (isCEOView()) {
         document.getElementById('mainChartTitle').textContent = `3대 지점 ${periodNameKor} 성과 추이 통합 비교`;
         document.getElementById('secondaryChartTitle').textContent = '3대 지점원장 KPI 종합 점수 및 달성률 비교';
-        document.getElementById('secondaryChartScopeTag').textContent = '대표원장 · 제작자 총괄 뷰';
+        document.getElementById('secondaryChartScopeTag').textContent = '전 지점 기준';
 
         const bColors = ['#B08968', '#6B7F6E', '#2C221E'];
         const datasets1 = BRANCH_NAMES.map((bName, idx) => {
@@ -3676,7 +4014,7 @@
 
         document.getElementById('mainChartTitle').textContent = `${bName} ${periodNameKor} 매출 추이 및 목표 비교`;
         document.getElementById('secondaryChartTitle').textContent = `${bName} 소속 직접 가입 원장·디자이너 KPI 비교`;
-        document.getElementById('secondaryChartScopeTag').textContent = `${bName} 전용`;
+        document.getElementById('secondaryChartScopeTag').textContent = `${bName}`;
 
         const baseManwon = Math.round(bSum.totalBranchSales / 10000);
         const targetManwon = Math.round(bSum.meta.mgrTargetSales / 10000);
@@ -3740,7 +4078,7 @@
 
         document.getElementById('mainChartTitle').textContent = `${desUser.name} ${desUser.title}님의 ${periodNameKor} 개인매출 추이`;
         document.getElementById('secondaryChartTitle').textContent = `${desUser.name}님의 4대 KPI 배점 대비 달성 구조`;
-        document.getElementById('secondaryChartScopeTag').textContent = '본인 결과값 전용';
+        document.getElementById('secondaryChartScopeTag').textContent = `${desUser.name}님`;
 
         const baseManwon = Math.round(kpi.sales / 10000);
         primaryChartInstance = new Chart(ctx1, {
@@ -3875,9 +4213,6 @@
       } else if (activeViewContext.role === '지점원장') {
         return appState.users.filter(u => u.branch === activeViewContext.branch && u.role !== '대표원장' && u.role !== '제작자');
       } else {
-        if (vis.desViewBranchPeers) {
-          return appState.users.filter(u => u.branch === activeViewContext.branch && u.role === '디자이너');
-        }
         return appState.users.filter(u => u.id === activeViewContext.designerId && u.role === '디자이너');
       }
     }
@@ -4192,7 +4527,7 @@
       const allowedUserIds = new Set(getVisibleUsersForCurrentRole().map(u => u.id));
       const filteredHistory = appState.crmHistory.filter(h => allowedUserIds.has(h.userId));
 
-      if (countBadge) countBadge.textContent = `열람 가능 기록 총 ${filteredHistory.length}건`;
+      if (countBadge) countBadge.textContent = `총 ${filteredHistory.length}건 기록됨`;
 
       if (filteredHistory.length === 0) {
         tbody.innerHTML = `
@@ -4255,8 +4590,7 @@
       }
 
       const isAllowed = isCEOView()
-        || (activeViewContext.role === '지점원장' && vis.mgrViewThreeBranchTab)
-        || (activeViewContext.role === '디자이너' && vis.desViewThreeBranchTab);
+        || (activeViewContext.role === '지점원장' && vis.mgrViewThreeBranchTab);
 
       if (!isAllowed) {
         if (blockedBox) blockedBox.classList.remove('hidden');
@@ -4295,7 +4629,7 @@
                 <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-espresso text-champagne-light">${s.meta.badge}</span>
                 ${isCEOView() ? `
                   <button type="button" onclick="openTargetSettingsModal('branches')" class="text-[11px] font-extrabold px-2.5 py-0.5 rounded bg-goldaccent text-goldaccent-text hover:bg-goldaccent-hover transition">
-                    🎯 매장·지점장 목표 수정
+                    🎯 매장·지점원장 목표 수정
                   </button>
                 ` : `<span class="text-xs font-extrabold px-2.5 py-0.5 rounded bg-sage-bg text-sage-dark">실시간 KPI 연동</span>`}
               </div>
@@ -4574,7 +4908,7 @@
     }
 
     // -----------------------------------------------------------------------
-    // 12. CEO-EXCLUSIVE TARGET SETTINGS MODAL (매장 · 지점장 · 디자이너 목표치 개별 설정)
+    // 12. CEO-EXCLUSIVE TARGET SETTINGS MODAL (매장 · 지점원장 · 디자이너 목표치 개별 설정)
     // -----------------------------------------------------------------------
     function openQuickSignupModal() {
       const m = document.getElementById('quickSignupModal');
@@ -4675,7 +5009,7 @@
         }).join('');
       }
 
-      // 2. 각 지점장(지점원장) 개별 목표치 입력 폼 렌더링
+      // 2. 각 지점원장 개별 목표치 입력 폼 렌더링
       const mgrGrid = document.getElementById('managerTargetsEditGrid');
       if (mgrGrid) {
         mgrGrid.innerHTML = BRANCH_NAMES.map((bName, idx) => {
@@ -4689,7 +5023,7 @@
                 <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-sage text-white">${mgrLabel}</span>
               </div>
               <div>
-                <label class="block text-xs font-bold text-espresso mb-1 whitespace-nowrap">① 지점장 목표 매출 (원, 배점 35%)</label>
+                <label class="block text-xs font-bold text-espresso mb-1 whitespace-nowrap">① 지점원장 목표 매출 (원, 배점 35%)</label>
                 <input type="number" id="mgrTargetSales_${idx}" step="1000000" min="1000000" value="${b.mgrTargetSales || b.targetMonthlySales}" required class="w-full px-3 py-2 rounded-xl border border-ivory-border bg-white text-sm font-bold text-espresso" />
               </div>
               <div>
@@ -4721,7 +5055,7 @@
           staffTbody.innerHTML = `
             <tr>
               <td colspan="6" class="py-6 px-4 text-center text-xs text-espresso-muted">
-                현재 직접 가입한 지점원장 · 디자이너가 없습니다. [+ 신규 디자이너·지점장 가입 등록]으로 인원이 가입하면 이곳에서 각 인원별 목표치를 개별 설정할 수 있습니다.
+                현재 직접 가입한 지점원장 · 디자이너가 없습니다. [+ 신규 디자이너·지점원장 가입 등록]으로 인원이 가입하면 이곳에서 각 인원별 목표치를 개별 설정할 수 있습니다.
               </td>
             </tr>
           `;
@@ -4776,7 +5110,7 @@
 
     function openTargetSettingsModal(initialTab = 'branches') {
       if (!isCEOView()) {
-        showToast('⛔ 대표원장만 각 매장, 지점장, 디자이너 목표치를 수정할 수 있습니다.', 'error');
+        showToast('⛔ 대표원장만 각 매장, 지점원장, 디자이너 목표치를 수정할 수 있습니다.', 'error');
         return;
       }
       renderTargetSettingsModalContents();
@@ -4841,7 +5175,7 @@
       saveAppState();
       closeTargetSettingsModal();
       syncAllSelectorsAndRender();
-      showToast('🎯 3대 매장 목표치 및 각 지점장 · 디자이너 개별 목표치가 저장되어 실시간 반영되었습니다!', 'highlight');
+      showToast('🎯 3대 매장 목표치 및 각 지점원장 · 디자이너 개별 목표치가 저장되어 실시간 반영되었습니다!', 'highlight');
     }
 
     function openCoachingModal(userId) {
@@ -4909,7 +5243,7 @@
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-      showToast('📥 현재 권한의 KPI & CRM 성과 데이터가 CSV 파일로 다운로드되었습니다.');
+      showToast('📥 KPI & CRM 성과 데이터가 CSV 파일로 다운로드되었습니다.');
     }
 
     function resetDemoDataConfirm() {
@@ -4926,6 +5260,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       loadAppState();
       renderCustomRegisteredAccountsOnLogin();
+      initSupabaseConnection(false);
 
       const savedSessionRaw = safeGetStorage(STORAGE_KEY_SESSION);
       if (savedSessionRaw) {
