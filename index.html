@@ -1848,7 +1848,7 @@
             />
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-3">
             <div>
               <label for="supabaseTableInput" class="block text-xs font-bold text-espresso mb-1">
                 3. 동기화 테이블명 (기본: yuroso_app_state)
@@ -1858,14 +1858,14 @@
                 id="supabaseTableInput"
                 value="yuroso_app_state"
                 required
-                class="w-full px-3.5 py-2 rounded-xl border border-ivory-border bg-ivory/40 focus:bg-white text-xs font-mono font-bold text-espresso"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-ivory-border bg-ivory/40 focus:bg-white text-xs font-mono font-bold text-espresso"
               />
             </div>
-            <div class="flex items-end gap-2">
-              <button type="button" onclick="pullStateFromSupabase(true)" class="flex-1 py-2.5 px-3 rounded-xl bg-sage hover:bg-sage-dark text-white text-xs font-bold transition whitespace-nowrap">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button type="button" onclick="syncModalInputsAndPull()" class="w-full py-2.5 px-4 rounded-xl bg-sage hover:bg-sage-dark text-white text-xs font-bold transition whitespace-nowrap">
                 📥 DB에서 최신 데이터 불러오기
               </button>
-              <button type="button" onclick="pushStateToSupabase(true)" class="flex-1 py-2.5 px-3 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-bold transition whitespace-nowrap">
+              <button type="button" onclick="syncModalInputsAndPush()" class="w-full py-2.5 px-4 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-bold transition whitespace-nowrap">
                 📤 현재 데이터 DB에 강제 저장
               </button>
             </div>
@@ -2324,7 +2324,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
     }
 
-    async function discoverSupabaseTables(cfg) {
+    async function probeSupabaseRestRoot(cfg) {
       try {
         const baseUrl = cfg.url.trim().replace(/\/+$/, '');
         const restEndpoint = ['https://', baseUrl.replace(/^https?:\/\//, ''), '/rest/v1/'].join('');
@@ -2336,15 +2336,49 @@ create policy "Allow public read write" on public.yuroso_app_state
           }
         });
         if (!res.ok) {
-          return { ok: false, status: res.status, tables: [], definitions: {} };
+          let errJson = null;
+          try { errJson = await res.json(); } catch (e) {}
+          return {
+            ok: false,
+            status: res.status,
+            tables: [],
+            definitions: {},
+            serverMsg: (errJson && (errJson.message || errJson.error || errJson.hint)) ? (errJson.message || errJson.error) : `HTTP ${res.status}`
+          };
         }
         const spec = await res.json();
         const defs = spec && spec.definitions ? spec.definitions : {};
         const tables = Object.keys(defs);
-        return { ok: true, status: 200, tables, definitions: defs };
+        return { ok: true, status: 200, tables, definitions: defs, serverMsg: 'OK' };
       } catch (err) {
-        return { ok: false, status: 0, tables: [], definitions: {}, error: err.message };
+        return { ok: false, status: 0, tables: [], definitions: {}, serverMsg: err.message || '네트워크 오류' };
       }
+    }
+
+    function syncModalInputsToStorageIfOpen() {
+      const m = document.getElementById('supabaseConfigModal');
+      if (m && !m.classList.contains('hidden')) {
+        const url = document.getElementById('supabaseUrlInput')?.value.trim();
+        const anonKey = document.getElementById('supabaseAnonKeyInput')?.value.trim();
+        const table = document.getElementById('supabaseTableInput')?.value.trim() || DEFAULT_SUPABASE_TABLE;
+        if (url && anonKey) {
+          safeSetStorage(STORAGE_KEY_SUPABASE, JSON.stringify({ url, anonKey, table }));
+        }
+      }
+    }
+
+    async function syncModalInputsAndPull() {
+      syncModalInputsToStorageIfOpen();
+      await initSupabaseConnection(true);
+    }
+
+    async function syncModalInputsAndPush() {
+      syncModalInputsToStorageIfOpen();
+      const cfg = getSupabaseConfig();
+      if (cfg && cfg.url && cfg.anonKey && typeof window.supabase !== 'undefined') {
+        supabaseClient = window.supabase.createClient(cfg.url.trim(), cfg.anonKey.trim());
+      }
+      await pushStateToSupabase(true);
     }
 
     async function initSupabaseConnection(showNotice = false) {
@@ -2359,52 +2393,12 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       try {
         supabaseClient = window.supabase.createClient(cfg.url.trim(), cfg.anonKey.trim());
+        const targetTable = (cfg.table || DEFAULT_SUPABASE_TABLE).trim();
 
-        // Step 1: Discover tables on the Supabase server
-        const discovery = await discoverSupabaseTables(cfg);
-        if (!discovery.ok) {
-          supabaseConnected = false;
-          updateSupabaseStatusUI('error', `❌ 서버 인증 실패 (HTTP ${discovery.status || '네트워크 오류'})`);
-          setDiagText(
-            `<span class="text-red-600">❌ 연결 실패 (HTTP ${discovery.status || '오류'} — URL 또는 Anon Key 확인 필요)</span>`,
-            '-',
-            '-'
-          );
-          if (showNotice) showToast('Supabase 서버 연결에 실패했습니다. URL과 Key를 확인해주세요.', 'error');
-          return false;
-        }
-
-        const foundTables = discovery.tables;
-        const tableDetailsStr = foundTables.map(t => {
-          const cols = Object.keys(discovery.definitions[t]?.properties || {});
-          return `${t}(${cols.slice(0, 5).join(',')}${cols.length > 5 ? '...' : ''})`;
-        }).join(', ');
-
-        setDiagText(
-          `<span class="text-emerald-700">✅ 서버 & API Key 정상 인증됨 (${cfg.url})</span>`,
-          foundTables.length > 0
-            ? `<span class="text-emerald-700">총 ${foundTables.length}개 테이블 발견: [${tableDetailsStr}]</span>`
-            : `<span class="text-amber-700">⚠️ 현재 생성된 테이블이 없습니다 (DB가 비어 있음 — 아래 SQL 1회 실행 필요)</span>`,
-          '데이터 테이블 동기화 확인 중...'
-        );
-
-        // If target table doesn't exist, check if another compatible JSON state table exists
-        let targetTable = (cfg.table || DEFAULT_SUPABASE_TABLE).trim();
-        if (foundTables.length > 0 && !foundTables.includes(targetTable)) {
-          const candidate = foundTables.find(t => {
-            const props = discovery.definitions[t]?.properties || {};
-            return ('state_json' in props) || ('data' in props) || ('state' in props) || ('value' in props);
-          });
-          if (candidate) {
-            targetTable = candidate;
-            cfg.table = candidate;
-            safeSetStorage(STORAGE_KEY_SUPABASE, JSON.stringify(cfg));
-            const tblInput = document.getElementById('supabaseTableInput');
-            if (tblInput) tblInput.value = candidate;
-          }
-        }
-
-        const ok = await pullStateFromSupabase(showNotice, foundTables);
+        // First: Try querying the target table directly!
+        // (In newer Supabase projects, /rest/v1/ root OpenAPI schema may return 401 even when table queries work,
+        // OR if the API key itself is invalid, the table query will also return 401 with the exact reason.)
+        const ok = await pullStateFromSupabase(showNotice, targetTable);
         if (ok) {
           subscribeSupabaseRealtime(targetTable);
         }
@@ -2417,13 +2411,13 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
     }
 
-    async function pullStateFromSupabase(showNotice = false, discoveredTables = null) {
+    async function pullStateFromSupabase(showNotice = false, tableOverride = null) {
       const cfg = getSupabaseConfig();
       if (!supabaseClient || !cfg) return false;
-      const tableName = (cfg.table || DEFAULT_SUPABASE_TABLE).trim();
+      const tableName = (tableOverride || cfg.table || DEFAULT_SUPABASE_TABLE).trim();
 
       try {
-        const { data, error } = await supabaseClient
+        const { data, error, status } = await supabaseClient
           .from(tableName)
           .select('*')
           .eq('id', 'main')
@@ -2431,29 +2425,56 @@ create policy "Allow public read write" on public.yuroso_app_state
 
         if (error) {
           supabaseConnected = false;
-          const isMissingTable = error.code === '42P01' || error.code === 'PGRST205' || (error.message && (error.message.includes('does not exist') || error.message.includes('schema cache')));
-          if (isMissingTable) {
-            updateSupabaseStatusUI('table_missing', `⚠️ '${tableName}' 테이블 미생성 (SQL 1회 실행 필요)`);
+          const errMsg = error.message || '';
+          const errCode = error.code || '';
+
+          // Case 1: HTTP 401 / Invalid API Key / JWT signature mismatch
+          if (status === 401 || errMsg.toLowerCase().includes('invalid api key') || errMsg.toLowerCase().includes('jwt') || errCode === 'PGRST301') {
+            const rootProbe = await probeSupabaseRestRoot(cfg);
+            const detailReason = rootProbe.serverMsg || errMsg || 'Invalid API Key';
+            updateSupabaseStatusUI('error', `❌ API Key 인증 실패 (${detailReason}) — [DB 연동 점검] 클릭`);
             setDiagText(
-              null,
-              discoveredTables && discoveredTables.length > 0
-                ? `<span class="text-amber-700">발견된 테이블: [${discoveredTables.join(', ')}] ('${tableName}' 없음)</span>`
-                : `<span class="text-amber-700">⚠️ 현재 Supabase 프로젝트에 '${tableName}' 테이블이 아직 생성되지 않았습니다.</span>`,
-              `<span class="text-red-600">❌ 아래 검정색 박스의 [SQL 복사하기]를 눌러 Supabase SQL Editor에서 Run을 1회 실행해주세요!</span>`
+              `<span class="text-red-600">❌ API Key 인증 거부됨 (사유: ${detailReason})</span>`,
+              `<span class="text-espresso-muted">API Key가 인증되어야 테이블을 조회할 수 있습니다.</span>`,
+              `<span class="text-red-600">👉 해결 방법: Supabase 대시보드 → [Project Settings(⚙️)] → [API Keys] 메뉴에서 <strong>anon public</strong> 키(또는 <strong>sb_publishable_...</strong> 키)의 [Copy] 버튼을 눌러 위 2번 칸에 붙여넣어 주세요!</span>`
             );
             if (showNotice) {
-              showToast(`⚠️ Supabase 서버는 연결되었으나 '${tableName}' 테이블이 아직 없습니다. 모달 하단 SQL을 Supabase SQL Editor에서 실행해주세요!`, 'error');
+              showToast(`⛔ Supabase API Key 인증 실패 (${detailReason}): Project Settings → API Keys에서 키를 다시 복사해 붙여넣어 주세요.`, 'error');
             }
-          } else {
-            updateSupabaseStatusUI('error', `❌ 조회 실패: ${error.message}`);
-            setDiagText(null, null, `<span class="text-red-600">❌ 오류 (${error.code || ''}): ${error.message}</span>`);
+            return false;
+          }
+
+          // Case 2: API Key IS VALID (200/404), but the table 'yuroso_app_state' has not been created yet!
+          const isMissingTable = errCode === '42P01' || errCode === 'PGRST205' || status === 404 || errMsg.includes('does not exist') || errMsg.includes('schema cache') || errMsg.includes('Could not find the table');
+          if (isMissingTable) {
+            const rootProbe = await probeSupabaseRestRoot(cfg);
+            const otherTables = (rootProbe.ok && rootProbe.tables.length > 0) ? rootProbe.tables.join(', ') : '없음';
+            updateSupabaseStatusUI('table_missing', `⚠️ 서버 연결 성공! '${tableName}' 테이블 생성 필요 (SQL 1회 실행)`);
+            setDiagText(
+              `<span class="text-emerald-700">✅ 서버 & API Key 인증 성공! (${cfg.url})</span>`,
+              `<span class="text-amber-700">⚠️ '${tableName}' 테이블이 아직 없습니다 (현재 발견된 타 테이블: ${otherTables})</span>`,
+              `<span class="text-red-600">👉 아래 검정색 박스의 [SQL 복사하기]를 누른 뒤, Supabase 대시보드 좌측 [SQL Editor]에 붙여넣고 [Run]을 1회 실행해주세요!</span>`
+            );
             if (showNotice) {
-              showToast(`⚠️ Supabase 조회 오류: ${error.message}`, 'error');
+              showToast(`✅ 서버 인증은 성공했으나 '${tableName}' 테이블이 없습니다. 아래 [SQL 복사하기] 후 Supabase SQL Editor에서 Run을 눌러주세요!`, 'error');
             }
+            return false;
+          }
+
+          // Case 3: Other error (e.g. RLS policy blocking or column mismatch)
+          updateSupabaseStatusUI('error', `❌ 조회 오류 (${errMsg})`);
+          setDiagText(
+            `<span class="text-emerald-700">✅ 서버 & API Key 인증 성공 (${cfg.url})</span>`,
+            `<span class="text-emerald-700">테이블(${tableName}) 접근 확인됨</span>`,
+            `<span class="text-red-600">❌ 쿼리 오류 (${errCode}): ${errMsg} — 아래 SQL을 Supabase SQL Editor에서 실행해 권한(RLS)과 컬럼을 맞춰주세요.</span>`
+          );
+          if (showNotice) {
+            showToast(`⚠️ Supabase 조회 오류: ${errMsg}`, 'error');
           }
           return false;
         }
 
+        // SUCCESS! Both API Key and Table are working!
         supabaseConnected = true;
         const nowTimeStr = new Date().toLocaleTimeString('ko-KR');
         updateSupabaseStatusUI('connected', `✅ ${tableName} 실시간 연동 중 (${nowTimeStr})`);
@@ -2472,16 +2493,20 @@ create policy "Allow public read write" on public.yuroso_app_state
           isPullingFromSupabase = false;
           const customCount = appState.users.filter(u => u.isCustom).length;
           setDiagText(
-            null,
-            null,
-            `<span class="text-emerald-700">✅ 양방향 동기화 정상 작동 중 (가입 인원 ${customCount}명 · 최근 동기화 ${nowTimeStr})</span>`
+            `<span class="text-emerald-700">✅ 서버 & API Key 정상 인증됨 (${cfg.url})</span>`,
+            `<span class="text-emerald-700">✅ '${tableName}' 테이블 정상 연결됨</span>`,
+            `<span class="text-emerald-700">✅ 양방향 실시간 동기화 완료 (등록된 가입자 ${customCount}명 · ${nowTimeStr})</span>`
           );
           if (showNotice) showToast(`☁️ Supabase DB에서 최신 데이터(가입 인원 ${customCount}명)를 성공적으로 불러왔습니다!`, 'highlight');
         } else {
-          // Table exists but no "main" row yet -> seed initial/current state to Supabase
+          // Table exists and is empty -> seed initial/current state to Supabase immediately
           const pushed = await pushStateToSupabase(false);
           if (pushed) {
-            setDiagText(null, null, `<span class="text-emerald-700">✅ 초기 데이터 업로드 및 실시간 연동 완료 (${nowTimeStr})</span>`);
+            setDiagText(
+              `<span class="text-emerald-700">✅ 서버 & API Key 정상 인증됨 (${cfg.url})</span>`,
+              `<span class="text-emerald-700">✅ '${tableName}' 테이블 정상 연결됨</span>`,
+              `<span class="text-emerald-700">✅ 초기 데이터 자동 업로드 및 실시간 연동 완료 (${nowTimeStr})</span>`
+            );
             if (showNotice) showToast('☁️ Supabase DB 연결 성공! 현재 데이터가 클라우드에 초기 동기화되었습니다.', 'highlight');
           }
         }
@@ -2490,7 +2515,11 @@ create policy "Allow public read write" on public.yuroso_app_state
         isPullingFromSupabase = false;
         supabaseConnected = false;
         updateSupabaseStatusUI('error', '❌ 네트워크 또는 URL 오류');
-        setDiagText(null, null, `<span class="text-red-600">❌ 통신 예외: ${e.message || '네트워크 확인 필요'}</span>`);
+        setDiagText(
+          `<span class="text-red-600">❌ 통신 예외: ${e.message || 'URL 또는 네트워크 확인 필요'}</span>`,
+          '-',
+          '-'
+        );
         if (showNotice) showToast('Supabase 통신 오류: URL과 Key를 확인해주세요.', 'error');
         return false;
       }
@@ -2504,7 +2533,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
       const tableName = (cfg.table || DEFAULT_SUPABASE_TABLE).trim();
       try {
-        const { error } = await supabaseClient
+        const { error, status } = await supabaseClient
           .from(tableName)
           .upsert({
             id: 'main',
@@ -2514,15 +2543,28 @@ create policy "Allow public read write" on public.yuroso_app_state
 
         if (error) {
           supabaseConnected = false;
-          updateSupabaseStatusUI('table_missing', `⚠️ 저장 실패 (${error.message})`);
-          setDiagText(null, null, `<span class="text-red-600">❌ 쓰기 실패 (${error.message}) — 아래 SQL을 Supabase SQL Editor에서 실행해주세요.</span>`);
-          if (showNotice) showToast(`❌ Supabase 저장 실패 (${error.message}). 아래 SQL 쿼리를 Supabase SQL Editor에서 실행해주세요.`, 'error');
+          if (status === 401 || (error.message && error.message.toLowerCase().includes('invalid api key'))) {
+            updateSupabaseStatusUI('error', `❌ API Key 오류 (${error.message})`);
+            setDiagText(
+              `<span class="text-red-600">❌ API Key 인증 실패 (${error.message})</span>`,
+              '-',
+              `<span class="text-red-600">Supabase 대시보드 → Project Settings → API Keys에서 anon public 키를 다시 복사해 붙여넣어 주세요.</span>`
+            );
+          } else {
+            updateSupabaseStatusUI('table_missing', `⚠️ 저장 실패 (${error.message})`);
+            setDiagText(null, null, `<span class="text-red-600">❌ 쓰기 실패 (${error.message}) — 아래 SQL을 Supabase SQL Editor에서 실행해주세요.</span>`);
+          }
+          if (showNotice) showToast(`❌ Supabase 저장 실패: ${error.message}`, 'error');
           return false;
         }
         supabaseConnected = true;
         const nowTimeStr = new Date().toLocaleTimeString('ko-KR');
         updateSupabaseStatusUI('connected', `✅ ${tableName} 실시간 동기화 완료 (${nowTimeStr})`);
-        setDiagText(null, null, `<span class="text-emerald-700">✅ DB 저장 및 실시간 동기화 완료 (${nowTimeStr})</span>`);
+        setDiagText(
+          `<span class="text-emerald-700">✅ 서버 & API Key 정상 인증됨 (${cfg.url})</span>`,
+          `<span class="text-emerald-700">✅ '${tableName}' 테이블 정상 연결됨</span>`,
+          `<span class="text-emerald-700">✅ DB 저장 및 실시간 동기화 완료 (${nowTimeStr})</span>`
+        );
         if (showNotice) showToast('☁️ 현재 데이터가 Supabase DB에 안전하게 저장되었습니다!', 'highlight');
         return true;
       } catch (e) {
@@ -2532,6 +2574,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     async function runSupabaseFullDiagnostics() {
+      syncModalInputsToStorageIfOpen();
       setDiagText('점검 중...', '조회 중...', '확인 중...');
       await initSupabaseConnection(true);
     }
