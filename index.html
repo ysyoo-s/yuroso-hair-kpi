@@ -123,7 +123,7 @@
     <div class="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-sage/15 blur-3xl pointer-events-none"></div>
 
     <!-- Top Brand Header -->
-    <header class="w-full py-4 px-6 sm:px-10 flex items-center justify-between gap-4 border-b border-ivory-border bg-white/70 backdrop-blur-md z-10 overflow-x-auto custom-scrollbar">
+    <header class="w-full py-4 px-6 sm:px-10 flex flex-wrap items-center justify-between gap-3 border-b border-ivory-border bg-white/70 backdrop-blur-md z-10">
       <div class="flex items-center gap-3 shrink-0">
         <div class="w-10 h-10 rounded-xl bg-espresso text-ivory flex items-center justify-center font-bold text-lg brand-serif tracking-wider shadow-sm shrink-0">
           Y
@@ -169,21 +169,21 @@
               <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between gap-2 whitespace-nowrap">
                 <div class="min-w-0">
                   <span class="text-[11px] text-champagne-light font-semibold block">YUROSO UNJEONG</span>
-                  <h3 class="text-sm font-bold text-ivory truncate">유로소 헤어 파주 운정점</h3>
+                  <h3 class="text-sm font-bold text-ivory">유로소 헤어 파주 운정점</h3>
                 </div>
                 <span id="loginBranchCount_파주 운정점" class="text-xs px-2.5 py-1 rounded-full bg-sage/30 text-ivory font-medium shrink-0 whitespace-nowrap">원장 미등록 · 디자이너 0명</span>
               </div>
               <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between gap-2 whitespace-nowrap">
                 <div class="min-w-0">
                   <span class="text-[11px] text-champagne-light font-semibold block">YUROSO UNJEONG STN.</span>
-                  <h3 class="text-sm font-bold text-ivory truncate">유로소 헤어 운정역점</h3>
+                  <h3 class="text-sm font-bold text-ivory">유로소 헤어 운정역점</h3>
                 </div>
                 <span id="loginBranchCount_운정역점" class="text-xs px-2.5 py-1 rounded-full bg-sage/30 text-ivory font-medium shrink-0 whitespace-nowrap">원장 미등록 · 디자이너 0명</span>
               </div>
               <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between gap-2 whitespace-nowrap">
                 <div class="min-w-0">
                   <span class="text-[11px] text-champagne-light font-semibold block">YUROSO MAGOK BALSAN</span>
-                  <h3 class="text-sm font-bold text-ivory truncate">유로소 헤어 마곡발산점</h3>
+                  <h3 class="text-sm font-bold text-ivory">유로소 헤어 마곡발산점</h3>
                 </div>
                 <span id="loginBranchCount_마곡발산점" class="text-xs px-2.5 py-1 rounded-full bg-sage/30 text-ivory font-medium shrink-0 whitespace-nowrap">원장 미등록 · 디자이너 0명</span>
               </div>
@@ -211,10 +211,10 @@
           <div>
             <!-- Auth Mode Tabs -->
             <div class="grid grid-cols-2 rounded-xl bg-ivory p-1 border border-ivory-border mb-6 gap-1">
-              <button type="button" id="authTabLoginBtn" onclick="switchAuthTab('login')" class="py-2.5 px-2 text-xs sm:text-sm font-bold rounded-lg bg-espresso text-ivory shadow-sm transition whitespace-nowrap truncate">
+              <button type="button" id="authTabLoginBtn" onclick="switchAuthTab('login')" class="py-2.5 px-2 text-xs sm:text-sm font-bold rounded-lg bg-espresso text-ivory shadow-sm transition">
                 로그인 (이름·비밀번호 / 관리자)
               </button>
-              <button type="button" id="authTabSignupBtn" onclick="switchAuthTab('signup')" class="py-2.5 px-2 text-xs sm:text-sm font-bold rounded-lg text-espresso-muted hover:text-espresso transition whitespace-nowrap truncate">
+              <button type="button" id="authTabSignupBtn" onclick="switchAuthTab('signup')" class="py-2.5 px-2 text-xs sm:text-sm font-bold rounded-lg text-espresso-muted hover:text-espresso transition">
                 임직원 회원가입 (사내 가입 코드)
               </button>
             </div>
@@ -224,7 +224,7 @@
               
               <!-- SECTION A: 대표원장 & 제작자(관리자) 회원가입 없이 패스워드 직통 로그인 -->
               <div class="p-5 rounded-2xl bg-espresso text-ivory border border-champagne/40 shadow-md space-y-3.5">
-                <div class="flex items-center justify-between gap-2 whitespace-nowrap overflow-x-auto">
+                <div class="flex flex-wrap items-center justify-between gap-2">
                   <div class="flex items-center gap-2 shrink-0">
                     <span class="text-xs font-extrabold px-2.5 py-0.5 rounded bg-champagne text-white whitespace-nowrap">👑 대표원장 · 🛠️ 제작자 전용</span>
                     <span class="text-xs text-champagne-light font-semibold whitespace-nowrap">회원가입 없이 패스워드 즉시 접속</span>
@@ -272,7 +272,7 @@
                       🔑 이름 · 비밀번호 간편 로그인
                     </span>
                     <h3 class="text-base font-bold text-espresso whitespace-nowrap">지점원장 · 디자이너 이름 및 비밀번호 로그인</h3>
-                    <p class="text-xs text-espresso-muted truncate">회원가입 시 작성한 본인의 <strong>이름</strong>과 <strong>비밀번호</strong>를 입력해 접속합니다.</p>
+                    <p class="text-xs text-espresso-muted">회원가입 시 작성한 본인의 <strong>이름</strong>과 <strong>비밀번호</strong>를 입력해 접속합니다.</p>
                   </div>
                 </div>
 
@@ -309,7 +309,7 @@
                     </div>
                   </div>
 
-                  <div class="flex items-center justify-between gap-2 pt-1 whitespace-nowrap overflow-x-auto">
+                  <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
                     <label class="inline-flex items-center gap-2 cursor-pointer select-none shrink-0">
                       <input type="checkbox" id="keepLoggedInCheckbox" checked class="w-4 h-4 rounded border-ivory-border text-espresso focus:ring-champagne" />
                       <span class="text-xs font-medium text-espresso whitespace-nowrap">이 기기에서 로그인 계속 유지 (자동 로그인)</span>
@@ -391,7 +391,7 @@
                       보기
                     </button>
                   </div>
-                  <p class="text-[11px] text-espresso-muted mt-1 whitespace-nowrap truncate">※ 유로소 헤어 임직원에게만 안내된 사내 가입 코드가 일치해야 가입됩니다.</p>
+                  <p class="text-[11px] text-espresso-muted mt-1">※ 유로소 헤어 임직원에게만 안내된 사내 가입 코드가 일치해야 가입됩니다.</p>
                 </div>
 
                 <!-- 4. 지점 선택 (파주 운정점, 운정역점, 마곡발산점) -->
@@ -409,13 +409,13 @@
                     <option value="마곡발산점">마곡발산점</option>
                   </select>
                   <div class="grid grid-cols-3 gap-2 mt-1.5">
-                    <button type="button" onclick="selectSignupBranchCard('파주 운정점')" id="branchCard_파주 운정점" class="py-2 px-2 rounded-lg border-2 border-champagne bg-champagne-bg text-xs font-bold text-espresso transition whitespace-nowrap truncate">
+                    <button type="button" onclick="selectSignupBranchCard('파주 운정점')" id="branchCard_파주 운정점" class="py-2 px-2 rounded-lg border-2 border-champagne bg-champagne-bg text-xs font-bold text-espresso transition">
                       📍 파주 운정점
                     </button>
-                    <button type="button" onclick="selectSignupBranchCard('운정역점')" id="branchCard_운정역점" class="py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition whitespace-nowrap truncate">
+                    <button type="button" onclick="selectSignupBranchCard('운정역점')" id="branchCard_운정역점" class="py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition">
                       🚉 운정역점
                     </button>
-                    <button type="button" onclick="selectSignupBranchCard('마곡발산점')" id="branchCard_마곡발산점" class="py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition whitespace-nowrap truncate">
+                    <button type="button" onclick="selectSignupBranchCard('마곡발산점')" id="branchCard_마곡발산점" class="py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition">
                       🏙️ 마곡발산점
                     </button>
                   </div>
@@ -445,7 +445,7 @@
                 </div>
 
                 <!-- Keep device logged in -->
-                <div class="p-3 rounded-xl bg-ivory border border-ivory-border flex items-center justify-between gap-2 whitespace-nowrap overflow-x-auto">
+                <div class="p-3 rounded-xl bg-ivory border border-ivory-border flex flex-wrap items-center justify-between gap-2">
                   <label class="inline-flex items-center gap-2 cursor-pointer shrink-0">
                     <input type="checkbox" id="signupKeepLoggedIn" checked class="w-4 h-4 rounded border-ivory-border text-espresso focus:ring-champagne" />
                     <span class="text-xs font-semibold text-espresso whitespace-nowrap">가입 후 이 기기에서 로그인 계속 유지하기</span>
@@ -461,7 +461,7 @@
             </div>
           </div>
 
-          <div class="pt-4 mt-4 border-t border-ivory-border flex items-center justify-between gap-2 text-xs text-espresso-muted whitespace-nowrap overflow-x-auto">
+          <div class="pt-4 mt-4 border-t border-ivory-border flex flex-wrap items-center justify-between gap-2 text-xs text-espresso-muted">
             <span>※ 대표원장 · 제작자는 회원가입 없이 패스워드로 접속하며, 전사 목표치 및 가입자를 전용 관리합니다.</span>
             <span class="font-medium text-espresso shrink-0">YUROSO HAIR CORP.</span>
           </div>
@@ -469,7 +469,7 @@
       </div>
     </main>
 
-    <footer class="py-4 px-6 text-center text-xs text-espresso-muted border-t border-ivory-border bg-white/50 whitespace-nowrap overflow-x-auto">
+    <footer class="py-4 px-6 text-center text-xs text-espresso-muted border-t border-ivory-border bg-white/50">
       © 2026 YUROSO HAIR (유로소 헤어 파주 운정점 · 운정역점 · 마곡발산점). All rights reserved.
     </footer>
   </div>
@@ -481,20 +481,20 @@
   <div id="appWorkspaceView" class="hidden min-h-screen flex flex-col bg-ivory">
 
     <!-- TOP RBAC PERMISSION SWITCHER BAR (상단 RBAC 권한 전환 바) -->
-    <div id="topRbacSwitcherBar" class="bg-espresso-deep text-ivory border-b border-white/10 px-4 sm:px-8 py-2 no-print overflow-x-auto custom-scrollbar">
-      <div class="max-w-7xl mx-auto flex items-center justify-between gap-3 whitespace-nowrap">
+    <div id="topRbacSwitcherBar" class="bg-espresso-deep text-ivory border-b border-white/10 px-4 sm:px-6 py-2 no-print">
+      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-2 shrink-0">
           <span class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-champagne text-white whitespace-nowrap">
             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
             상단 RBAC 권한 전환 바
           </span>
-          <span id="rbacNoticeText" class="text-xs text-ivory/80 hidden xl:inline whitespace-nowrap">
-            대표원장 전용 매장·지점장·디자이너 목표치 개별 설정 지원
+          <span id="rbacNoticeText" class="text-[11px] text-ivory/75 hidden 2xl:inline whitespace-nowrap">
+            직급별 열람 권한 분리
           </span>
         </div>
 
         <!-- Role Switcher Controls -->
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex flex-wrap items-center gap-1.5">
           <!-- 1. 대표원장 전환 -->
           <button type="button" id="rbacBtnCEO" onclick="switchRBACRole('대표원장')" class="px-3 py-1 rounded-lg text-xs font-bold transition border border-white/15 bg-white/10 hover:bg-champagne hover:text-white whitespace-nowrap">
             👑 대표원장 (영화)
@@ -522,7 +522,7 @@
             <button type="button" id="rbacBtnDesigner" onclick="switchRBACRole('디자이너')" class="px-2.5 py-1 text-xs font-bold transition hover:bg-champagne hover:text-white whitespace-nowrap">
               ✂️ 디자이너
             </button>
-            <select id="rbacDesignerUserSelect" onchange="handleRBACDesignerChange(this.value)" aria-label="디자이너 계정 선택" class="bg-espresso text-ivory text-xs px-2 py-1 border-l border-white/15 focus:outline-none max-w-[170px]">
+            <select id="rbacDesignerUserSelect" onchange="handleRBACDesignerChange(this.value)" aria-label="디자이너 계정 선택" class="bg-espresso text-ivory text-xs px-2 py-1 border-l border-white/15 focus:outline-none max-w-[145px]">
             </select>
           </div>
 
@@ -537,7 +537,7 @@
 
     <!-- MAIN BRAND HEADER -->
     <header class="bg-espresso text-ivory border-b border-espresso-light sticky top-0 z-30 shadow-md no-print">
-      <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4 overflow-x-auto custom-scrollbar">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
         
         <!-- Logo & Title -->
         <div class="flex items-center gap-3 shrink-0">
@@ -561,7 +561,7 @@
         </div>
 
         <!-- Right User Status & Action Buttons -->
-        <div class="flex items-center gap-2 shrink-0 whitespace-nowrap">
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <!-- Current Logged-in User Chip -->
           <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 shrink-0">
             <span class="w-2 h-2 rounded-full bg-goldaccent shrink-0"></span>
@@ -573,7 +573,7 @@
 
           <!-- CEO & CREATOR EXCLUSIVE TARGET SETTINGS BUTTON (대표원장만 매장·지점장·디자이너 목표치 수정 가능) -->
           <button type="button" id="btnOpenTargetSettingsModal" onclick="openTargetSettingsModal('branches')" class="px-3.5 py-2 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap shrink-0">
-            <span id="btnTargetSettingsLabel">🎯 매장·지점장·디자이너 목표치 설정 (대표원장)</span>
+            <span id="btnTargetSettingsLabel">🎯 목표치 설정 (대표원장)</span>
           </button>
 
           <!-- CEO & CREATOR DATA VISIBILITY SETTINGS BUTTON -->
@@ -583,7 +583,7 @@
 
           <!-- New Member Registration Modal Button -->
           <button type="button" onclick="openQuickSignupModal()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-ivory text-xs font-bold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap shrink-0">
-            <span>+ 신규 인원 회원가입</span>
+            <span>+ 신규 회원가입</span>
           </button>
 
           <!-- Logout Button -->
@@ -594,36 +594,36 @@
       </div>
 
       <!-- SUB NAVIGATION TABS + PERIOD FILTER BAR -->
-      <div class="bg-espresso-light/80 border-t border-white/10 px-4 sm:px-8">
-        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3 py-2 overflow-x-auto custom-scrollbar whitespace-nowrap">
+      <div class="bg-espresso-light/80 border-t border-white/10 px-4 sm:px-6">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 py-2">
           <!-- Main Navigation Tabs -->
-          <nav class="flex items-center gap-1 py-0.5 shrink-0" aria-label="주요 메뉴 탭">
-            <button type="button" id="navTab_dashboard" onclick="switchMainTab('dashboard')" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold bg-champagne text-white transition whitespace-nowrap">
+          <nav class="flex flex-wrap items-center gap-1 py-0.5" aria-label="주요 메뉴 탭">
+            <button type="button" id="navTab_dashboard" onclick="switchMainTab('dashboard')" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-champagne text-white transition whitespace-nowrap">
               📊 직급별 맞춤 KPI 대시보드
             </button>
-            <button type="button" id="navTab_crm" onclick="switchMainTab('crm')" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap flex items-center gap-1.5">
+            <button type="button" id="navTab_crm" onclick="switchMainTab('crm')" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap flex items-center gap-1.5">
               <span>🧮 고객관리(CRM) 5대 지표 입력·자동계산</span>
               <span class="px-1.5 py-0.5 text-[10px] rounded bg-goldaccent text-goldaccent-text font-extrabold">핵심</span>
             </button>
-            <button type="button" id="navTab_branches" onclick="switchMainTab('branches')" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
+            <button type="button" id="navTab_branches" onclick="switchMainTab('branches')" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
               🏆 3대 지점장 & 총 결과 KPI 비교 분석
             </button>
-            <button type="button" id="navTab_members" onclick="switchMainTab('members')" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
+            <button type="button" id="navTab_members" onclick="switchMainTab('members')" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
               👥 소속 디자이너·원장 성과 및 코칭
             </button>
           </nav>
 
           <!-- Global Period Filter (일 / 월 / 년 비교) + Export -->
-          <div class="flex items-center gap-2 ml-auto shrink-0">
+          <div class="flex flex-wrap items-center gap-1.5 ml-auto">
             <div class="inline-flex rounded-lg bg-espresso p-0.5 border border-white/15 shrink-0">
               <button type="button" id="periodBtn_daily" onclick="setGlobalPeriod('daily')" class="px-2.5 py-1 rounded-md text-xs font-medium text-ivory/75 hover:text-white transition whitespace-nowrap">
-                일별(Daily)
+                일별
               </button>
               <button type="button" id="periodBtn_monthly" onclick="setGlobalPeriod('monthly')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-champagne text-white transition whitespace-nowrap">
-                월별(Monthly)
+                월별
               </button>
               <button type="button" id="periodBtn_yearly" onclick="setGlobalPeriod('yearly')" class="px-2.5 py-1 rounded-md text-xs font-medium text-ivory/75 hover:text-white transition whitespace-nowrap">
-                연별(Yearly)
+                연별
               </button>
             </div>
 
@@ -644,7 +644,7 @@
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 space-y-6">
 
       <!-- RBAC Permission Banner (Dynamic Context Banner) -->
-      <div id="rbacStatusBanner" class="rounded-2xl p-4 sm:px-6 bg-white border border-ivory-border shadow-sm flex flex-wrap lg:flex-nowrap items-center justify-between gap-4">
+      <div id="rbacStatusBanner" class="rounded-2xl p-4 sm:px-6 bg-white border border-ivory-border shadow-sm flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-3.5 min-w-0">
           <div id="rbacBannerIcon" class="w-11 h-11 rounded-xl bg-espresso text-champagne-light flex items-center justify-center text-xl font-bold shrink-0">
             👑
@@ -658,12 +658,12 @@
                 가중치: 매출성장 30% · 영업이익 30% · 지점목표달성 20% · 리더·인재성장 20%
               </span>
             </div>
-            <p id="rbacBannerSubtitle" class="text-xs text-espresso-muted mt-0.5 truncate">
+            <p id="rbacBannerSubtitle" class="text-xs text-espresso-muted mt-0.5">
               파주 운정점, 운정역점, 마곡발산점의 매장 목표치 및 각 지점장·디자이너 개별 목표치를 통합 관리합니다.
             </p>
           </div>
         </div>
-        <div class="flex items-center gap-2 shrink-0 whitespace-nowrap">
+        <div class="flex flex-wrap items-center gap-2">
           <button type="button" id="bannerBtnTargetSettings" onclick="openTargetSettingsModal('branches')" class="px-3.5 py-2 rounded-xl bg-champagne hover:bg-champagne-dark text-white text-xs font-extrabold transition whitespace-nowrap">
             🎯 매장·지점장·디자이너 목표치 개별 설정
           </button>
@@ -691,12 +691,12 @@
         <div id="dashboardChartsGridContainer" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <!-- Primary Chart: Trend or Branch/Designer Comparison -->
           <div class="lg:col-span-7 card-luxury rounded-2xl p-5 sm:p-6 flex flex-col justify-between">
-            <div class="flex items-center justify-between gap-2 mb-4 overflow-x-auto whitespace-nowrap">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
               <div class="min-w-0">
                 <span id="mainChartBadge" class="text-[11px] font-bold uppercase tracking-wider text-champagne-dark bg-champagne-bg px-2 py-0.5 rounded whitespace-nowrap">
                   일·월·년 시계열 비교 분석
                 </span>
-                <h3 id="mainChartTitle" class="text-sm sm:text-base font-bold text-espresso mt-1 whitespace-nowrap truncate">
+                <h3 id="mainChartTitle" class="text-sm sm:text-base font-bold text-espresso mt-1">
                   3대 지점 매출 및 목표 달성 추이 비교
                 </h3>
               </div>
@@ -716,12 +716,12 @@
 
           <!-- Secondary Chart: Designer / Branch Manager KPI Breakdown -->
           <div class="lg:col-span-5 card-luxury rounded-2xl p-5 sm:p-6 flex flex-col justify-between">
-            <div class="flex items-center justify-between gap-2 mb-4 overflow-x-auto whitespace-nowrap">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
               <div class="min-w-0">
                 <span id="secondaryChartBadge" class="text-[11px] font-bold uppercase tracking-wider text-sage-dark bg-sage-bg px-2 py-0.5 rounded whitespace-nowrap">
                   직급별 권한 맞춤 비교
                 </span>
-                <h3 id="secondaryChartTitle" class="text-sm sm:text-base font-bold text-espresso mt-1 whitespace-nowrap truncate">
+                <h3 id="secondaryChartTitle" class="text-sm sm:text-base font-bold text-espresso mt-1">
                   소속 디자이너 KPI 종합 점수 비교
                 </h3>
               </div>
@@ -741,7 +741,7 @@
                 <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-espresso text-ivory whitespace-nowrap">직접 가입 원장·디자이너 통합 비교 그래프</span>
                 <span id="allDesignersChartRoleHint" class="text-xs text-champagne-dark font-semibold whitespace-nowrap">대표원장 · 제작자 · 지점원장 뷰</span>
               </div>
-              <h3 id="allDesignersChartHeading" class="text-sm sm:text-base font-bold text-espresso mt-1 whitespace-nowrap truncate">
+              <h3 id="allDesignersChartHeading" class="text-sm sm:text-base font-bold text-espresso mt-1">
                 지점별 직접 가입 원장·디자이너 개인매출 · 재방문율 · KPI 종합점수 비교 그래프
               </h3>
             </div>
@@ -770,7 +770,7 @@
               <h3 class="text-base sm:text-lg font-bold mt-1 whitespace-nowrap">
                 👥 전체 가입자 리스트 · 개별 목표치 설정 및 회원탈퇴 관리
               </h3>
-              <p class="text-xs text-ivory/75 mt-0.5 truncate">
+              <p class="text-xs text-ivory/75 mt-0.5">
                 이름·비밀번호 설정과 사내 가입 코드(Yuroso1007)로 가입한 디자이너 및 지점원장 목록입니다. 대표원장만 개별 목표치 변경 및 회원탈퇴 처리가 가능합니다.
               </p>
             </div>
@@ -813,7 +813,7 @@
               <h3 id="dashboardTableTitle" class="text-base sm:text-lg font-bold text-espresso whitespace-nowrap">
                 직급별 열람 허용 성과 데이터 명세표 (개별 목표치 자동 반영)
               </h3>
-              <p id="dashboardTableSubtitle" class="text-xs text-espresso-muted mt-0.5 truncate">
+              <p id="dashboardTableSubtitle" class="text-xs text-espresso-muted mt-0.5">
                 대표원장이 각 지점장·디자이너에게 개별 설정한 목표치를 기준으로 KPI 달성 점수가 자동 산출됩니다.
               </p>
             </div>
@@ -870,7 +870,7 @@
                 <h3 class="text-base sm:text-xl font-bold text-espresso whitespace-nowrap">
                   고객관리(CRM) 5대 지표 입력 및 실시간 KPI 산출
                 </h3>
-                <p class="text-xs text-espresso-muted mt-0.5 truncate">
+                <p class="text-xs text-espresso-muted mt-0.5">
                   가입된 원장·디자이너의 5대 지표를 입력하면 개별 적용된 목표치 기준으로 재방문 비율과 KPI 점수가 자동 계산됩니다.
                 </p>
               </div>
@@ -927,7 +927,7 @@
                     />
                     <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-espresso-muted whitespace-nowrap">원 (KRW)</span>
                   </div>
-                  <div class="flex items-center justify-between gap-2 mt-1.5 text-[11px] text-espresso-muted whitespace-nowrap overflow-x-auto">
+                  <div class="flex flex-wrap items-center justify-between gap-2 mt-1.5 text-[11px] text-espresso-muted">
                     <span id="crmSalesKoreanText">환산 금액: 약 0만원</span>
                     <span id="crmTargetSalesLabel" class="font-semibold text-espresso">개인 목표 매출: 18,000,000원</span>
                   </div>
@@ -953,7 +953,7 @@
                       placeholder="예: 185"
                       class="w-full px-3 py-2.5 rounded-xl border border-ivory-border bg-ivory/40 focus:bg-white text-base font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
                     />
-                    <p class="text-[11px] text-espresso-muted mt-1 whitespace-nowrap truncate">신규 + 재방문 전체 고객</p>
+                    <p class="text-[11px] text-espresso-muted mt-1">신규 + 재방문 전체 고객</p>
                   </div>
 
                   <!-- ③ 신규 고객수 -->
@@ -975,7 +975,7 @@
                       placeholder="예: 42"
                       class="w-full px-3 py-2.5 rounded-xl border border-ivory-border bg-ivory/40 focus:bg-white text-base font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
                     />
-                    <p id="crmTargetNewLabel" class="text-[11px] text-espresso-muted mt-1 whitespace-nowrap truncate">목표 신규: 40명</p>
+                    <p id="crmTargetNewLabel" class="text-[11px] text-espresso-muted mt-1">목표 신규: 40명</p>
                   </div>
 
                   <!-- ④ 재방문 고객수 -->
@@ -997,7 +997,7 @@
                       placeholder="예: 143"
                       class="w-full px-3 py-2.5 rounded-xl border border-ivory-border bg-ivory/40 focus:bg-white text-base font-bold text-espresso focus:outline-none focus:ring-2 focus:ring-champagne"
                     />
-                    <button type="button" onclick="autoFillRevisitCustomers()" class="text-[11px] text-champagne-dark font-bold hover:underline mt-1 whitespace-nowrap block truncate">
+                    <button type="button" onclick="autoFillRevisitCustomers()" class="text-[11px] text-champagne-dark font-bold hover:underline mt-1 whitespace-nowrap block">
                       ⚡ (총고객-신규) 자동적용
                     </button>
                   </div>
@@ -1030,7 +1030,7 @@
                     />
                     <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-espresso-muted whitespace-nowrap">원 / 1인</span>
                   </div>
-                  <div class="flex items-center justify-between gap-2 mt-1.5 text-[11px] text-espresso-muted whitespace-nowrap overflow-x-auto">
+                  <div class="flex flex-wrap items-center justify-between gap-2 mt-1.5 text-[11px] text-espresso-muted">
                     <span id="crmCustomerSumHint">고객수 검증: 신규 + 재방문 = 총 고객수 일치</span>
                     <span class="text-espresso-muted">고객 1인당 평균 시술 단가</span>
                   </div>
@@ -1060,7 +1060,7 @@
                 <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-champagne text-white whitespace-nowrap">
                   실시간 자동계산 결과
                 </span>
-                <span id="crmCalcDesignerBadge" class="text-xs text-champagne-light font-semibold whitespace-nowrap truncate">
+                <span id="crmCalcDesignerBadge" class="text-xs text-champagne-light font-semibold">
                   대상 인원 선택
                 </span>
               </div>
@@ -1069,7 +1069,7 @@
               <div class="grid grid-cols-2 gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 mb-5">
                 <div class="min-w-0">
                   <p class="text-xs text-ivory/70 whitespace-nowrap">자동계산 재방문 고객 비율</p>
-                  <p id="crmLiveRevisitTargetSub" class="text-[11px] text-champagne-light whitespace-nowrap truncate">(재방문 ÷ 총고객 · 목표 72%)</p>
+                  <p id="crmLiveRevisitTargetSub" class="text-[11px] text-champagne-light">(재방문 ÷ 총고객 · 목표 72%)</p>
                   <div class="mt-2 flex items-baseline gap-1 whitespace-nowrap">
                     <span id="crmLiveRevisitRate" class="text-2xl sm:text-3xl font-extrabold text-goldaccent">0.0</span>
                     <span class="text-base font-bold text-goldaccent">%</span>
@@ -1077,7 +1077,7 @@
                 </div>
                 <div class="border-l border-white/10 pl-4 min-w-0">
                   <p class="text-xs text-ivory/70 whitespace-nowrap">디자이너 종합 KPI 점수</p>
-                  <p class="text-[11px] text-champagne-light whitespace-nowrap truncate">4대 가중치 합산 (100점 만점)</p>
+                  <p class="text-[11px] text-champagne-light">4대 가중치 합산 (100점 만점)</p>
                   <div class="mt-2 flex items-baseline gap-2 whitespace-nowrap">
                     <span id="crmLiveTotalKpiScore" class="text-2xl sm:text-3xl font-extrabold text-white">0.0</span>
                     <span id="crmLiveGradeBadge" class="text-xs font-extrabold px-2 py-0.5 rounded bg-sage text-white whitespace-nowrap">-</span>
@@ -1094,7 +1094,7 @@
                 <!-- 1. 개인매출 (40%) -->
                 <div>
                   <div class="flex justify-between gap-2 text-xs mb-1 whitespace-nowrap">
-                    <span class="font-medium text-ivory/90 truncate">① 개인매출 달성 점수 (가중치 40%)</span>
+                    <span class="font-medium text-ivory/90">① 개인매출 달성 점수 (가중치 40%)</span>
                     <span id="crmLiveScoreSales" class="font-bold text-champagne-light shrink-0">0.0 / 40.0점</span>
                   </div>
                   <div class="w-full h-2.5 rounded-full bg-white/10 overflow-hidden">
@@ -1105,7 +1105,7 @@
                 <!-- 2. 재방문 비율 (30%) -->
                 <div>
                   <div class="flex justify-between gap-2 text-xs mb-1 whitespace-nowrap">
-                    <span class="font-medium text-ivory/90 truncate">② 재방문 비율 점수 (가중치 30%)</span>
+                    <span class="font-medium text-ivory/90">② 재방문 비율 점수 (가중치 30%)</span>
                     <span id="crmLiveScoreRevisit" class="font-bold text-sage-light shrink-0">0.0 / 30.0점</span>
                   </div>
                   <div class="w-full h-2.5 rounded-full bg-white/10 overflow-hidden">
@@ -1116,7 +1116,7 @@
                 <!-- 3. 객단가 (20%) -->
                 <div>
                   <div class="flex justify-between gap-2 text-xs mb-1 whitespace-nowrap">
-                    <span class="font-medium text-ivory/90 truncate">③ 객단가 점수 (가중치 20%)</span>
+                    <span class="font-medium text-ivory/90">③ 객단가 점수 (가중치 20%)</span>
                     <span id="crmLiveScoreTicket" class="font-bold text-champagne-light shrink-0">0.0 / 20.0점</span>
                   </div>
                   <div class="w-full h-2.5 rounded-full bg-white/10 overflow-hidden">
@@ -1127,7 +1127,7 @@
                 <!-- 4. 신규 고객수 (10%) -->
                 <div>
                   <div class="flex justify-between gap-2 text-xs mb-1 whitespace-nowrap">
-                    <span class="font-medium text-ivory/90 truncate">④ 신규 고객수 점수 (가중치 10%)</span>
+                    <span class="font-medium text-ivory/90">④ 신규 고객수 점수 (가중치 10%)</span>
                     <span id="crmLiveScoreNew" class="font-bold text-sage-light shrink-0">0.0 / 10.0점</span>
                   </div>
                   <div class="w-full h-2.5 rounded-full bg-white/10 overflow-hidden">
@@ -1151,11 +1151,11 @@
                 📐 유로소 헤어 디자이너 KPI 산출 공식 안내
               </h4>
               <ul class="text-xs text-espresso-muted space-y-1.5">
-                <li class="whitespace-nowrap truncate">• <strong>재방문 고객 비율(%)</strong> = (④ 재방문 고객수 ÷ ② 총 고객수) × 100</li>
-                <li class="whitespace-nowrap truncate">• <strong>개인매출 점수(40점)</strong> = (① 개인매출 ÷ 개인별 목표 매출) × 40점</li>
-                <li class="whitespace-nowrap truncate">• <strong>재방문 비율 점수(30점)</strong> = (재방문 비율 ÷ 개인별 목표 재방문율) × 30점</li>
-                <li class="whitespace-nowrap truncate">• <strong>객단가 점수(20점)</strong> = ⑤ 고객 1인당 평균 시술단가 환산 점수 (20점 만점)</li>
-                <li class="whitespace-nowrap truncate">• <strong>신규 고객수 점수(10점)</strong> = (③ 신규 고객수 ÷ 개인별 목표 신규 고객수) × 10점</li>
+                <li class="whitespace-nowrap">• <strong>재방문 고객 비율(%)</strong> = (④ 재방문 고객수 ÷ ② 총 고객수) × 100</li>
+                <li class="whitespace-nowrap">• <strong>개인매출 점수(40점)</strong> = (① 개인매출 ÷ 개인별 목표 매출) × 40점</li>
+                <li class="whitespace-nowrap">• <strong>재방문 비율 점수(30점)</strong> = (재방문 비율 ÷ 개인별 목표 재방문율) × 30점</li>
+                <li class="whitespace-nowrap">• <strong>객단가 점수(20점)</strong> = ⑤ 고객 1인당 평균 시술단가 환산 점수 (20점 만점)</li>
+                <li class="whitespace-nowrap">• <strong>신규 고객수 점수(10점)</strong> = (③ 신규 고객수 ÷ 개인별 목표 신규 고객수) × 10점</li>
               </ul>
             </div>
           </div>
@@ -1164,7 +1164,7 @@
 
         <!-- CRM SAVED HISTORY LOG TABLE -->
         <div id="crmHistorySectionCard" class="card-luxury rounded-2xl overflow-hidden">
-          <div class="p-5 sm:p-6 border-b border-ivory-border flex items-center justify-between gap-3 whitespace-nowrap overflow-x-auto">
+          <div class="p-5 sm:p-6 border-b border-ivory-border flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 class="text-base font-bold text-espresso whitespace-nowrap">📋 CRM 5대 지표 저장 이력 내역</h3>
               <p class="text-xs text-espresso-muted whitespace-nowrap">직접 가입한 원장·디자이너가 입력·저장한 고객관리(CRM) 기록과 자동 산출된 KPI 점수 내역입니다.</p>
@@ -1207,10 +1207,10 @@
             <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-espresso text-champagne-light whitespace-nowrap">
               3대 지점 총괄 비교 분석 대시보드
             </span>
-            <h3 class="text-base sm:text-xl font-bold text-espresso mt-1.5 whitespace-nowrap truncate">
+            <h3 class="text-base sm:text-xl font-bold text-espresso mt-1.5">
               파주 운정점 · 운정역점 · 마곡발산점 지점원장 및 총 결과 KPI 달성 현황
             </h3>
-            <p class="text-xs text-espresso-muted mt-0.5 truncate">
+            <p class="text-xs text-espresso-muted mt-0.5">
               각 지점원장의 개별 목표치 대비 4대 KPI(지점매출 35% / 디자이너 평균매출 성장 30% / 재방문 비율 20% / 직원 성장·유지 15%) 달성도를 비교합니다.
             </p>
           </div>
@@ -1241,14 +1241,14 @@
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div class="lg:col-span-7 card-luxury rounded-2xl p-5 sm:p-6">
               <h4 class="text-base font-bold text-espresso mb-1 whitespace-nowrap">3대 지점 매출 · 영업이익 · 목표 달성액 비교</h4>
-              <p class="text-xs text-espresso-muted mb-4 whitespace-nowrap truncate">매장별 월 목표 매출 대비 실제 달성 매출과 영업이익(단위: 만원) 비교</p>
+              <p class="text-xs text-espresso-muted mb-4">매장별 월 목표 매출 대비 실제 달성 매출과 영업이익(단위: 만원) 비교</p>
               <div class="relative h-72 w-full">
                 <canvas id="branchFinancialChart"></canvas>
               </div>
             </div>
             <div class="lg:col-span-5 card-luxury rounded-2xl p-5 sm:p-6">
               <h4 class="text-base font-bold text-espresso mb-1 whitespace-nowrap">지점원장 4대 KPI 밸런스 비교 (레이더)</h4>
-              <p class="text-xs text-espresso-muted mb-4 whitespace-nowrap truncate">지점매출(35%) · 평균매출성장(30%) · 재방문율(20%) · 직원성장유지(15%)</p>
+              <p class="text-xs text-espresso-muted mb-4">지점매출(35%) · 평균매출성장(30%) · 재방문율(20%) · 직원성장유지(15%)</p>
               <div class="relative h-72 w-full">
                 <canvas id="branchRadarChart"></canvas>
               </div>
@@ -1290,10 +1290,10 @@
             <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-sage text-white whitespace-nowrap">
               직접 가입 인원 & 개별 목표치 · 성장 코칭 보드
             </span>
-            <h3 class="text-base sm:text-xl font-bold text-espresso mt-1.5 whitespace-nowrap truncate">
+            <h3 class="text-base sm:text-xl font-bold text-espresso mt-1.5">
               직접 가입한 지점원장 · 디자이너 프로필, 개별 목표치 및 1:1 성장 코칭 관리
             </h3>
-            <p class="text-xs text-espresso-muted mt-0.5 truncate">
+            <p class="text-xs text-espresso-muted mt-0.5">
               직접 회원가입을 완료한 인원만 등록되며, 대표원장은 각 지점장·디자이너의 개인 목표치를 개별 설정·변경할 수 있습니다.
             </p>
           </div>
@@ -1318,7 +1318,7 @@
 
     <!-- FOOTER -->
     <footer class="bg-white border-t border-ivory-border py-5 px-4 sm:px-8 mt-10 no-print">
-      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4 text-xs text-espresso-muted whitespace-nowrap overflow-x-auto">
+      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs text-espresso-muted">
         <div class="flex items-center gap-2 shrink-0">
           <span class="font-bold text-espresso brand-serif">YUROSO HAIR</span>
           <span>|</span>
@@ -1791,7 +1791,7 @@
 
         <!-- Modal Footer -->
         <div class="flex items-center justify-between gap-3 pt-4 border-t border-ivory-border whitespace-nowrap">
-          <span class="text-xs text-espresso-muted whitespace-nowrap truncate">※ 저장 즉시 전 지점 대시보드 및 개별 KPI 점수가 실시간 재계산됩니다.</span>
+          <span class="text-xs text-espresso-muted">※ 저장 즉시 전 지점 대시보드 및 개별 KPI 점수가 실시간 재계산됩니다.</span>
           <div class="flex items-center gap-2 shrink-0">
             <button type="button" onclick="closeTargetSettingsModal()" class="px-4 py-2.5 rounded-xl border border-ivory-border text-xs font-bold text-espresso-muted whitespace-nowrap">닫기</button>
             <button type="submit" class="px-6 py-2.5 rounded-xl bg-espresso hover:bg-espresso-light text-ivory text-xs font-extrabold shadow-md whitespace-nowrap">
@@ -2379,13 +2379,13 @@
       if (tab === 'login') {
         loginPanel.classList.remove('hidden');
         signupPanel.classList.add('hidden');
-        loginBtn.className = 'py-2.5 px-2 text-xs sm:text-sm font-bold rounded-lg bg-espresso text-ivory shadow-sm transition whitespace-nowrap truncate';
-        signupBtn.className = 'py-2.5 px-2 text-xs sm:text-sm font-bold rounded-lg text-espresso-muted hover:text-espresso transition whitespace-nowrap truncate';
+        loginBtn.className = 'py-2.5 px-2 text-xs sm:text-sm font-bold rounded-lg bg-espresso text-ivory shadow-sm transition';
+        signupBtn.className = 'py-2.5 px-2 text-xs sm:text-sm font-bold rounded-lg text-espresso-muted hover:text-espresso transition';
       } else {
         loginPanel.classList.add('hidden');
         signupPanel.classList.remove('hidden');
-        signupBtn.className = 'py-2.5 px-2 text-xs sm:text-sm font-bold rounded-lg bg-espresso text-ivory shadow-sm transition whitespace-nowrap truncate';
-        loginBtn.className = 'py-2.5 px-2 text-xs sm:text-sm font-bold rounded-lg text-espresso-muted hover:text-espresso transition whitespace-nowrap truncate';
+        signupBtn.className = 'py-2.5 px-2 text-xs sm:text-sm font-bold rounded-lg bg-espresso text-ivory shadow-sm transition';
+        loginBtn.className = 'py-2.5 px-2 text-xs sm:text-sm font-bold rounded-lg text-espresso-muted hover:text-espresso transition';
       }
     }
 
@@ -2501,9 +2501,9 @@
         const btn = document.getElementById('branchCard_' + b);
         if (!btn) return;
         if (b === branch) {
-          btn.className = 'py-2 px-2 rounded-lg border-2 border-champagne bg-champagne-bg text-xs font-bold text-espresso transition whitespace-nowrap truncate';
+          btn.className = 'py-2 px-2 rounded-lg border-2 border-champagne bg-champagne-bg text-xs font-bold text-espresso transition';
         } else {
-          btn.className = 'py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition whitespace-nowrap truncate';
+          btn.className = 'py-2 px-2 rounded-lg border border-ivory-border bg-white text-xs font-medium text-espresso-muted hover:border-champagne transition';
         }
       });
     }
@@ -2992,7 +2992,7 @@
       if (desSelect) {
         const designers = appState.users.filter(u => u.role === '디자이너' && u.isCustom);
         if (designers.length === 0) {
-          desSelect.innerHTML = `<option value="">등록된 디자이너 없음 (직접 가입 필요)</option>`;
+          desSelect.innerHTML = `<option value="">디자이너 미등록</option>`;
         } else {
           if (!designers.some(d => d.id === activeViewContext.designerId)) {
             activeViewContext.designerId = designers[0].id;
@@ -3009,7 +3009,7 @@
       if (mgrBranchSelect) {
         mgrBranchSelect.innerHTML = BRANCH_NAMES.map(bName => {
           const mgrs = appState.users.filter(u => u.branch === bName && u.role === '지점원장' && u.isCustom);
-          const mgrSuffix = mgrs.length > 0 ? ` (${mgrs[mgrs.length - 1].name} 원장)` : ' (원장 미등록)';
+          const mgrSuffix = mgrs.length > 0 ? ` (${mgrs[mgrs.length - 1].name})` : '';
           return `<option value="${bName}" ${bName === activeViewContext.branch ? 'selected' : ''}>${bName}${mgrSuffix}</option>`;
         }).join('');
       }
@@ -3107,9 +3107,9 @@
         }
         if (btn) {
           if (t === tabName) {
-            btn.className = 'px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold bg-champagne text-white transition whitespace-nowrap flex items-center gap-1.5';
+            btn.className = 'px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-champagne text-white transition whitespace-nowrap flex items-center gap-1.5';
           } else {
-            btn.className = 'px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap flex items-center gap-1.5';
+            btn.className = 'px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium text-ivory/80 hover:text-white hover:bg-white/10 transition whitespace-nowrap flex items-center gap-1.5';
           }
         }
       });
@@ -3193,7 +3193,8 @@
       const bannerSub = document.getElementById('rbacBannerSubtitle');
 
       if (currentSession) {
-        document.getElementById('loggedInUserNameDisplay').textContent = `${currentSession.name} ${currentSession.role} (${currentSession.branch})`;
+        const dispRole = currentSession.name === currentSession.role ? currentSession.name : `${currentSession.name} ${currentSession.role}`;
+        document.getElementById('loggedInUserNameDisplay').textContent = `${dispRole} (${currentSession.branch})`;
         document.getElementById('loggedInDeviceStatus').textContent = currentSession.keepLoggedIn
           ? '인증됨 · 기기 로그인 유지 중'
           : '인증됨 · 일회성 세션';
@@ -3201,10 +3202,10 @@
 
       if (isCEOView()) {
         const regStaffCount = appState.users.filter(u => u.isCustom).length;
-        const adminTitleLabel = activeViewContext.role === '제작자' ? '제작자 (최상위 총괄관리자)' : '대표원장 (최상위 관리자)';
+        const adminTitleLabel = activeViewContext.role === '제작자' ? '제작자 (총괄관리)' : '대표원장 (총괄관리)';
         roleBadge.textContent = adminTitleLabel;
         branchBadge.textContent = `전 지점 총괄 · 가입 인원 ${regStaffCount}명`;
-        scopeDesc.textContent = `${adminTitleLabel} 권한: 3대 매장 목표치 및 각 지점장·디자이너 개별 목표치 직접 설정 · 통합 조회`;
+        scopeDesc.textContent = `3대 매장 · 지점장 · 디자이너 목표치 개별 설정 및 통합 조회`;
         bannerIcon.textContent = activeViewContext.role === '제작자' ? '🛠️' : '👑';
         bannerTitle.textContent = activeViewContext.role === '제작자'
           ? '제작자(총괄관리자)님 — 전 지점 통합 KPI & 개별 목표치 관리 대시보드'
@@ -3267,11 +3268,11 @@
         kpiGrid.innerHTML = `
           <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-champagne">
             <div class="flex justify-between items-center gap-1.5 mb-2 whitespace-nowrap">
-              <span class="text-xs font-bold text-espresso-muted truncate">① 전 지점 매출 성장</span>
+              <span class="text-xs font-bold text-espresso-muted">① 전 지점 매출 성장</span>
               <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark shrink-0">가중치 30%</span>
             </div>
-            <p class="text-xl sm:text-2xl font-extrabold text-espresso whitespace-nowrap truncate">${formatManwon(ceo.totalAllSales)}</p>
-            <p class="text-xs text-sage-dark font-bold mt-1 whitespace-nowrap truncate">▲ 전월 대비 +${ceo.allSalesGrowthRate.toFixed(1)}% 성장</p>
+            <p class="text-xl sm:text-2xl font-extrabold text-espresso">${formatManwon(ceo.totalAllSales)}</p>
+            <p class="text-xs text-sage-dark font-bold mt-1">▲ 전월 대비 +${ceo.allSalesGrowthRate.toFixed(1)}% 성장</p>
             <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs whitespace-nowrap">
               <span class="text-espresso-muted">환산 점수</span>
               <span class="font-extrabold text-espresso">${ceo.scoreSalesGrowth.toFixed(1)} / 30.0점</span>
@@ -3280,11 +3281,11 @@
 
           <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-espresso">
             <div class="flex justify-between items-center gap-1.5 mb-2 whitespace-nowrap">
-              <span class="text-xs font-bold text-espresso-muted truncate">② 전 지점 영업이익</span>
+              <span class="text-xs font-bold text-espresso-muted">② 전 지점 영업이익</span>
               <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark shrink-0">가중치 30%</span>
             </div>
-            <p class="text-xl sm:text-2xl font-extrabold text-espresso whitespace-nowrap truncate">${formatManwon(ceo.totalOperatingProfit)}</p>
-            <p class="text-xs text-sage-dark font-bold mt-1 whitespace-nowrap truncate">목표 이익 달성률 ${ceo.allProfitAchievementRate.toFixed(1)}%</p>
+            <p class="text-xl sm:text-2xl font-extrabold text-espresso">${formatManwon(ceo.totalOperatingProfit)}</p>
+            <p class="text-xs text-sage-dark font-bold mt-1">목표 이익 달성률 ${ceo.allProfitAchievementRate.toFixed(1)}%</p>
             <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs whitespace-nowrap">
               <span class="text-espresso-muted">환산 점수</span>
               <span class="font-extrabold text-espresso">${ceo.scoreOperatingProfit.toFixed(1)} / 30.0점</span>
@@ -3293,11 +3294,11 @@
 
           <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-sage">
             <div class="flex justify-between items-center gap-1.5 mb-2 whitespace-nowrap">
-              <span class="text-xs font-bold text-espresso-muted truncate">③ 3대 매장 목표 달성</span>
+              <span class="text-xs font-bold text-espresso-muted">③ 3대 매장 목표 달성</span>
               <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-sage-bg text-sage-dark shrink-0">가중치 20%</span>
             </div>
-            <p class="text-xl sm:text-2xl font-extrabold text-espresso whitespace-nowrap truncate">${ceo.allTargetAchievementRate.toFixed(1)}%</p>
-            <p class="text-xs text-espresso-muted mt-1 whitespace-nowrap truncate">매장 목표 합계: ${formatManwon(ceo.totalTargetSales)}</p>
+            <p class="text-xl sm:text-2xl font-extrabold text-espresso">${ceo.allTargetAchievementRate.toFixed(1)}%</p>
+            <p class="text-xs text-espresso-muted mt-1">매장 목표 합계: ${formatManwon(ceo.totalTargetSales)}</p>
             <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs whitespace-nowrap">
               <span class="text-espresso-muted">환산 점수</span>
               <span class="font-extrabold text-espresso">${ceo.scoreTargetAchievement.toFixed(1)} / 20.0점</span>
@@ -3306,11 +3307,11 @@
 
           <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-champagne-light">
             <div class="flex justify-between items-center gap-1.5 mb-2 whitespace-nowrap">
-              <span class="text-xs font-bold text-espresso-muted truncate">④ 리더·인재 성장 지수</span>
+              <span class="text-xs font-bold text-espresso-muted">④ 리더·인재 성장 지수</span>
               <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-sage-bg text-sage-dark shrink-0">가중치 20%</span>
             </div>
-            <p class="text-xl sm:text-2xl font-extrabold text-espresso whitespace-nowrap truncate">${ceo.avgLeaderGrowthIndex.toFixed(1)}점</p>
-            <p class="text-xs text-espresso-muted mt-1 whitespace-nowrap truncate">직접 가입 원장·디자이너 성장</p>
+            <p class="text-xl sm:text-2xl font-extrabold text-espresso">${ceo.avgLeaderGrowthIndex.toFixed(1)}점</p>
+            <p class="text-xs text-espresso-muted mt-1">직접 가입 원장·디자이너 성장</p>
             <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs whitespace-nowrap">
               <span class="text-espresso-muted">환산 점수</span>
               <span class="font-extrabold text-espresso">${ceo.scoreLeaderGrowth.toFixed(1)} / 20.0점</span>
@@ -3319,13 +3320,13 @@
         `;
 
         totalBar.innerHTML = `
-          <div class="flex flex-wrap lg:flex-nowrap items-center justify-between gap-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="min-w-0">
               <span class="text-xs font-bold text-champagne-light uppercase whitespace-nowrap">TOP ADMINISTRATOR KPI EVALUATION (대표원장 · 제작자 공동 권한)</span>
-              <h3 class="text-base sm:text-xl font-bold mt-0.5 whitespace-nowrap truncate">${roleLabel} 종합 KPI 달성 점수: <span class="text-goldaccent">${ceo.ceoTotalScore.toFixed(1)}점</span> / 100점 (${ceo.ceoGrade})</h3>
-              <p class="text-xs text-ivory/75 mt-1 truncate">전 지점 매출 성장(30%) + 영업이익(30%) + 지점 목표 달성(20%) + 리더·인재 성장(20%) 통합 산출</p>
+              <h3 class="text-base sm:text-xl font-bold mt-0.5">${roleLabel} 종합 KPI 달성 점수: <span class="text-goldaccent">${ceo.ceoTotalScore.toFixed(1)}점</span> / 100점 (${ceo.ceoGrade})</h3>
+              <p class="text-xs text-ivory/75 mt-1">전 지점 매출 성장(30%) + 영업이익(30%) + 지점 목표 달성(20%) + 리더·인재 성장(20%) 통합 산출</p>
             </div>
-            <div class="flex items-center gap-2 shrink-0 whitespace-nowrap">
+            <div class="flex flex-wrap items-center gap-2">
               <button type="button" onclick="openTargetSettingsModal('branches')" class="px-4 py-2.5 rounded-xl bg-goldaccent hover:bg-goldaccent-hover text-goldaccent-text text-xs font-extrabold transition shadow-md whitespace-nowrap">
                 🎯 매장·지점장·디자이너 목표치 설정
               </button>
@@ -3346,11 +3347,11 @@
           kpiGrid.innerHTML = `
             <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-champagne">
               <div class="flex justify-between items-center gap-1.5 mb-2 whitespace-nowrap">
-                <span class="text-xs font-bold text-espresso-muted truncate">① 지점 매출 (목표 ${formatManwon(b.meta.mgrTargetSales)})</span>
+                <span class="text-xs font-bold text-espresso-muted">① 지점 매출 (목표 ${formatManwon(b.meta.mgrTargetSales)})</span>
                 <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark shrink-0">35%</span>
               </div>
-              <p class="text-xl sm:text-2xl font-extrabold text-espresso whitespace-nowrap truncate">${maskIfHidden('colSales', formatManwon(b.totalBranchSales))}</p>
-              <p class="text-xs text-sage-dark font-bold mt-1 whitespace-nowrap truncate">지점장 목표 대비 ${b.mgrSalesAchievementRate.toFixed(1)}%</p>
+              <p class="text-xl sm:text-2xl font-extrabold text-espresso">${maskIfHidden('colSales', formatManwon(b.totalBranchSales))}</p>
+              <p class="text-xs text-sage-dark font-bold mt-1">지점장 목표 대비 ${b.mgrSalesAchievementRate.toFixed(1)}%</p>
               <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs whitespace-nowrap">
                 <span class="text-espresso-muted">환산 점수</span>
                 <span class="font-extrabold text-espresso">${b.scoreBranchSales.toFixed(1)} / 35.0점</span>
@@ -3359,11 +3360,11 @@
 
             <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-espresso">
               <div class="flex justify-between items-center gap-1.5 mb-2 whitespace-nowrap">
-                <span class="text-xs font-bold text-espresso-muted truncate">② 평균매출 성장 (목표 +${b.meta.mgrTargetGrowth}%)</span>
+                <span class="text-xs font-bold text-espresso-muted">② 평균매출 성장 (목표 +${b.meta.mgrTargetGrowth}%)</span>
                 <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark shrink-0">30%</span>
               </div>
-              <p class="text-xl sm:text-2xl font-extrabold text-espresso whitespace-nowrap truncate">+${b.designerAvgGrowthRate.toFixed(1)}%</p>
-              <p class="text-xs text-espresso-muted mt-1 whitespace-nowrap truncate">인당 평균: ${maskIfHidden('colSales', formatManwon(b.avgDesignerSales))}</p>
+              <p class="text-xl sm:text-2xl font-extrabold text-espresso">+${b.designerAvgGrowthRate.toFixed(1)}%</p>
+              <p class="text-xs text-espresso-muted mt-1">인당 평균: ${maskIfHidden('colSales', formatManwon(b.avgDesignerSales))}</p>
               <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs whitespace-nowrap">
                 <span class="text-espresso-muted">환산 점수</span>
                 <span class="font-extrabold text-espresso">${b.scoreDesignerGrowth.toFixed(1)} / 30.0점</span>
@@ -3372,11 +3373,11 @@
 
             <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-sage">
               <div class="flex justify-between items-center gap-1.5 mb-2 whitespace-nowrap">
-                <span class="text-xs font-bold text-espresso-muted truncate">③ 지점 재방문율 (목표 ${b.meta.mgrTargetRevisit}%)</span>
+                <span class="text-xs font-bold text-espresso-muted">③ 지점 재방문율 (목표 ${b.meta.mgrTargetRevisit}%)</span>
                 <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-sage-bg text-sage-dark shrink-0">20%</span>
               </div>
-              <p class="text-xl sm:text-2xl font-extrabold text-espresso whitespace-nowrap truncate">${maskIfHidden('colRevisit', b.avgRevisitRate.toFixed(1) + '%')}</p>
-              <p class="text-xs text-espresso-muted mt-1 whitespace-nowrap truncate">재방문 ${b.totalRevisitCustomers}명 / 총 ${b.totalCustomers}명</p>
+              <p class="text-xl sm:text-2xl font-extrabold text-espresso">${maskIfHidden('colRevisit', b.avgRevisitRate.toFixed(1) + '%')}</p>
+              <p class="text-xs text-espresso-muted mt-1">재방문 ${b.totalRevisitCustomers}명 / 총 ${b.totalCustomers}명</p>
               <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs whitespace-nowrap">
                 <span class="text-espresso-muted">환산 점수</span>
                 <span class="font-extrabold text-espresso">${b.scoreRevisit.toFixed(1)} / 20.0점</span>
@@ -3385,11 +3386,11 @@
 
             <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-champagne-light">
               <div class="flex justify-between items-center gap-1.5 mb-2 whitespace-nowrap">
-                <span class="text-xs font-bold text-espresso-muted truncate">④ 직원 성장·유지</span>
+                <span class="text-xs font-bold text-espresso-muted">④ 직원 성장·유지</span>
                 <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-sage-bg text-sage-dark shrink-0">15%</span>
               </div>
-              <p class="text-xl sm:text-2xl font-extrabold text-espresso whitespace-nowrap truncate">${b.meta.staffRetentionScore.toFixed(1)}점</p>
-              <p class="text-xs text-espresso-muted mt-1 whitespace-nowrap truncate">직접 가입 디자이너 ${b.designerCount}명</p>
+              <p class="text-xl sm:text-2xl font-extrabold text-espresso">${b.meta.staffRetentionScore.toFixed(1)}점</p>
+              <p class="text-xs text-espresso-muted mt-1">직접 가입 디자이너 ${b.designerCount}명</p>
               <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs whitespace-nowrap">
                 <span class="text-espresso-muted">환산 점수</span>
                 <span class="font-extrabold text-espresso">${b.scoreRetention.toFixed(1)} / 15.0점</span>
@@ -3404,8 +3405,8 @@
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="min-w-0">
               <span class="text-xs font-bold text-champagne-light uppercase whitespace-nowrap">BRANCH DIRECTOR KPI (${b.branchName} 전용 열람)</span>
-              <h3 class="text-base sm:text-xl font-bold mt-0.5 whitespace-nowrap truncate">${b.branchName} (${b.meta.managerName}) 종합 KPI 점수: <span class="text-goldaccent">${maskIfHidden('colKpiScore', b.managerTotalScore.toFixed(1) + '점')}</span> (${b.managerGrade})</h3>
-              <p class="text-xs text-ivory/75 mt-1 truncate">지점 매출(35%) + 디자이너 평균매출 성장(30%) + 재방문 고객 비율(20%) + 직원 성장·유지(15%) 합산</p>
+              <h3 class="text-base sm:text-xl font-bold mt-0.5">${b.branchName} (${b.meta.managerName}) 종합 KPI 점수: <span class="text-goldaccent">${maskIfHidden('colKpiScore', b.managerTotalScore.toFixed(1) + '점')}</span> (${b.managerGrade})</h3>
+              <p class="text-xs text-ivory/75 mt-1">지점 매출(35%) + 디자이너 평균매출 성장(30%) + 재방문 고객 비율(20%) + 직원 성장·유지(15%) 합산</p>
             </div>
             <span class="px-3 py-1.5 rounded-xl bg-white/10 text-xs font-semibold text-champagne-light whitespace-nowrap shrink-0">
               🔒 매장·지점장 목표치는 대표원장 전용 설정
@@ -3479,11 +3480,11 @@
           kpiGrid.innerHTML = `
             <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-champagne">
               <div class="flex justify-between items-center gap-1.5 mb-2 whitespace-nowrap">
-                <span class="text-xs font-bold text-espresso-muted truncate">① 개인매출 (목표 ${formatManwon(kpi.targetSales)})</span>
+                <span class="text-xs font-bold text-espresso-muted">① 개인매출 (목표 ${formatManwon(kpi.targetSales)})</span>
                 <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark shrink-0">40%</span>
               </div>
-              <p class="text-xl sm:text-2xl font-extrabold text-espresso whitespace-nowrap truncate">${maskIfHidden('colSales', formatKRW(kpi.sales))}</p>
-              <p class="text-xs text-sage-dark font-bold mt-1 whitespace-nowrap truncate">전월 대비 +${kpi.salesGrowthRate.toFixed(1)}%</p>
+              <p class="text-xl sm:text-2xl font-extrabold text-espresso">${maskIfHidden('colSales', formatKRW(kpi.sales))}</p>
+              <p class="text-xs text-sage-dark font-bold mt-1">전월 대비 +${kpi.salesGrowthRate.toFixed(1)}%</p>
               <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs whitespace-nowrap">
                 <span class="text-espresso-muted">환산 점수</span>
                 <span class="font-extrabold text-espresso">${maskIfHidden('colKpiScore', kpi.salesScore.toFixed(1) + ' / 40.0점')}</span>
@@ -3492,11 +3493,11 @@
 
             <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-sage">
               <div class="flex justify-between items-center gap-1.5 mb-2 whitespace-nowrap">
-                <span class="text-xs font-bold text-espresso-muted truncate">② 재방문 비율 (목표 ${kpi.targetRevisitRate}%)</span>
+                <span class="text-xs font-bold text-espresso-muted">② 재방문 비율 (목표 ${kpi.targetRevisitRate}%)</span>
                 <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-sage-bg text-sage-dark shrink-0">30%</span>
               </div>
-              <p class="text-xl sm:text-2xl font-extrabold text-espresso whitespace-nowrap truncate">${maskIfHidden('colRevisit', kpi.revisitRate.toFixed(1) + '%')}</p>
-              <p class="text-xs text-espresso-muted mt-1 whitespace-nowrap truncate">재방문 ${kpi.revisitCust}명 ÷ 총 ${kpi.totalCust}명</p>
+              <p class="text-xl sm:text-2xl font-extrabold text-espresso">${maskIfHidden('colRevisit', kpi.revisitRate.toFixed(1) + '%')}</p>
+              <p class="text-xs text-espresso-muted mt-1">재방문 ${kpi.revisitCust}명 ÷ 총 ${kpi.totalCust}명</p>
               <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs whitespace-nowrap">
                 <span class="text-espresso-muted">환산 점수</span>
                 <span class="font-extrabold text-espresso">${maskIfHidden('colKpiScore', kpi.revisitScore.toFixed(1) + ' / 30.0점')}</span>
@@ -3505,11 +3506,11 @@
 
             <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-espresso">
               <div class="flex justify-between items-center gap-1.5 mb-2 whitespace-nowrap">
-                <span class="text-xs font-bold text-espresso-muted truncate">③ 객단가 (1인당 평균)</span>
+                <span class="text-xs font-bold text-espresso-muted">③ 객단가 (1인당 평균)</span>
                 <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-champagne-bg text-champagne-dark shrink-0">20%</span>
               </div>
-              <p class="text-xl sm:text-2xl font-extrabold text-espresso whitespace-nowrap truncate">${maskIfHidden('colAvgTicket', formatKRW(kpi.avgTicket))}</p>
-              <p class="text-xs text-espresso-muted mt-1 whitespace-nowrap truncate">고객 1인당 평균 시술단가</p>
+              <p class="text-xl sm:text-2xl font-extrabold text-espresso">${maskIfHidden('colAvgTicket', formatKRW(kpi.avgTicket))}</p>
+              <p class="text-xs text-espresso-muted mt-1">고객 1인당 평균 시술단가</p>
               <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs whitespace-nowrap">
                 <span class="text-espresso-muted">환산 점수</span>
                 <span class="font-extrabold text-espresso">${maskIfHidden('colKpiScore', kpi.ticketScore.toFixed(1) + ' / 20.0점')}</span>
@@ -3518,11 +3519,11 @@
 
             <div class="card-luxury rounded-2xl p-5 border-t-4 border-t-champagne-light">
               <div class="flex justify-between items-center gap-1.5 mb-2 whitespace-nowrap">
-                <span class="text-xs font-bold text-espresso-muted truncate">④ 신규 고객수 (목표 ${kpi.targetNewCustomers}명)</span>
+                <span class="text-xs font-bold text-espresso-muted">④ 신규 고객수 (목표 ${kpi.targetNewCustomers}명)</span>
                 <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-sage-bg text-sage-dark shrink-0">10%</span>
               </div>
-              <p class="text-xl sm:text-2xl font-extrabold text-espresso whitespace-nowrap truncate">${maskIfHidden('colNewCust', kpi.newCust + '명')}</p>
-              <p class="text-xs text-espresso-muted mt-1 whitespace-nowrap truncate">네이버 플레이스·소개 신규 유입</p>
+              <p class="text-xl sm:text-2xl font-extrabold text-espresso">${maskIfHidden('colNewCust', kpi.newCust + '명')}</p>
+              <p class="text-xs text-espresso-muted mt-1">네이버 플레이스·소개 신규 유입</p>
               <div class="mt-3 pt-2 border-t border-ivory-border flex justify-between text-xs whitespace-nowrap">
                 <span class="text-espresso-muted">환산 점수</span>
                 <span class="font-extrabold text-espresso">${maskIfHidden('colKpiScore', kpi.newCustScore.toFixed(1) + ' / 10.0점')}</span>
@@ -3541,8 +3542,8 @@
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="min-w-0">
               <span class="text-xs font-bold text-champagne-light uppercase whitespace-nowrap">PERSONAL DESIGNER KPI (${desUser.branch} · ${desUser.name} 전용)</span>
-              <h3 class="text-base sm:text-xl font-bold mt-0.5 whitespace-nowrap truncate">${desUser.name} ${desUser.title}님의 개인 KPI 총점: <span class="text-goldaccent">${maskIfHidden('colKpiScore', kpi.totalScore.toFixed(1) + '점')}</span> (${kpi.grade})</h3>
-              <p class="text-xs text-ivory/80 mt-1 truncate">${coachingLine}</p>
+              <h3 class="text-base sm:text-xl font-bold mt-0.5">${desUser.name} ${desUser.title}님의 개인 KPI 총점: <span class="text-goldaccent">${maskIfHidden('colKpiScore', kpi.totalScore.toFixed(1) + '점')}</span> (${kpi.grade})</h3>
+              <p class="text-xs text-ivory/80 mt-1">${coachingLine}</p>
             </div>
             <button type="button" onclick="switchMainTab('crm')" class="px-4 py-2.5 rounded-xl bg-goldaccent hover:bg-goldaccent-hover text-goldaccent-text text-xs font-extrabold transition shadow-md whitespace-nowrap shrink-0">
               내 CRM 5대 지표 입력·수정하기 &rarr;
@@ -4299,7 +4300,7 @@
                 ` : `<span class="text-xs font-extrabold px-2.5 py-0.5 rounded bg-sage-bg text-sage-dark">실시간 KPI 연동</span>`}
               </div>
               <h4 class="text-xl font-bold text-espresso whitespace-nowrap">${s.branchName}</h4>
-              <p class="text-xs text-espresso-muted mt-0.5 whitespace-nowrap truncate">지점 총괄: <strong class="text-espresso">${s.meta.managerName}</strong> · 디자이너 ${s.designerCount}명</p>
+              <p class="text-xs text-espresso-muted mt-0.5">지점 총괄: <strong class="text-espresso">${s.meta.managerName}</strong> · 디자이너 ${s.designerCount}명</p>
 
               <div class="mt-4 p-4 rounded-xl bg-ivory border border-ivory-border flex items-center justify-between gap-2 whitespace-nowrap">
                 <div>
@@ -4505,7 +4506,7 @@
                   </div>
                   <div class="min-w-0">
                     <div class="flex items-center gap-1.5 whitespace-nowrap">
-                      <h4 class="font-bold text-espresso text-base truncate">${u.name} ${u.title}</h4>
+                      <h4 class="font-bold text-espresso text-base">${u.name} ${u.title}</h4>
                       ${u.isCustom ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-goldaccent text-goldaccent-text font-extrabold shrink-0">직접가입</span>' : '<span class="text-[10px] px-1.5 py-0.5 rounded bg-champagne-bg text-champagne-dark font-bold shrink-0">총괄관리</span>'}
                     </div>
                     <p class="text-xs text-espresso-muted whitespace-nowrap">${u.branch}</p>
@@ -4517,27 +4518,27 @@
               </div>
 
               <!-- Individual Target Summary Strip -->
-              <div class="px-3 py-2 rounded-xl bg-champagne-bg/60 border border-champagne/30 text-[11px] text-espresso flex items-center justify-between gap-2 mb-2.5 whitespace-nowrap overflow-x-auto">
+              <div class="px-3 py-2 rounded-xl bg-champagne-bg/60 border border-champagne/30 text-[11px] text-espresso flex flex-wrap items-center justify-between gap-2 mb-2.5">
                 <span class="font-bold text-champagne-dark">🎯 개별 목표치</span>
                 <span class="font-semibold">매출 ${formatManwon(kpi.targetSales)} · 재방문 ${kpi.targetRevisitRate}% · 신규 ${kpi.targetNewCustomers}명</span>
               </div>
 
               <div class="grid grid-cols-2 gap-2 p-3 rounded-xl bg-ivory text-xs mb-3">
-                <div class="whitespace-nowrap truncate">
+                <div class="whitespace-nowrap">
                   <span class="text-espresso-muted">개인매출:</span>
-                  <p class="font-bold text-espresso truncate">${maskIfHidden('colSales', formatManwon(kpi.sales))}</p>
+                  <p class="font-bold text-espresso">${maskIfHidden('colSales', formatManwon(kpi.sales))}</p>
                 </div>
-                <div class="whitespace-nowrap truncate">
+                <div class="whitespace-nowrap">
                   <span class="text-espresso-muted">재방문율:</span>
-                  <p class="font-bold text-sage-dark truncate">${maskIfHidden('colRevisit', kpi.revisitRate.toFixed(1) + '% (' + kpi.revisitCust + '/' + kpi.totalCust + '명)')}</p>
+                  <p class="font-bold text-sage-dark">${maskIfHidden('colRevisit', kpi.revisitRate.toFixed(1) + '% (' + kpi.revisitCust + '/' + kpi.totalCust + '명)')}</p>
                 </div>
-                <div class="whitespace-nowrap truncate">
+                <div class="whitespace-nowrap">
                   <span class="text-espresso-muted">객단가:</span>
-                  <p class="font-bold text-espresso truncate">${maskIfHidden('colAvgTicket', formatKRW(kpi.avgTicket))}</p>
+                  <p class="font-bold text-espresso">${maskIfHidden('colAvgTicket', formatKRW(kpi.avgTicket))}</p>
                 </div>
-                <div class="whitespace-nowrap truncate">
+                <div class="whitespace-nowrap">
                   <span class="text-espresso-muted">신규 고객수:</span>
-                  <p class="font-bold text-espresso truncate">${maskIfHidden('colNewCust', kpi.newCust + '명')}</p>
+                  <p class="font-bold text-espresso">${maskIfHidden('colNewCust', kpi.newCust + '명')}</p>
                 </div>
               </div>
 
@@ -4547,7 +4548,7 @@
               </div>
             </div>
 
-            <div class="mt-4 pt-3 border-t border-ivory-border flex items-center justify-between gap-1.5 overflow-x-auto whitespace-nowrap">
+            <div class="mt-4 pt-3 border-t border-ivory-border flex flex-wrap items-center justify-between gap-1.5">
               <button type="button" onclick="jumpToCrmForUser('${u.id}')" class="flex-1 py-2 px-2.5 rounded-xl bg-espresso hover:bg-espresso-light text-ivory text-xs font-bold transition whitespace-nowrap">
                 CRM 입력
               </button>
