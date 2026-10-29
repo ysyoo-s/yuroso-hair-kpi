@@ -116,6 +116,24 @@
   <!-- TOAST NOTIFICATION CONTAINER -->
   <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none px-4 sm:px-0"></div>
 
+  <!-- LIVE SUPABASE DIAGNOSTIC BANNER (SHOWN ONLY IF TABLE IS MISSING OR ERROR OCCURS) -->
+  <div id="supabaseLiveAlertBar" class="hidden bg-amber-500 text-espresso px-4 py-2.5 text-xs font-bold border-b border-amber-600 z-40">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="px-2 py-0.5 rounded bg-espresso text-goldaccent font-extrabold">☁️ Supabase DB 점검 알림</span>
+        <span id="supabaseLiveAlertText">Supabase 서버 연결 상태를 확인 중입니다...</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="copySupabaseSqlSnippet()" class="px-3 py-1 rounded-lg bg-espresso text-ivory hover:bg-espresso-light font-extrabold transition">
+          📋 테이블 생성 SQL 복사
+        </button>
+        <button type="button" onclick="openSupabaseModal()" class="px-3 py-1 rounded-lg bg-white text-espresso hover:bg-ivory font-extrabold transition">
+          🔍 DB 연동 상세 점검창 열기
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ===================================================================== -->
   <!-- 1. AUTH GATE SCREEN (LOGIN & SIGNUP - SHOWN BEFORE AUTHENTICATION)    -->
   <!-- ===================================================================== -->
@@ -1788,11 +1806,19 @@
       </div>
 
       <form id="supabaseConfigForm" onsubmit="handleSaveSupabaseConfig(event)" class="p-6 overflow-y-auto custom-scrollbar space-y-4 text-xs sm:text-sm">
-        <div class="p-4 rounded-2xl bg-ivory border border-ivory-border space-y-1.5">
-          <p class="font-bold text-espresso text-xs sm:text-sm">💡 Supabase Project URL 및 Anon Key 연동</p>
-          <p class="text-xs text-espresso-muted leading-relaxed">
-            기존에 사용하시던 Supabase 프로젝트의 <strong>Project URL</strong>과 <strong>Anon Key (public)</strong>를 입력하면 회원가입, 목표치, CRM 5대 지표 데이터가 Supabase DB와 실시간 동기화됩니다.
-          </p>
+        <!-- Live Diagnostic Status Box -->
+        <div id="supabaseDiagBox" class="p-4 rounded-2xl bg-ivory border-2 border-champagne space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="font-extrabold text-espresso text-xs sm:text-sm">🔍 Supabase DB 실시간 연결 점검 결과</span>
+            <button type="button" onclick="runSupabaseFullDiagnostics()" class="px-3 py-1 rounded-lg bg-espresso text-ivory text-xs font-bold hover:bg-espresso-light transition">
+              🔄 지금 연결 상태 재점검
+            </button>
+          </div>
+          <div id="supabaseDiagDetails" class="text-xs space-y-1 text-espresso-muted bg-white p-3 rounded-xl border border-ivory-border">
+            <p>• <strong>1단계 (서버 & API Key 인증):</strong> <span id="diagStep1Text" class="font-bold text-espresso">점검 중...</span></p>
+            <p>• <strong>2단계 (DB 내 발견된 테이블):</strong> <span id="diagStep2Text" class="font-bold text-espresso">조회 중...</span></p>
+            <p>• <strong>3단계 (데이터 읽기/쓰기 상태):</strong> <span id="diagStep3Text" class="font-bold text-espresso">확인 중...</span></p>
+          </div>
         </div>
 
         <div class="space-y-3">
@@ -2171,6 +2197,57 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
     }
 
+    function normalizeLoadedState(parsed) {
+      const defState = createInitialState();
+      if (!parsed || typeof parsed !== 'object') return defState;
+
+      if (!parsed.targets) parsed.targets = defState.targets;
+      else parsed.targets = Object.assign({}, defState.targets, parsed.targets);
+
+      if (!parsed.branches) parsed.branches = defState.branches;
+      else {
+        BRANCH_NAMES.forEach(bName => {
+          if (parsed.branches[bName]) {
+            parsed.branches[bName] = Object.assign({}, defState.branches[bName], parsed.branches[bName]);
+            if (!parsed.branches[bName].mgrTargetSales) {
+              parsed.branches[bName].mgrTargetSales = parsed.branches[bName].targetMonthlySales;
+            }
+            if (!parsed.branches[bName].mgrTargetDesignerGrowth) {
+              parsed.branches[bName].mgrTargetDesignerGrowth = 10.0;
+            }
+            if (!parsed.branches[bName].mgrTargetRevisitRate) {
+              parsed.branches[bName].mgrTargetRevisitRate = parsed.targets.designerRevisitRate || 72.0;
+            }
+          } else {
+            parsed.branches[bName] = defState.branches[bName];
+          }
+        });
+      }
+
+      if (!Array.isArray(parsed.users)) parsed.users = defState.users;
+      parsed.users = parsed.users.filter(u => (u.role === '대표원장' || u.role === '제작자') || u.isCustom === true);
+      if (!parsed.users.some(u => u.id === 'u_ceo')) {
+        parsed.users.unshift(defState.users[0]);
+      }
+      if (!parsed.users.some(u => u.id === 'u_creator')) {
+        parsed.users.push(defState.users[1]);
+      }
+      parsed.users.forEach(u => {
+        if (!u.targetSales) u.targetSales = parsed.targets.designerSales || 18000000;
+        if (!u.targetRevisitRate) u.targetRevisitRate = parsed.targets.designerRevisitRate || 72;
+        if (!u.targetNewCustomers) u.targetNewCustomers = parsed.targets.designerNewCustomers || 40;
+      });
+
+      if (!parsed.visibilitySettings) {
+        parsed.visibilitySettings = createDefaultVisibilitySettings();
+      } else {
+        parsed.visibilitySettings = Object.assign(createDefaultVisibilitySettings(), parsed.visibilitySettings);
+      }
+
+      if (!Array.isArray(parsed.crmHistory)) parsed.crmHistory = [];
+      return parsed;
+    }
+
     function saveAppState() {
       safeSetStorage(STORAGE_KEY_STATE, JSON.stringify(appState));
       if (supabaseClient && !isPullingFromSupabase) {
@@ -2183,17 +2260,25 @@ create policy "Allow public read write" on public.yuroso_app_state
       if (raw) {
         try {
           const parsed = JSON.parse(raw);
-          if (parsed && parsed.url && parsed.anonKey) return parsed;
+          if (parsed && parsed.url && parsed.anonKey && parsed.url.includes('supabase.co')) {
+            return parsed;
+          }
         } catch (e) {}
       }
-      if (DEFAULT_SUPABASE_URL && DEFAULT_SUPABASE_ANON_KEY) {
-        return {
-          url: DEFAULT_SUPABASE_URL,
-          anonKey: DEFAULT_SUPABASE_ANON_KEY,
-          table: DEFAULT_SUPABASE_TABLE
-        };
-      }
-      return null;
+      return {
+        url: DEFAULT_SUPABASE_URL,
+        anonKey: DEFAULT_SUPABASE_ANON_KEY,
+        table: DEFAULT_SUPABASE_TABLE
+      };
+    }
+
+    function setDiagText(step1, step2, step3) {
+      const el1 = document.getElementById('diagStep1Text');
+      const el2 = document.getElementById('diagStep2Text');
+      const el3 = document.getElementById('diagStep3Text');
+      if (el1 && step1 !== null) el1.innerHTML = step1;
+      if (el2 && step2 !== null) el2.innerHTML = step2;
+      if (el3 && step3 !== null) el3.innerHTML = step3;
     }
 
     function updateSupabaseStatusUI(status, labelText) {
@@ -2203,14 +2288,63 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       const dotColor = status === 'connected'
         ? 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse'
+        : status === 'table_missing'
+        ? 'w-2 h-2 rounded-full bg-amber-400 animate-pulse'
         : status === 'error'
         ? 'w-2 h-2 rounded-full bg-red-500'
         : 'w-2 h-2 rounded-full bg-amber-400';
 
       dots.forEach(d => { if (d) d.className = dotColor; });
-      if (labels[0]) labels[0].textContent = status === 'connected' ? '☁️ DB 연동됨' : '☁️ DB 연동 설정';
-      if (labels[1]) labels[1].textContent = status === 'connected' ? '☁️ Supabase DB 실시간 연동 중' : '☁️ Supabase DB 연동 설정';
-      if (modalBadge) modalBadge.textContent = labelText || (status === 'connected' ? '✅ 실시간 연결됨' : '⚠️ 미연결 (URL/Key 입력 필요)');
+      if (labels[0]) {
+        labels[0].textContent = status === 'connected'
+          ? '☁️ DB 연동됨'
+          : status === 'table_missing'
+          ? '⚠️ DB 테이블 생성 필요'
+          : '☁️ DB 연동 점검';
+      }
+      if (labels[1]) {
+        labels[1].textContent = status === 'connected'
+          ? '☁️ Supabase DB 실시간 연동 중'
+          : status === 'table_missing'
+          ? '⚠️ Supabase 테이블 생성 필요 (클릭)'
+          : '☁️ Supabase DB 연동 점검';
+      }
+      if (modalBadge) {
+        modalBadge.textContent = labelText || (status === 'connected' ? '✅ 실시간 연결됨' : '⚠️ 점검 필요');
+      }
+      const alertBar = document.getElementById('supabaseLiveAlertBar');
+      const alertText = document.getElementById('supabaseLiveAlertText');
+      if (alertBar && alertText) {
+        if (status === 'connected') {
+          alertBar.classList.add('hidden');
+        } else if (status === 'table_missing' || status === 'error') {
+          alertBar.classList.remove('hidden');
+          alertText.textContent = labelText || 'Supabase 테이블 설정 확인이 필요합니다.';
+        }
+      }
+    }
+
+    async function discoverSupabaseTables(cfg) {
+      try {
+        const baseUrl = cfg.url.trim().replace(/\/+$/, '');
+        const restEndpoint = ['https://', baseUrl.replace(/^https?:\/\//, ''), '/rest/v1/'].join('');
+        const res = await fetch(restEndpoint, {
+          method: 'GET',
+          headers: {
+            'apikey': cfg.anonKey.trim(),
+            'Authorization': `Bearer ${cfg.anonKey.trim()}`
+          }
+        });
+        if (!res.ok) {
+          return { ok: false, status: res.status, tables: [], definitions: {} };
+        }
+        const spec = await res.json();
+        const defs = spec && spec.definitions ? spec.definitions : {};
+        const tables = Object.keys(defs);
+        return { ok: true, status: 200, tables, definitions: defs };
+      } catch (err) {
+        return { ok: false, status: 0, tables: [], definitions: {}, error: err.message };
+      }
     }
 
     async function initSupabaseConnection(showNotice = false) {
@@ -2219,14 +2353,60 @@ create policy "Allow public read write" on public.yuroso_app_state
         supabaseClient = null;
         supabaseConnected = false;
         updateSupabaseStatusUI('disconnected', '⚠️ 미연결 (URL 및 Anon Key 입력 필요)');
+        setDiagText('❌ URL 또는 Key 미입력', '-', '-');
         return false;
       }
 
       try {
         supabaseClient = window.supabase.createClient(cfg.url.trim(), cfg.anonKey.trim());
-        const ok = await pullStateFromSupabase(showNotice);
+
+        // Step 1: Discover tables on the Supabase server
+        const discovery = await discoverSupabaseTables(cfg);
+        if (!discovery.ok) {
+          supabaseConnected = false;
+          updateSupabaseStatusUI('error', `❌ 서버 인증 실패 (HTTP ${discovery.status || '네트워크 오류'})`);
+          setDiagText(
+            `<span class="text-red-600">❌ 연결 실패 (HTTP ${discovery.status || '오류'} — URL 또는 Anon Key 확인 필요)</span>`,
+            '-',
+            '-'
+          );
+          if (showNotice) showToast('Supabase 서버 연결에 실패했습니다. URL과 Key를 확인해주세요.', 'error');
+          return false;
+        }
+
+        const foundTables = discovery.tables;
+        const tableDetailsStr = foundTables.map(t => {
+          const cols = Object.keys(discovery.definitions[t]?.properties || {});
+          return `${t}(${cols.slice(0, 5).join(',')}${cols.length > 5 ? '...' : ''})`;
+        }).join(', ');
+
+        setDiagText(
+          `<span class="text-emerald-700">✅ 서버 & API Key 정상 인증됨 (${cfg.url})</span>`,
+          foundTables.length > 0
+            ? `<span class="text-emerald-700">총 ${foundTables.length}개 테이블 발견: [${tableDetailsStr}]</span>`
+            : `<span class="text-amber-700">⚠️ 현재 생성된 테이블이 없습니다 (DB가 비어 있음 — 아래 SQL 1회 실행 필요)</span>`,
+          '데이터 테이블 동기화 확인 중...'
+        );
+
+        // If target table doesn't exist, check if another compatible JSON state table exists
+        let targetTable = (cfg.table || DEFAULT_SUPABASE_TABLE).trim();
+        if (foundTables.length > 0 && !foundTables.includes(targetTable)) {
+          const candidate = foundTables.find(t => {
+            const props = discovery.definitions[t]?.properties || {};
+            return ('state_json' in props) || ('data' in props) || ('state' in props) || ('value' in props);
+          });
+          if (candidate) {
+            targetTable = candidate;
+            cfg.table = candidate;
+            safeSetStorage(STORAGE_KEY_SUPABASE, JSON.stringify(cfg));
+            const tblInput = document.getElementById('supabaseTableInput');
+            if (tblInput) tblInput.value = candidate;
+          }
+        }
+
+        const ok = await pullStateFromSupabase(showNotice, foundTables);
         if (ok) {
-          subscribeSupabaseRealtime(cfg.table || DEFAULT_SUPABASE_TABLE);
+          subscribeSupabaseRealtime(targetTable);
         }
         return ok;
       } catch (err) {
@@ -2237,7 +2417,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
     }
 
-    async function pullStateFromSupabase(showNotice = false) {
+    async function pullStateFromSupabase(showNotice = false, discoveredTables = null) {
       const cfg = getSupabaseConfig();
       if (!supabaseClient || !cfg) return false;
       const tableName = (cfg.table || DEFAULT_SUPABASE_TABLE).trim();
@@ -2245,45 +2425,72 @@ create policy "Allow public read write" on public.yuroso_app_state
       try {
         const { data, error } = await supabaseClient
           .from(tableName)
-          .select('state_json, updated_at')
+          .select('*')
           .eq('id', 'main')
           .maybeSingle();
 
         if (error) {
           supabaseConnected = false;
-          updateSupabaseStatusUI('error', `❌ 테이블(${tableName}) 조회 실패: ${error.message}`);
-          if (showNotice) {
-            showToast(`⚠️ Supabase 조회 실패 (${error.message}). 모달 하단의 SQL 생성 쿼리를 Supabase SQL Editor에서 실행해주세요.`, 'error');
+          const isMissingTable = error.code === '42P01' || error.code === 'PGRST205' || (error.message && (error.message.includes('does not exist') || error.message.includes('schema cache')));
+          if (isMissingTable) {
+            updateSupabaseStatusUI('table_missing', `⚠️ '${tableName}' 테이블 미생성 (SQL 1회 실행 필요)`);
+            setDiagText(
+              null,
+              discoveredTables && discoveredTables.length > 0
+                ? `<span class="text-amber-700">발견된 테이블: [${discoveredTables.join(', ')}] ('${tableName}' 없음)</span>`
+                : `<span class="text-amber-700">⚠️ 현재 Supabase 프로젝트에 '${tableName}' 테이블이 아직 생성되지 않았습니다.</span>`,
+              `<span class="text-red-600">❌ 아래 검정색 박스의 [SQL 복사하기]를 눌러 Supabase SQL Editor에서 Run을 1회 실행해주세요!</span>`
+            );
+            if (showNotice) {
+              showToast(`⚠️ Supabase 서버는 연결되었으나 '${tableName}' 테이블이 아직 없습니다. 모달 하단 SQL을 Supabase SQL Editor에서 실행해주세요!`, 'error');
+            }
+          } else {
+            updateSupabaseStatusUI('error', `❌ 조회 실패: ${error.message}`);
+            setDiagText(null, null, `<span class="text-red-600">❌ 오류 (${error.code || ''}): ${error.message}</span>`);
+            if (showNotice) {
+              showToast(`⚠️ Supabase 조회 오류: ${error.message}`, 'error');
+            }
           }
           return false;
         }
 
         supabaseConnected = true;
-        updateSupabaseStatusUI('connected', `✅ ${tableName} 실시간 연동 중`);
+        const nowTimeStr = new Date().toLocaleTimeString('ko-KR');
+        updateSupabaseStatusUI('connected', `✅ ${tableName} 실시간 연동 중 (${nowTimeStr})`);
 
-        if (data && data.state_json && typeof data.state_json === 'object') {
+        const rawState = data ? (data.state_json || data.data || data.state || data.value) : null;
+        const parsedRemote = typeof rawState === 'string' ? JSON.parse(rawState) : rawState;
+
+        if (parsedRemote && typeof parsedRemote === 'object' && parsedRemote.users) {
           isPullingFromSupabase = true;
-          const remote = data.state_json;
-          if (remote.users && remote.branches && remote.targets) {
-            appState = remote;
-            safeSetStorage(STORAGE_KEY_STATE, JSON.stringify(appState));
-            renderCustomRegisteredAccountsOnLogin();
-            if (currentSession) {
-              syncAllSelectorsAndRender();
-            }
+          appState = normalizeLoadedState(parsedRemote);
+          safeSetStorage(STORAGE_KEY_STATE, JSON.stringify(appState));
+          renderCustomRegisteredAccountsOnLogin();
+          if (currentSession) {
+            syncAllSelectorsAndRender();
           }
           isPullingFromSupabase = false;
-          if (showNotice) showToast('☁️ Supabase DB에서 최신 데이터를 성공적으로 불러왔습니다!', 'highlight');
+          const customCount = appState.users.filter(u => u.isCustom).length;
+          setDiagText(
+            null,
+            null,
+            `<span class="text-emerald-700">✅ 양방향 동기화 정상 작동 중 (가입 인원 ${customCount}명 · 최근 동기화 ${nowTimeStr})</span>`
+          );
+          if (showNotice) showToast(`☁️ Supabase DB에서 최신 데이터(가입 인원 ${customCount}명)를 성공적으로 불러왔습니다!`, 'highlight');
         } else {
           // Table exists but no "main" row yet -> seed initial/current state to Supabase
-          await pushStateToSupabase(false);
-          if (showNotice) showToast('☁️ Supabase DB 연결 성공! 현재 데이터가 클라우드에 초기 동기화되었습니다.', 'highlight');
+          const pushed = await pushStateToSupabase(false);
+          if (pushed) {
+            setDiagText(null, null, `<span class="text-emerald-700">✅ 초기 데이터 업로드 및 실시간 연동 완료 (${nowTimeStr})</span>`);
+            if (showNotice) showToast('☁️ Supabase DB 연결 성공! 현재 데이터가 클라우드에 초기 동기화되었습니다.', 'highlight');
+          }
         }
         return true;
       } catch (e) {
         isPullingFromSupabase = false;
         supabaseConnected = false;
         updateSupabaseStatusUI('error', '❌ 네트워크 또는 URL 오류');
+        setDiagText(null, null, `<span class="text-red-600">❌ 통신 예외: ${e.message || '네트워크 확인 필요'}</span>`);
         if (showNotice) showToast('Supabase 통신 오류: URL과 Key를 확인해주세요.', 'error');
         return false;
       }
@@ -2292,7 +2499,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     async function pushStateToSupabase(showNotice = false) {
       const cfg = getSupabaseConfig();
       if (!supabaseClient || !cfg) {
-        if (showNotice) showToast('먼저 Supabase URL과 Key를 입력해 연동해주세요.', 'error');
+        if (showNotice) showToast('먼저 Supabase URL과 Key를 확인해주세요.', 'error');
         return false;
       }
       const tableName = (cfg.table || DEFAULT_SUPABASE_TABLE).trim();
@@ -2307,18 +2514,26 @@ create policy "Allow public read write" on public.yuroso_app_state
 
         if (error) {
           supabaseConnected = false;
-          updateSupabaseStatusUI('error', `❌ 저장 오류: ${error.message}`);
-          if (showNotice) showToast(`❌ Supabase 저장 실패: ${error.message}`, 'error');
+          updateSupabaseStatusUI('table_missing', `⚠️ 저장 실패 (${error.message})`);
+          setDiagText(null, null, `<span class="text-red-600">❌ 쓰기 실패 (${error.message}) — 아래 SQL을 Supabase SQL Editor에서 실행해주세요.</span>`);
+          if (showNotice) showToast(`❌ Supabase 저장 실패 (${error.message}). 아래 SQL 쿼리를 Supabase SQL Editor에서 실행해주세요.`, 'error');
           return false;
         }
         supabaseConnected = true;
-        updateSupabaseStatusUI('connected', `✅ ${tableName} 실시간 동기화 완료`);
+        const nowTimeStr = new Date().toLocaleTimeString('ko-KR');
+        updateSupabaseStatusUI('connected', `✅ ${tableName} 실시간 동기화 완료 (${nowTimeStr})`);
+        setDiagText(null, null, `<span class="text-emerald-700">✅ DB 저장 및 실시간 동기화 완료 (${nowTimeStr})</span>`);
         if (showNotice) showToast('☁️ 현재 데이터가 Supabase DB에 안전하게 저장되었습니다!', 'highlight');
         return true;
       } catch (e) {
         if (showNotice) showToast('Supabase 저장 중 오류가 발생했습니다.', 'error');
         return false;
       }
+    }
+
+    async function runSupabaseFullDiagnostics() {
+      setDiagText('점검 중...', '조회 중...', '확인 중...');
+      await initSupabaseConnection(true);
     }
 
     function subscribeSupabaseRealtime(tableName) {
@@ -2333,9 +2548,10 @@ create policy "Allow public read write" on public.yuroso_app_state
             'postgres_changes',
             { event: '*', schema: 'public', table: tableName },
             (payload) => {
-              if (payload && payload.new && payload.new.state_json) {
+              const rawRemote = payload && payload.new ? (payload.new.state_json || payload.new.data || payload.new.state) : null;
+              if (rawRemote) {
                 isPullingFromSupabase = true;
-                appState = payload.new.state_json;
+                appState = normalizeLoadedState(typeof rawRemote === 'string' ? JSON.parse(rawRemote) : rawRemote);
                 safeSetStorage(STORAGE_KEY_STATE, JSON.stringify(appState));
                 renderCustomRegisteredAccountsOnLogin();
                 if (currentSession) {
@@ -2354,8 +2570,8 @@ create policy "Allow public read write" on public.yuroso_app_state
       const urlEl = document.getElementById('supabaseUrlInput');
       const keyEl = document.getElementById('supabaseAnonKeyInput');
       const tblEl = document.getElementById('supabaseTableInput');
-      if (urlEl) urlEl.value = cfg ? cfg.url : '';
-      if (keyEl) keyEl.value = cfg ? cfg.anonKey : '';
+      if (urlEl) urlEl.value = cfg ? cfg.url : DEFAULT_SUPABASE_URL;
+      if (keyEl) keyEl.value = cfg ? cfg.anonKey : DEFAULT_SUPABASE_ANON_KEY;
       if (tblEl) tblEl.value = (cfg && cfg.table) ? cfg.table : DEFAULT_SUPABASE_TABLE;
 
       const m = document.getElementById('supabaseConfigModal');
@@ -2363,6 +2579,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         m.classList.remove('hidden');
         m.classList.add('flex');
       }
+      runSupabaseFullDiagnostics();
     }
 
     function closeSupabaseModal() {
@@ -2375,14 +2592,9 @@ create policy "Allow public read write" on public.yuroso_app_state
 
     async function handleSaveSupabaseConfig(e) {
       e.preventDefault();
-      const url = document.getElementById('supabaseUrlInput')?.value.trim() || '';
-      const anonKey = document.getElementById('supabaseAnonKeyInput')?.value.trim() || '';
+      const url = document.getElementById('supabaseUrlInput')?.value.trim() || DEFAULT_SUPABASE_URL;
+      const anonKey = document.getElementById('supabaseAnonKeyInput')?.value.trim() || DEFAULT_SUPABASE_ANON_KEY;
       const table = document.getElementById('supabaseTableInput')?.value.trim() || DEFAULT_SUPABASE_TABLE;
-
-      if (!url || !anonKey) {
-        showToast('Supabase Project URL과 Anon Key를 모두 입력해주세요.', 'error');
-        return;
-      }
 
       safeSetStorage(STORAGE_KEY_SUPABASE, JSON.stringify({ url, anonKey, table }));
       const ok = await initSupabaseConnection(true);
@@ -2393,10 +2605,7 @@ create policy "Allow public read write" on public.yuroso_app_state
 
     function disconnectSupabaseConfig() {
       safeRemoveStorage(STORAGE_KEY_SUPABASE);
-      supabaseClient = null;
-      supabaseConnected = false;
-      updateSupabaseStatusUI('disconnected', '⚠️ 연동 해제됨');
-      showToast('Supabase DB 연동 설정이 초기화되었습니다.');
+      initSupabaseConnection(true);
     }
 
     function copySupabaseSqlSnippet() {
@@ -2726,8 +2935,11 @@ create policy "Allow public read write" on public.yuroso_app_state
       if (pwInput) pwInput.focus();
     }
 
-    function handleAdminPasswordLogin(e) {
+    async function handleAdminPasswordLogin(e) {
       e.preventDefault();
+      if (supabaseClient) {
+        await pullStateFromSupabase(false);
+      }
       const pwInput = document.getElementById('adminDirectPasswordInput');
       const enteredPw = pwInput ? pwInput.value : '';
       const selectedRole = document.getElementById('selectedAdminLoginRole')?.value || '대표원장';
@@ -5266,10 +5478,10 @@ create policy "Allow public read write" on public.yuroso_app_state
     // -----------------------------------------------------------------------
     // 13. INITIALIZATION ON WINDOW LOAD
     // -----------------------------------------------------------------------
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
       loadAppState();
       renderCustomRegisteredAccountsOnLogin();
-      initSupabaseConnection(false);
+      await initSupabaseConnection(false);
 
       const savedSessionRaw = safeGetStorage(STORAGE_KEY_SESSION);
       if (savedSessionRaw) {
