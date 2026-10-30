@@ -980,6 +980,7 @@
 
   <!-- =========================================================================
        1. 로그인 및 임직원 회원가입 게이트 화면
+       (로그인 화면에서는 DB 연동 버튼 비노출 — 관리자 접속 후에만 노출)
        ========================================================================= -->
   <section id="authGateView" class="auth-screen">
     <header class="auth-topbar">
@@ -1003,7 +1004,7 @@
 
     <main class="auth-main">
       <div class="auth-grid">
-        <!-- 좌측: 대표원장 · 관리자 패스워드 직통 접속 -->
+        <!-- 좌측: 대표원장 · 관리자 패스워드 직통 접속 (동일 마스터 패스워드 적용) -->
         <div class="admin-direct-card">
           <div>
             <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:14px;">
@@ -1012,21 +1013,21 @@
             </div>
             <h1 style="font-size:21px; font-weight:700; margin-bottom:6px;">대표원장 · 관리자 직통 접속</h1>
             <p style="font-size:13px; color:rgba(250,247,242,0.76); margin-bottom:18px;">
-              회원가입 없이 관리자 패스워드 입력만으로 즉시 접속합니다.
+              접속할 권한을 선택한 뒤 패스워드를 입력하면 회원가입 없이 즉시 입장합니다.
             </p>
 
             <div class="admin-role-selector">
               <button type="button" id="adminRoleBtnCeo" class="admin-role-btn active" onclick="selectAdminLoginRole('ceo')">
                 👑 대표원장 (영화)
               </button>
-              <button type="button" id="adminRoleBtnCreator" class="admin-role-btn" onclick="selectAdminLoginRole('creator')">
+              <button type="button" id="adminRoleBtnAdmin" class="admin-role-btn" onclick="selectAdminLoginRole('admin')">
                 🛠️ 관리자
               </button>
             </div>
 
             <form onsubmit="handleAdminDirectLogin(event)" style="display:flex; flex-direction:column; gap:12px;">
               <div>
-                <label class="field-label" style="color:rgba(250,247,242,0.85);">관리자 전용 패스워드</label>
+                <label class="field-label" style="color:rgba(250,247,242,0.85);">전용 패스워드</label>
                 <input type="password" id="adminPasswordInput" class="input" placeholder="패스워드를 입력하세요" autocomplete="current-password" required />
               </div>
               <label style="display:inline-flex; align-items:center; gap:7px; font-size:12.5px; color:rgba(250,247,242,0.82); cursor:pointer;">
@@ -1140,7 +1141,7 @@
           <button type="button" id="rbacBtnCeo" class="rbac-pill" onclick="switchAdminPreview('ceo')">
             👑 대표원장
           </button>
-          <button type="button" id="rbacBtnCreator" class="rbac-pill hidden" onclick="switchAdminPreview('creator')">
+          <button type="button" id="rbacBtnAdmin" class="rbac-pill" onclick="switchAdminPreview('admin')">
             🛠️ 관리자
           </button>
 
@@ -1165,6 +1166,7 @@
           </div>
         </div>
 
+        <!-- DB 연동 상태 배지 (관리자 모드일 때만 표시) -->
         <div id="rbacDbStatusWrap" class="rbac-group hidden">
           <span id="workspaceDbStatusBadge" class="badge badge-dark">☁️ 로컬 연동</span>
         </div>
@@ -1196,6 +1198,7 @@
           <button type="button" id="btnOpenQuickSignup" class="btn btn-dark-outline btn-sm hidden" onclick="openQuickMemberModal()">
             + 임직원 등록
           </button>
+          <!-- DB 연동 버튼은 '관리자(admin)' 모드에서만 노출 -->
           <button type="button" id="btnOpenDbHeader" class="btn btn-dark-outline btn-sm hidden" onclick="openDbModal()">
             ☁️ DB 연동
           </button>
@@ -1395,7 +1398,7 @@
           <div class="card">
             <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px;">
               <h3 style="font-size:17px; font-weight:700;">🧮 고객관리(CRM) 5대 지표 입력</h3>
-              <span class="badge badge-champagne-soft">실시간 자동계산 · 월별 그래프 연동</span>
+              <span class="badge badge-champagne-soft">실시간 자동계산 · 월간 성과 그래프 연동</span>
             </div>
 
             <form onsubmit="handleSaveCrmRecord(event)" style="display:flex; flex-direction:column; gap:16px;">
@@ -1405,7 +1408,7 @@
                   <select id="crmMemberSelect" class="select" onchange="onCrmMemberSelectChange()"></select>
                 </div>
                 <div>
-                  <label class="field-label">기준 일자 (연·월별 그래프 자동 반영)</label>
+                  <label class="field-label">기준 일자 (달력 월 · 분기 · 1년 그래프 반영)</label>
                   <input type="date" id="crmDateInput" class="input" required />
                 </div>
               </div>
@@ -1469,12 +1472,12 @@
 
               <div>
                 <label class="field-label">메모 (선택)</label>
-                <input type="text" id="crmMemoInput" class="input" placeholder="시술 특이사항 또는 월별 프로모션 메모" />
+                <input type="text" id="crmMemoInput" class="input" placeholder="시술 특이사항 또는 프로모션 메모" />
               </div>
 
               <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:8px;">
                 <button type="button" class="btn btn-outline" onclick="resetCrmForm()">초기화</button>
-                <button type="submit" class="btn btn-espresso btn-lg">CRM 지표 저장 및 월별 그래프 반영</button>
+                <button type="submit" class="btn btn-espresso btn-lg">CRM 지표 저장 및 성과 그래프 반영</button>
               </div>
             </form>
           </div>
@@ -1680,7 +1683,7 @@
   </div>
 
   <!-- =========================================================================
-       모달 2: 대표원장 · 제작자 전용 [🔐 열람 데이터 설정] 모달
+       모달 2: 대표원장 · 관리자 전용 [🔐 열람 데이터 설정] 모달
        ========================================================================= -->
   <div id="visibilityModal" class="modal-backdrop hidden no-print">
     <div class="modal-panel">
@@ -1747,13 +1750,13 @@
   </div>
 
   <!-- =========================================================================
-       모달 4: [☁️ Supabase Cloud DB 연동 점검] 모달 (순수 HTTPS REST 방식)
+       모달 4: 관리자 전용 [☁️ Supabase Cloud DB 연동 점검] 모달
        ========================================================================= -->
   <div id="dbModal" class="modal-backdrop hidden no-print">
     <div class="modal-panel">
       <div class="modal-header">
         <div style="display:flex; align-items:center; gap:8px;">
-          <span class="badge badge-sage">SUPABASE REST</span>
+          <span class="badge badge-sage">관리자 전용</span>
           <h3 style="font-size:16px; font-weight:700;">☁️ 클라우드 DB 연동 설정 및 상태 점검</h3>
         </div>
         <button type="button" style="color:var(--ivory); font-size:20px; padding:2px 6px;" onclick="closeDbModal()">&times;</button>
@@ -1869,20 +1872,20 @@ create policy "Allow public read write" on public.yuroso_app_state
 
     /* =========================================================================
        2. 고정 상수 및 기본 상태 정의
+       (대표원장 패스워드와 관리자 패스워드를 ^^yuroso1004 로 통일)
        ========================================================================= */
     const BRANCHES = ['파주 운정점', '운정역점', '마곡발산점'];
     const MONTHS_KO = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
     const INVITE_CODE = 'Yuroso1007';
-    const CEO_PASSWORD = '^^yuroso1004';
-    const CREATOR_PASSWORD = 'IPStor101\x6012__~!';
+    const UNIFIED_MASTER_PASSWORD = '^^yuroso1004';
 
     const DEFAULT_SUPABASE_URL = 'https://kveohlhceddavohapgnd.supabase.co';
     const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2ZW9obGhjZWRkYXZvaGFwZ25kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxODczOTEsImV4cCI6MjEwODc2MzM5MX0.BVjVZNScYblGHfcEMvzWyTs4O6tT4Xmom6gYl0SCjDw';
     const DEFAULT_SUPABASE_TABLE = 'yuroso_app_state';
 
-    const STORAGE_STATE_KEY = 'yuroso_clean_state_v6';
-    const STORAGE_SESSION_KEY = 'yuroso_clean_session_v6';
-    const STORAGE_DB_CFG_KEY = 'yuroso_clean_dbcfg_v6';
+    const STORAGE_STATE_KEY = 'yuroso_clean_state_v7';
+    const STORAGE_SESSION_KEY = 'yuroso_clean_session_v7';
+    const STORAGE_DB_CFG_KEY = 'yuroso_clean_dbcfg_v7';
 
     function createDefaultState() {
       return {
@@ -1949,7 +1952,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function loadLocalState() {
-      const candidateKeys = [STORAGE_STATE_KEY, 'yuroso_clean_state_v5'];
+      const candidateKeys = [STORAGE_STATE_KEY, 'yuroso_clean_state_v6', 'yuroso_clean_state_v5'];
       for (let i = 0; i < candidateKeys.length; i++) {
         try {
           const saved = safeStorage.getItem(candidateKeys[i]);
@@ -2015,22 +2018,25 @@ create policy "Allow public read write" on public.yuroso_app_state
     });
 
     /* =========================================================================
-       4. Supabase 순수 HTTPS REST 연동
+       4. Supabase 순수 HTTPS REST 연동 (관리자 전용 설정 UI)
        ========================================================================= */
     function getDbConfig() {
-      try {
-        const raw = safeStorage.getItem(STORAGE_DB_CFG_KEY);
-        if (raw && raw.trim().startsWith('{')) {
-          const parsed = JSON.parse(raw);
-          if (parsed && parsed.url && parsed.anonKey) {
-            return {
-              url: String(parsed.url).replace(/\/+$/, ''),
-              anonKey: String(parsed.anonKey).trim(),
-              table: String(parsed.table || DEFAULT_SUPABASE_TABLE).trim()
-            };
+      const keys = [STORAGE_DB_CFG_KEY, 'yuroso_clean_dbcfg_v6'];
+      for (let i = 0; i < keys.length; i++) {
+        try {
+          const raw = safeStorage.getItem(keys[i]);
+          if (raw && raw.trim().startsWith('{')) {
+            const parsed = JSON.parse(raw);
+            if (parsed && parsed.url && parsed.anonKey) {
+              return {
+                url: String(parsed.url).replace(/\/+$/, ''),
+                anonKey: String(parsed.anonKey).trim(),
+                table: String(parsed.table || DEFAULT_SUPABASE_TABLE).trim()
+              };
+            }
           }
-        }
-      } catch (e) {}
+        } catch (e) {}
+      }
       return {
         url: DEFAULT_SUPABASE_URL,
         anonKey: DEFAULT_SUPABASE_KEY,
@@ -2039,14 +2045,10 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function setDbStatusBadges(statusText, isOk) {
-      const b1 = document.getElementById('authDbBadge');
       const b2 = document.getElementById('workspaceDbStatusBadge');
-      if (b1) {
-        b1.textContent = statusText;
-        b1.className = isOk ? 'badge badge-sage' : 'badge badge-champagne-soft';
-      }
       if (b2) {
         b2.textContent = statusText;
+        b2.className = isOk ? 'badge badge-sage' : 'badge badge-dark';
       }
     }
 
@@ -2183,8 +2185,8 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function openDbModal() {
-      if (!isCreatorLogged()) {
-        showToast('DB 연동 설정은 관리자 계정에서만 접근할 수 있습니다.', 'error');
+      if (!isAdminViewVisible()) {
+        showToast('DB 연동 설정은 관리자 화면에서만 열람할 수 있습니다.', 'error');
         return;
       }
       const cfg = getDbConfig();
@@ -2270,9 +2272,9 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function selectAdminLoginRole(role) {
-      selectedAdminLoginRole = role;
-      document.getElementById('adminRoleBtnCeo').classList.toggle('active', role === 'ceo');
-      document.getElementById('adminRoleBtnCreator').classList.toggle('active', role === 'creator');
+      selectedAdminLoginRole = role === 'admin' ? 'admin' : 'ceo';
+      document.getElementById('adminRoleBtnCeo').classList.toggle('active', selectedAdminLoginRole === 'ceo');
+      document.getElementById('adminRoleBtnAdmin').classList.toggle('active', selectedAdminLoginRole === 'admin');
     }
 
     function switchAuthTab(tab) {
@@ -2293,23 +2295,18 @@ create policy "Allow public read write" on public.yuroso_app_state
       const pw = document.getElementById('adminPasswordInput').value;
       const keep = document.getElementById('adminKeepLogin').checked;
 
-      let matchedRole = null;
-      if (pw === CEO_PASSWORD) {
-        matchedRole = 'ceo';
-      } else if (pw === CREATOR_PASSWORD) {
-        matchedRole = 'creator';
-      }
-
-      if (!matchedRole) {
-        showToast('관리자 패스워드가 일치하지 않습니다.', 'error');
+      /* 대표원장과 관리자 패스워드를 ^^yuroso1004 로 완전 통일 */
+      if (pw !== UNIFIED_MASTER_PASSWORD) {
+        showToast('패스워드가 일치하지 않습니다.', 'error');
         return;
       }
 
+      const targetRole = selectedAdminLoginRole === 'admin' ? 'admin' : 'ceo';
       const session = {
-        role: matchedRole,
-        name: matchedRole === 'ceo' ? '영화 대표원장' : '관리자',
+        role: targetRole,
+        name: targetRole === 'ceo' ? '영화 대표원장' : '관리자',
         branch: '전 지점 총괄',
-        memberId: matchedRole
+        memberId: targetRole
       };
 
       document.getElementById('adminPasswordInput').value = '';
@@ -2370,6 +2367,22 @@ create policy "Allow public read write" on public.yuroso_app_state
       const pw = document.getElementById('loginPasswordInput').value;
       const keep = document.getElementById('memberKeepLogin').checked;
 
+      /* 임직원 로그인 폼에서도 통일된 대표원장/관리자 패스워드 입력 시 직통 접속 지원 */
+      if (pw === UNIFIED_MASTER_PASSWORD && (name === '영화' || name === '대표원장')) {
+        document.getElementById('loginPasswordInput').value = '';
+        establishSession({ role: 'ceo', name: '영화 대표원장', branch: '전 지점 총괄', memberId: 'ceo' }, keep);
+        pullFromSupabaseRest(false);
+        showToast('영화 대표원장님 환영합니다.', 'success');
+        return;
+      }
+      if (pw === UNIFIED_MASTER_PASSWORD && name === '관리자') {
+        document.getElementById('loginPasswordInput').value = '';
+        establishSession({ role: 'admin', name: '관리자', branch: '전 지점 총괄', memberId: 'admin' }, keep);
+        pullFromSupabaseRest(false);
+        showToast('관리자 권한으로 접속되었습니다.', 'success');
+        return;
+      }
+
       const found = appState.members.find(function(m) { return m.name === name && m.password === pw; });
       if (!found) {
         showToast('이름 또는 비밀번호가 일치하지 않거나 미가입 계정입니다.', 'error');
@@ -2392,6 +2405,10 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function establishSession(session, persist) {
+      if (session.role === 'creator') {
+        session.role = 'admin';
+        session.name = '관리자';
+      }
       loggedInSession = session;
       if (persist) {
         safeStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(session));
@@ -2399,7 +2416,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         safeStorage.removeItem(STORAGE_SESSION_KEY);
       }
 
-      if (session.role === 'ceo' || session.role === 'creator') {
+      if (session.role === 'ceo' || session.role === 'admin') {
         activeView = {
           role: session.role,
           branch: '파주 운정점',
@@ -2445,11 +2462,12 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function isTopAdminLogged() {
-      return Boolean(loggedInSession && (loggedInSession.role === 'ceo' || loggedInSession.role === 'creator'));
+      return Boolean(loggedInSession && (loggedInSession.role === 'ceo' || loggedInSession.role === 'admin'));
     }
 
-    function isCreatorLogged() {
-      return Boolean(loggedInSession && loggedInSession.role === 'creator');
+    /* DB 연동 버튼 및 모달 노출 기준: 오직 '관리자(admin)' 모드에서만 노출 */
+    function isAdminViewVisible() {
+      return Boolean(isTopAdminLogged() && activeView.role === 'admin');
     }
 
     /* =========================================================================
@@ -2457,7 +2475,6 @@ create policy "Allow public read write" on public.yuroso_app_state
        ========================================================================= */
     function switchAdminPreview(viewRole) {
       if (!isTopAdminLogged()) return;
-      if (viewRole === 'creator' && !isCreatorLogged()) return;
       activeView.role = viewRole;
       if (viewRole === 'designer') {
         if (!appState.members.some(function(m) { return m.id === activeView.memberId; })) {
@@ -2636,7 +2653,6 @@ create policy "Allow public read write" on public.yuroso_app_state
       return aggregateMemberMetricsFromList(member, myRecs);
     }
 
-    /* 개인별 특정 연도 1월~12월 월별 성과 데이터 산출 */
     function getMemberMonthlySeries(member, yearStr) {
       const target = getMemberTarget(member.id);
       const months = [];
@@ -2773,13 +2789,13 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     /* =========================================================================
-       8. 화면 전체 렌더링 (권한별 엄격 분리)
+       8. 화면 전체 렌더링 (권한별 엄격 분리 + DB 연동 관리자 전용화)
        ========================================================================= */
     function renderWorkspaceAll() {
       if (!loggedInSession) return;
 
       const topAdmin = isTopAdminLogged();
-      const creatorOnly = isCreatorLogged();
+      const showAdminDbUi = isAdminViewVisible();
       const viewRole = activeView.role;
 
       const rbacBar = document.getElementById('rbacSwitchBar');
@@ -2787,12 +2803,11 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       if (topAdmin) {
         document.getElementById('rbacBtnCeo').classList.toggle('active', viewRole === 'ceo');
-        document.getElementById('rbacBtnCreator').classList.toggle('hidden', !creatorOnly);
-        document.getElementById('rbacBtnCreator').classList.toggle('active', viewRole === 'creator');
+        document.getElementById('rbacBtnAdmin').classList.toggle('active', viewRole === 'admin');
         document.getElementById('rbacBtnDirector').classList.toggle('active', viewRole === 'director');
         document.getElementById('rbacBtnDesigner').classList.toggle('active', viewRole === 'designer');
         document.getElementById('rbacBranchSelect').value = activeView.branch;
-        document.getElementById('rbacDbStatusWrap').classList.toggle('hidden', !creatorOnly);
+        document.getElementById('rbacDbStatusWrap').classList.toggle('hidden', !showAdminDbUi);
 
         const desSelect = document.getElementById('rbacDesignerSelect');
         if (appState.members.length === 0) {
@@ -2812,7 +2827,7 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       const roleLabels = {
         ceo: '대표원장',
-        creator: '관리자',
+        admin: '관리자',
         director: '지점원장',
         designer: '디자이너'
       };
@@ -2820,7 +2835,7 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       if (viewRole === 'ceo') {
         document.getElementById('headerUserBadge').textContent = '영화 대표원장';
-      } else if (viewRole === 'creator') {
+      } else if (viewRole === 'admin') {
         document.getElementById('headerUserBadge').textContent = '관리자 · 전 지점';
       } else if (viewRole === 'director') {
         document.getElementById('headerUserBadge').textContent = topAdmin
@@ -2836,11 +2851,11 @@ create policy "Allow public read write" on public.yuroso_app_state
       document.getElementById('btnOpenTargets').classList.toggle('hidden', !topAdmin);
       document.getElementById('btnOpenVisibility').classList.toggle('hidden', !topAdmin);
       document.getElementById('btnOpenQuickSignup').classList.toggle('hidden', !topAdmin);
-      document.getElementById('btnOpenDbHeader').classList.toggle('hidden', !creatorOnly);
+      document.getElementById('btnOpenDbHeader').classList.toggle('hidden', !showAdminDbUi);
       document.getElementById('bannerTargetBtn').classList.toggle('hidden', !topAdmin);
       document.getElementById('branchTabTargetBtn').classList.toggle('hidden', !topAdmin);
 
-      const showBranchTab = (viewRole === 'ceo' || viewRole === 'creator') ||
+      const showBranchTab = (viewRole === 'ceo' || viewRole === 'admin') ||
         (viewRole === 'director' && appState.visibility.directorShowBranchTab);
       document.getElementById('tabBtnBranchCompare').classList.toggle('hidden', !showBranchTab);
 
@@ -2924,7 +2939,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       yearSel.value = years.indexOf(prevYear) >= 0 ? prevYear : String(curYear);
 
       let allowedMembers = [];
-      if (activeView.role === 'ceo' || activeView.role === 'creator') {
+      if (activeView.role === 'ceo' || activeView.role === 'admin') {
         allowedMembers = appState.members.slice();
       } else if (activeView.role === 'director') {
         allowedMembers = appState.members.filter(function(m) { return m.branch === activeView.branch; });
@@ -3114,7 +3129,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       const target = getMemberTarget(member.id);
       const roleName = member.role === 'director' ? '지점원장' : '디자이너';
 
-      /* 1) 달력 월 단위 (선택 연·월 일자별 추이 + 실제 월간 달력 뷰) */
+      /* 1) 달력 월 단위 */
       if (indivGraphUnit === 'month') {
         const calData = getMemberCalendarMonthDays(member, calYm);
         document.getElementById('indivMonthlyTitle').textContent =
@@ -3210,7 +3225,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         return;
       }
 
-      /* 2) 분기 단위 (1분기 ~ 4분기 비교) */
+      /* 2) 분기 단위 */
       if (indivGraphUnit === 'quarter') {
         const qSeries = getMemberQuarterSeries(member, yearStr);
         const qLabels = qSeries.map(function(q) { return q.label; });
@@ -3279,7 +3294,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         return;
       }
 
-      /* 3) 1년 단위 (선택 연도 1월~12월 연간 추이 + 연간 총괄 요약) */
+      /* 3) 1년 단위 */
       const monthlyData = getMemberMonthlySeries(member, yearStr);
       document.getElementById('indivMonthlyTitle').textContent =
         '📈 월간 성과 그래프 — ' + member.name + ' ' + roleName + ' (' + yearStr + '년 1년 단위)';
@@ -3369,6 +3384,18 @@ create policy "Allow public read write" on public.yuroso_app_state
         '<div class="month-strip">' + cellsHtml + '</div>';
     }
 
+    function selectMemberMonthlyChart(memberId) {
+      const memSel = document.getElementById('indivMemberSelect');
+      if (memSel) {
+        memSel.value = memberId;
+        renderIndividualMonthlySection();
+        const sec = document.getElementById('individualMonthlyChartSection');
+        if (sec && sec.scrollIntoView) {
+          sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }
+
     function renderDashboardPanel() {
       const viewRole = activeView.role;
       const topAdmin = isTopAdminLogged();
@@ -3382,20 +3409,125 @@ create policy "Allow public read write" on public.yuroso_app_state
       const memberPerfCard = document.getElementById('memberPerformanceCard');
       const adminManageSec = document.getElementById('adminMemberManageSection');
 
-      adminManageSec.classList.toggle('hidden', !(topAdmin && (viewRole === 'ceo' || viewRole === 'creator')));
-      if (topAdmin && (viewRole === 'ceo' || viewRole === 'creator')) {
+      adminManageSec.classList.toggle('hidden', !(topAdmin && (viewRole === 'ceo' || viewRole === 'admin')));
+      if (topAdmin && (viewRole === 'ceo' || viewRole === 'admin')) {
         renderAdminMemberWithdrawalTable();
       }
 
       populateIndividualMonthlySelectors();
       renderIndividualMonthlySection();
 
-      if (viewRole === 'ceo' || viewRole === 'creator') {
+      if (viewRole === 'ceo' || viewRole === 'admin') {
         const ceo = aggregateCeoMetrics();
         document.getElementById('summaryBannerBadge').textContent = viewRole === 'ceo' ? '대표원장 종합 KPI' : '관리자 종합 KPI';
         document.getElementById('summaryBannerTitle').textContent =
           '전 지점 종합 KPI 달성 점수: ' + ceo.totalKpiScore.toFixed(1) + '점 / 100점';
-// ... existing code ... -->
+
+        kpiContainer.classList.remove('hidden');
+        kpiContainer.innerHTML = [
+          buildKpiCardHtml('전 지점 매출 성장', '30%', formatNumber(ceo.totalRevenue, 1) + '만원', '목표 합계 ' + formatNumber(ceo.totalTargetRev) + '만원', ceo.scoreRevGrowth.toFixed(1) + ' / 30점', false),
+          buildKpiCardHtml('전 지점 영업이익', '30%', formatNumber(ceo.totalProfit) + '만원', '목표 영업이익 ' + formatNumber(ceo.totalTargetProfit) + '만원', ceo.scoreProfit.toFixed(1) + ' / 30점', true),
+          buildKpiCardHtml('3대 지점 목표 달성률', '20%', ceo.targetAchRate.toFixed(1) + '%', '파주 운정 · 운정역 · 마곡발산', ceo.scoreBranchAch.toFixed(1) + ' / 20점', false),
+          buildKpiCardHtml('리더 · 인재 성장 지수', '20%', ceo.avgTalentScore.toFixed(1) + '점', '등록 임직원 ' + appState.members.length + '명 평균', ceo.scoreTalent.toFixed(1) + ' / 20점', true)
+        ].join('');
+
+        chartsGrid.classList.remove('hidden');
+        secondaryChartCard.classList.remove('hidden');
+        document.getElementById('primaryChartTitle').textContent = '3대 지점 기간별 성과 추이';
+        document.getElementById('secondaryChartTitle').textContent = '전 지점 임직원 KPI 점수 비교';
+
+        memberPerfCard.classList.remove('hidden');
+        document.getElementById('memberTableTitle').textContent = '전 지점 지점원장 · 디자이너 KPI 현황';
+        renderMemberPerformanceTable(appState.members, true);
+
+      } else if (viewRole === 'director') {
+        const br = aggregateBranchMetrics(activeView.branch);
+        document.getElementById('summaryBannerBadge').textContent = activeView.branch + ' 지점원장 KPI';
+        document.getElementById('summaryBannerTitle').textContent =
+          activeView.branch + ' 종합 KPI 달성 점수: ' + br.directorKpiScore.toFixed(1) + '점 / 100점';
+
+        kpiContainer.classList.toggle('hidden', !vis.directorShowKpi && !topAdmin);
+        const profitSub = (vis.directorShowProfit || topAdmin)
+          ? ('영업이익 ' + formatNumber(br.actualProfit) + '만원')
+          : ('목표 ' + formatNumber(br.targetRevenue) + '만원');
+
+        kpiContainer.innerHTML = [
+          buildKpiCardHtml('지점 매출 달성', '35%', formatNumber(br.totalRevenue, 1) + '만원', profitSub, br.scoreBranchRev.toFixed(1) + ' / 35점', false),
+          buildKpiCardHtml('디자이너 평균매출 성장', '30%', (br.growthPct >= 0 ? '+' : '') + br.growthPct.toFixed(1) + '%', '목표 성장률 ' + appState.directorTargets[activeView.branch].targetAvgGrowth + '%', br.scoreAvgGrowth.toFixed(1) + ' / 30점', true),
+          buildKpiCardHtml('재방문 고객 비율', '20%', br.avgRevisitRate.toFixed(1) + '%', '목표 재방문율 ' + appState.directorTargets[activeView.branch].targetRevisitRate + '%', br.scoreRevisit.toFixed(1) + ' / 20점', false),
+          buildKpiCardHtml('직원 성장 · 유지', '15%', br.branchMembers.length + '명', '소속 디자이너 ' + br.designers.length + '명', br.scoreRetention.toFixed(1) + ' / 15점', true)
+        ].join('');
+
+        chartsGrid.classList.toggle('hidden', !vis.directorShowCharts && !topAdmin);
+        secondaryChartCard.classList.remove('hidden');
+        document.getElementById('primaryChartTitle').textContent = activeView.branch + ' 기간별 성과 추이';
+        document.getElementById('secondaryChartTitle').textContent = activeView.branch + ' 소속 인원 KPI 비교';
+
+        memberPerfCard.classList.remove('hidden');
+        document.getElementById('memberTableTitle').textContent = activeView.branch + ' 소속 인원 KPI 현황';
+        renderMemberPerformanceTable(br.branchMembers, topAdmin);
+
+      } else {
+        const me = appState.members.find(function(m) { return m.id === activeView.memberId; }) || null;
+        if (!me) {
+          document.getElementById('summaryBannerBadge').textContent = '디자이너 KPI';
+          document.getElementById('summaryBannerTitle').textContent = '등록된 디자이너 계정이 없습니다.';
+          kpiContainer.innerHTML = '';
+          chartsGrid.classList.add('hidden');
+          memberPerfCard.classList.add('hidden');
+          return;
+        }
+
+        const myStat = aggregateMemberMetrics(me);
+        document.getElementById('summaryBannerBadge').textContent = me.branch + ' · ' + me.name;
+        document.getElementById('summaryBannerTitle').textContent =
+          me.name + '님 종합 KPI 달성 점수: ' + myStat.totalScore.toFixed(1) + '점 / 100점';
+
+        kpiContainer.classList.toggle('hidden', !vis.designerShowKpi && !topAdmin);
+        const unitSub = myStat.target.unitPriceRange
+          ? ('목표 ' + formatNumber(myStat.target.targetUnitPrice) + '원 (' + escapeHtml(myStat.target.unitPriceRange) + ')')
+          : ('목표 ' + formatNumber(myStat.target.targetUnitPrice) + '원');
+
+        kpiContainer.innerHTML = [
+          buildKpiCardHtml('① 개인매출', '40%', (vis.colRevenue || topAdmin) ? (formatNumber(myStat.revenue, 1) + '만원') : '비공개', '목표 ' + formatNumber(myStat.target.targetRevenue) + '만원', myStat.scoreRev.toFixed(1) + ' / 40점', false),
+          buildKpiCardHtml('④ 재방문 고객 비율', '30%', (vis.colRevisitRate || topAdmin) ? (myStat.revisitRate.toFixed(1) + '%') : '비공개', '재방문 ' + myStat.revisitCust + '명 / 총 ' + myStat.totalCust + '명', myStat.scoreRevRate.toFixed(1) + ' / 30점', true),
+          buildKpiCardHtml('⑤ 객단가', '20%', (vis.colUnitPrice || topAdmin) ? (formatNumber(myStat.unitPrice) + '원') : '비공개', unitSub, myStat.scoreUnit.toFixed(1) + ' / 20점', false),
+          buildKpiCardHtml('③ 신규 고객수', '10%', (vis.colNewCust || topAdmin) ? (formatNumber(myStat.newCust) + '명') : '비공개', '목표 ' + formatNumber(myStat.target.targetNewCustomers) + '명', myStat.scoreNew.toFixed(1) + ' / 10점', true)
+        ].join('');
+
+        chartsGrid.classList.toggle('hidden', !vis.designerShowTrend && !topAdmin);
+        secondaryChartCard.classList.add('hidden');
+        document.getElementById('primaryChartTitle').textContent = me.name + '님 기간별 성과 추이';
+
+        memberPerfCard.classList.remove('hidden');
+        document.getElementById('memberTableTitle').textContent = me.name + '님 KPI 요약';
+        renderMemberPerformanceTable([me], topAdmin);
+      }
+
+      renderAllCharts();
+    }
+
+    function buildKpiCardHtml(title, weight, mainVal, subText, scoreText, useSage) {
+      return '<div class="kpi-card' + (useSage ? ' sage-accent' : '') + '">' +
+        '<div class="kpi-top">' +
+          '<span class="kpi-title">' + escapeHtml(title) + '</span>' +
+          '<span class="badge ' + (useSage ? 'badge-sage' : 'badge-champagne-soft') + '">가중치 ' + escapeHtml(weight) + '</span>' +
+        '</div>' +
+        '<div class="kpi-value">' + mainVal + '</div>' +
+        '<div class="kpi-foot">' +
+          '<span>' + subText + '</span>' +
+          '<strong style="color:var(--espresso);">' + escapeHtml(scoreText) + '</strong>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function renderMemberPerformanceTable(memberList, unmasked) {
+      const vis = appState.visibility;
+      document.getElementById('memberTableCountBadge').textContent = memberList.length + '명';
+
+      const thead = document.getElementById('memberPerfThead');
+      const tbody = document.getElementById('memberPerfTbody');
+
       thead.innerHTML =
         '<tr>' +
           '<th>이름</th>' +
@@ -3504,43 +3636,52 @@ create policy "Allow public read write" on public.yuroso_app_state
       const width = Math.max(260, Math.floor(rect.width || 420));
       const height = Math.max(220, Math.floor(rect.height || 260));
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      /* 1월~12월 / 일별 / 분기별 막대 & 추세 포인트 */
-      const groupW = plotW / labels.length;
-      const barW = Math.min(36, Math.max(5, groupW * (labels.length > 15 ? 0.62 : 0.54)));
-      const labelStep = (labels.length > 15 && width < 680) ? (width < 460 ? 5 : 2) : 1;
-      const pts = [];
 
-      labels.forEach(function(lbl, idx) {
-        const v = Math.max(0, Number(values[idx]) || 0);
-        const barH = v > 0 ? Math.max(4, (v / maxVal) * plotH) : 2;
-        const centerX = padLeft + idx * groupW + groupW / 2;
-        const x = centerX - barW / 2;
-        const y = padTop + plotH - barH;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+      return { ctx: ctx, width: width, height: height };
+    }
 
-        ctx.fillStyle = v > 0 ? barColor : '#EFE9DD';
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(x, y, barW, barH, [5, 5, 0, 0]);
-        } else {
-          ctx.rect(x, y, barW, barH);
-        }
-        ctx.fill();
+    function drawEmptyChartMessage(canvasId, message) {
+      const canvas = document.getElementById(canvasId);
+      const prep = prepareCanvas(canvas);
+      if (!prep) return;
+      const ctx = prep.ctx;
+      ctx.fillStyle = '#FAF7F2';
+      ctx.fillRect(10, 10, prep.width - 20, prep.height - 20);
+      ctx.strokeStyle = '#E5DCCB';
+      ctx.strokeRect(10, 10, prep.width - 20, prep.height - 20);
+      ctx.fillStyle = '#75645B';
+      ctx.font = '500 13px "Noto Sans KR", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(message, prep.width / 2, prep.height / 2);
+    }
 
-        if (v > 0) {
-          pts.push({ x: centerX, y: y, v: v });
-          ctx.fillStyle = '#2C221E';
-          ctx.font = '600 10.5px "Inter", "Noto Sans KR", sans-serif';
-          ctx.textAlign = 'center';
-          const disp = v >= 1000 ? formatNumber(Math.round(v)) : (Number.isInteger(v) ? String(v) : v.toFixed(1));
-          ctx.fillText(disp + unitSuffix, centerX, y - 6);
-        }
+    /* 달력 월 / 분기 / 1년 단위 전용 막대 + 추세선 + 목표 기준선 복합 차트 */
+    function drawMonthlyComboChart(canvasId, labels, values, barLabel, barColor, targetVal, targetLabel, suffix) {
+      const unitSuffix = suffix || '';
+      const canvas = document.getElementById(canvasId);
+      const prep = prepareCanvas(canvas);
+      if (!prep) return;
+      const ctx = prep.ctx;
+      const width = prep.width;
+      const height = prep.height;
 
-        if (idx % labelStep === 0 || idx === labels.length - 1) {
-          ctx.fillStyle = '#2C221E';
-          ctx.font = (labels.length > 15 ? '500 10.5px' : '500 11.5px') + ' "Noto Sans KR", sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText(lbl, centerX, padTop + plotH + 22);
-        }
+      const padTop = 38;
+      const padBottom = 42;
+      const padLeft = 58;
+      const padRight = 20;
+      const plotW = width - padLeft - padRight;
+      const plotH = height - padTop - padBottom;
+
+      const targetValue = Number(targetVal) || 0;
+      let maxVal = targetValue;
+      values.forEach(function(v) {
+        if (v > maxVal) maxVal = v;
       });
       maxVal = maxVal > 0 ? maxVal * 1.22 : 100;
 
@@ -3595,9 +3736,10 @@ create policy "Allow public read write" on public.yuroso_app_state
         ctx.setLineDash([]);
       }
 
-      /* 1월~12월 막대 & 추세 포인트 */
+      /* 막대 & 추세 포인트 */
       const groupW = plotW / labels.length;
-      const barW = Math.min(32, Math.max(12, groupW * 0.54));
+      const barW = Math.min(36, Math.max(5, groupW * (labels.length > 15 ? 0.62 : 0.54)));
+      const labelStep = (labels.length > 15 && width < 680) ? (width < 460 ? 5 : 2) : 1;
       const pts = [];
 
       labels.forEach(function(lbl, idx) {
@@ -3610,7 +3752,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         ctx.fillStyle = v > 0 ? barColor : '#EFE9DD';
         ctx.beginPath();
         if (ctx.roundRect) {
-          ctx.roundRect(x, y, barW, barH, [6, 6, 0, 0]);
+          ctx.roundRect(x, y, barW, barH, [5, 5, 0, 0]);
         } else {
           ctx.rect(x, y, barW, barH);
         }
@@ -3625,13 +3767,15 @@ create policy "Allow public read write" on public.yuroso_app_state
           ctx.fillText(disp + unitSuffix, centerX, y - 6);
         }
 
-        ctx.fillStyle = '#2C221E';
-        ctx.font = '500 11.5px "Noto Sans KR", sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(lbl, centerX, padTop + plotH + 22);
+        if (idx % labelStep === 0 || idx === labels.length - 1) {
+          ctx.fillStyle = '#2C221E';
+          ctx.font = (labels.length > 15 ? '500 10.5px' : '500 11.5px') + ' "Noto Sans KR", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(lbl, centerX, padTop + plotH + 22);
+        }
       });
 
-      /* 실적이 있는 월 간 연결선 */
+      /* 실적이 있는 지점 간 연결선 */
       if (pts.length >= 2) {
         ctx.strokeStyle = '#2C221E';
         ctx.lineWidth = 2;
@@ -3714,21 +3858,23 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       const groupW = plotW / labels.length;
       const barCount = datasets.length;
-      const barW = Math.min(34, Math.max(8, (groupW * 0.68) / barCount));
-      const totalBarsW = barW * barCount + (barCount - 1) * 3;
+      const barW = Math.min(34, Math.max(4, (groupW * 0.68) / barCount));
+      const gapPx = labels.length > 15 ? 1 : 3;
+      const totalBarsW = barW * barCount + (barCount - 1) * gapPx;
+      const labelStep = (labels.length > 15 && width < 680) ? (width < 460 ? 5 : 2) : 1;
 
       labels.forEach(function(lbl, idx) {
         const startX = padLeft + idx * groupW + (groupW - totalBarsW) / 2;
         datasets.forEach(function(ds, dIdx) {
           const v = Math.max(0, Number(ds.values[idx]) || 0);
           const barH = Math.max(2, (v / maxVal) * plotH);
-          const x = startX + dIdx * (barW + 3);
+          const x = startX + dIdx * (barW + gapPx);
           const y = padTop + plotH - barH;
 
           ctx.fillStyle = ds.color;
           ctx.beginPath();
           if (ctx.roundRect) {
-            ctx.roundRect(x, y, barW, barH, [5, 5, 0, 0]);
+            ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]);
           } else {
             ctx.rect(x, y, barW, barH);
           }
@@ -3743,11 +3889,13 @@ create policy "Allow public read write" on public.yuroso_app_state
           }
         });
 
-        ctx.fillStyle = '#2C221E';
-        ctx.font = '500 11.5px "Noto Sans KR", sans-serif';
-        ctx.textAlign = 'center';
-        const shortLbl = lbl.length > 9 ? (lbl.slice(0, 8) + '…') : lbl;
-        ctx.fillText(shortLbl, padLeft + idx * groupW + groupW / 2, padTop + plotH + 22);
+        if (idx % labelStep === 0 || idx === labels.length - 1) {
+          ctx.fillStyle = '#2C221E';
+          ctx.font = (labels.length > 15 ? '500 10.5px' : '500 11.5px') + ' "Noto Sans KR", sans-serif';
+          ctx.textAlign = 'center';
+          const shortLbl = lbl.length > 9 ? (lbl.slice(0, 8) + '…') : lbl;
+          ctx.fillText(shortLbl, padLeft + idx * groupW + groupW / 2, padTop + plotH + 22);
+        }
       });
     }
 
@@ -3874,7 +4022,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         const metric = document.getElementById('chartMetricSelect').value || 'revenue';
         const viewRole = activeView.role;
 
-        if (viewRole === 'ceo' || viewRole === 'creator') {
+        if (viewRole === 'ceo' || viewRole === 'admin') {
           const allBuckets = Array.from(new Set(appState.crmRecords.map(function(r) { return getBucketKey(r.date); }))).sort().slice(-6);
           const labels = allBuckets.length ? allBuckets : ['현재 기간'];
           const colors = ['#2C221E', '#B08968', '#6B7F6E'];
@@ -3973,7 +4121,7 @@ create policy "Allow public read write" on public.yuroso_app_state
        10. TAB 2: CRM 5대 지표 자동계산기 & 대표원장 객단가 직접 설정
        ========================================================================= */
     function getPermittedMembersForCrm() {
-      if (activeView.role === 'ceo' || activeView.role === 'creator') {
+      if (activeView.role === 'ceo' || activeView.role === 'admin') {
         return appState.members;
       }
       if (activeView.role === 'director') {
@@ -4206,7 +4354,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       historyCard.classList.remove('hidden');
 
       let list = [];
-      if (activeView.role === 'ceo' || activeView.role === 'creator') {
+      if (activeView.role === 'ceo' || activeView.role === 'admin') {
         list = appState.crmRecords;
       } else if (activeView.role === 'director') {
         const bIds = new Set(appState.members.filter(function(m) { return m.branch === activeView.branch; }).map(function(m) { return m.id; }));
@@ -4329,7 +4477,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       writeCard.classList.remove('hidden');
       document.getElementById('coachingListTitle').textContent = '📒 소속 임직원 1:1 코칭 노트 내역';
 
-      const targets = (activeView.role === 'ceo' || activeView.role === 'creator')
+      const targets = (activeView.role === 'ceo' || activeView.role === 'admin')
         ? appState.members
         : appState.members.filter(function(m) { return m.branch === activeView.branch; });
 
@@ -4342,7 +4490,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
 
       const targetIds = new Set(targets.map(function(m) { return m.id; }));
-      const notes = (activeView.role === 'ceo' || activeView.role === 'creator')
+      const notes = (activeView.role === 'ceo' || activeView.role === 'admin')
         ? appState.coachingNotes
         : appState.coachingNotes.filter(function(n) { return targetIds.has(n.memberId); });
 
@@ -4410,7 +4558,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     /* =========================================================================
-       13. 대표원장 · 제작자 전용 모달 (목표치 설정 / 열람 데이터 설정 / 임직원 등록)
+       13. 대표원장 · 관리자 전용 모달 (목표치 설정 / 열람 데이터 설정 / 임직원 등록)
        ========================================================================= */
     function openTargetModal() {
       if (!isTopAdminLogged()) return;
@@ -4647,7 +4795,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       const rows = [['기준일자', '지점', '이름', '개인매출(만원)', '총고객수(명)', '신규고객수(명)', '재방문고객수(명)', '재방문율(%)', '객단가(원)', 'KPI점수', '메모']];
       let targetRecs = [];
 
-      if (activeView.role === 'ceo' || activeView.role === 'creator') {
+      if (activeView.role === 'ceo' || activeView.role === 'admin') {
         targetRecs = appState.crmRecords;
       } else if (activeView.role === 'director') {
         const bIds = new Set(appState.members.filter(function(m) { return m.branch === activeView.branch; }).map(function(m) { return m.id; }));
@@ -4691,30 +4839,36 @@ create policy "Allow public read write" on public.yuroso_app_state
     window.addEventListener('DOMContentLoaded', function() {
       updateLoginMemberCount();
 
-      try {
-        const rawSession = safeStorage.getItem(STORAGE_SESSION_KEY);
-        if (rawSession && rawSession.trim().startsWith('{')) {
-          const parsedSession = JSON.parse(rawSession);
-          if (parsedSession && parsedSession.role) {
-            if (parsedSession.role === 'ceo' || parsedSession.role === 'creator') {
-              if (parsedSession.role === 'creator') parsedSession.name = '관리자';
-              establishSession(parsedSession, true);
-            } else {
-              const found = appState.members.find(function(m) {
-                return m.id === parsedSession.memberId && m.approved !== false;
-              });
-              if (found) {
-                establishSession({
-                  role: found.role,
-                  name: found.name,
-                  branch: found.branch,
-                  memberId: found.id
-                }, true);
+      const sessionKeys = [STORAGE_SESSION_KEY, 'yuroso_clean_session_v6'];
+      for (let i = 0; i < sessionKeys.length; i++) {
+        try {
+          const rawSession = safeStorage.getItem(sessionKeys[i]);
+          if (rawSession && rawSession.trim().startsWith('{')) {
+            const parsedSession = JSON.parse(rawSession);
+            if (parsedSession && parsedSession.role) {
+              if (parsedSession.role === 'ceo' || parsedSession.role === 'admin' || parsedSession.role === 'creator') {
+                if (parsedSession.role === 'creator') parsedSession.role = 'admin';
+                parsedSession.name = parsedSession.role === 'admin' ? '관리자' : '영화 대표원장';
+                establishSession(parsedSession, true);
+                break;
+              } else {
+                const found = appState.members.find(function(m) {
+                  return m.id === parsedSession.memberId && m.approved !== false;
+                });
+                if (found) {
+                  establishSession({
+                    role: found.role,
+                    name: found.name,
+                    branch: found.branch,
+                    memberId: found.id
+                  }, true);
+                  break;
+                }
               }
             }
           }
-        }
-      } catch (e) {}
+        } catch (e) {}
+      }
 
       pullFromSupabaseRest(false);
       startSafePolling();
