@@ -697,6 +697,99 @@
       border-color: rgba(176, 137, 104, 0.45);
     }
 
+    /* 월간 성과 그래프 단위 전환 컨트롤 & 달력 그리드 */
+    .unit-toggle-group {
+      display: inline-flex;
+      align-items: center;
+      background: var(--ivory-soft);
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid var(--ivory-border);
+    }
+
+    .unit-toggle-btn {
+      padding: 5px 11px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--espresso-muted);
+    }
+
+    .unit-toggle-btn.active {
+      background: var(--espresso);
+      color: var(--ivory);
+    }
+
+    .quarter-strip {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    @media (min-width: 640px) {
+      .quarter-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .quarter-strip {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .cal-summary-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 14px;
+      margin-top: 14px;
+      background: var(--ivory);
+      border: 1px solid var(--ivory-border);
+      border-radius: 12px;
+      font-size: 12.5px;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .cal-weekday {
+      text-align: center;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--espresso-muted);
+      padding: 4px 0;
+    }
+
+    .cal-day {
+      min-height: 54px;
+      background: var(--ivory);
+      border: 1px solid var(--ivory-border);
+      border-radius: 9px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .cal-day.empty {
+      background: transparent;
+      border-color: transparent;
+      min-height: 0;
+    }
+
+    .cal-day.has-data {
+      background: var(--champagne-bg);
+      border-color: var(--champagne);
+    }
+
     /* 진행률 바 */
     .progress-track {
       width: 100%;
@@ -903,22 +996,21 @@
         </div>
 
         <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
-          <span id="authDbBadge" class="badge badge-sage">☁️ DB 확인 중</span>
-          <button type="button" class="btn btn-outline btn-sm" onclick="openDbModal()">☁️ DB 연동</button>
+          <span class="badge badge-sage">파주 운정점 · 운정역점 · 마곡발산점</span>
         </div>
       </div>
     </header>
 
     <main class="auth-main">
       <div class="auth-grid">
-        <!-- 좌측: 대표원장 · 제작자 패스워드 직통 접속 -->
+        <!-- 좌측: 대표원장 · 관리자 패스워드 직통 접속 -->
         <div class="admin-direct-card">
           <div>
             <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:14px;">
               <span class="badge badge-champagne">최상위 관리자 전용</span>
               <span class="badge badge-dark">파주 운정점 · 운정역점 · 마곡발산점</span>
             </div>
-            <h1 style="font-size:21px; font-weight:700; margin-bottom:6px;">대표원장 · 제작자 직통 접속</h1>
+            <h1 style="font-size:21px; font-weight:700; margin-bottom:6px;">대표원장 · 관리자 직통 접속</h1>
             <p style="font-size:13px; color:rgba(250,247,242,0.76); margin-bottom:18px;">
               회원가입 없이 관리자 패스워드 입력만으로 즉시 접속합니다.
             </p>
@@ -928,7 +1020,7 @@
                 👑 대표원장 (영화)
               </button>
               <button type="button" id="adminRoleBtnCreator" class="admin-role-btn" onclick="selectAdminLoginRole('creator')">
-                🛠️ 제작자 (관리자)
+                🛠️ 관리자
               </button>
             </div>
 
@@ -1040,7 +1132,7 @@
        ========================================================================= -->
   <section id="appWorkspaceView" class="hidden" style="min-height:100vh; display:flex; flex-direction:column;">
 
-    <!-- 최상단 RBAC 전환 바 (대표원장 · 제작자 로그인 시에만 노출) -->
+    <!-- 최상단 RBAC 전환 바 (대표원장 · 관리자 로그인 시에만 노출) -->
     <div id="rbacSwitchBar" class="rbac-bar no-print hidden">
       <div class="container rbac-inner">
         <div class="rbac-group">
@@ -1048,8 +1140,8 @@
           <button type="button" id="rbacBtnCeo" class="rbac-pill" onclick="switchAdminPreview('ceo')">
             👑 대표원장
           </button>
-          <button type="button" id="rbacBtnCreator" class="rbac-pill" onclick="switchAdminPreview('creator')">
-            🛠️ 제작자
+          <button type="button" id="rbacBtnCreator" class="rbac-pill hidden" onclick="switchAdminPreview('creator')">
+            🛠️ 관리자
           </button>
 
           <div style="display:inline-flex; align-items:center; gap:5px;">
@@ -1073,7 +1165,7 @@
           </div>
         </div>
 
-        <div class="rbac-group">
+        <div id="rbacDbStatusWrap" class="rbac-group hidden">
           <span id="workspaceDbStatusBadge" class="badge badge-dark">☁️ 로컬 연동</span>
         </div>
       </div>
@@ -1104,7 +1196,7 @@
           <button type="button" id="btnOpenQuickSignup" class="btn btn-dark-outline btn-sm hidden" onclick="openQuickMemberModal()">
             + 임직원 등록
           </button>
-          <button type="button" id="btnOpenDbHeader" class="btn btn-dark-outline btn-sm" onclick="openDbModal()">
+          <button type="button" id="btnOpenDbHeader" class="btn btn-dark-outline btn-sm hidden" onclick="openDbModal()">
             ☁️ DB 연동
           </button>
           <button type="button" class="btn btn-dark-outline btn-sm" onclick="handleLogout()">
@@ -1174,24 +1266,42 @@
         <!-- 4대 핵심 KPI 카드 그리드 -->
         <div id="kpiCardsContainer" class="kpi-grid"></div>
 
-        <!-- ==================== 신규 핵심: 개인별 월별(1월~12월) 성과 그래프 섹션 ==================== -->
+        <!-- ==================== 월간 성과 그래프 (달력 월 단위 · 분기 단위 · 1년 단위) ==================== -->
         <div id="individualMonthlyChartSection" class="card">
           <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;">
             <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
-              <span class="badge badge-champagne">1월 ~ 12월 월별 추이</span>
-              <h3 id="indivMonthlyTitle" style="font-size:16px; font-weight:700;">📈 개인별 월별 성과 그래프</h3>
+              <span id="indivUnitBadge" class="badge badge-champagne">달력 월 단위</span>
+              <h3 id="indivMonthlyTitle" style="font-size:16px; font-weight:700;">📈 월간 성과 그래프</h3>
             </div>
+
             <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
-              <select id="indivYearSelect" class="select" style="width:auto; padding:6px 10px; font-size:12.5px;" onchange="renderIndividualMonthlySection()">
+              <!-- 조회 단위 토글: 달력 월 단위 / 분기 단위 / 1년 단위 -->
+              <div class="unit-toggle-group">
+                <button type="button" id="indivUnitBtnMonth" class="unit-toggle-btn active" onclick="setIndivGraphUnit('month')">달력 월 단위</button>
+                <button type="button" id="indivUnitBtnQuarter" class="unit-toggle-btn" onclick="setIndivGraphUnit('quarter')">분기 단위</button>
+                <button type="button" id="indivUnitBtnYear" class="unit-toggle-btn" onclick="setIndivGraphUnit('year')">1년 단위</button>
+              </div>
+
+              <!-- 달력 월 선택기 (달력 월 단위 모드) -->
+              <div id="indivCalendarMonthWrap" style="display:inline-flex; align-items:center; gap:4px;">
+                <button type="button" class="btn btn-outline btn-sm" style="padding:6px 9px;" onclick="shiftIndivCalendarMonth(-1)" title="이전 달">&lsaquo;</button>
+                <input type="month" id="indivCalendarMonthInput" class="input" style="width:auto; padding:5px 10px; font-size:12.5px;" onchange="renderIndividualMonthlySection()" />
+                <button type="button" class="btn btn-outline btn-sm" style="padding:6px 9px;" onclick="shiftIndivCalendarMonth(1)" title="다음 달">&rsaquo;</button>
+              </div>
+
+              <!-- 연도 선택기 (분기 단위 · 1년 단위 모드) -->
+              <select id="indivYearSelect" class="select hidden" style="width:auto; padding:6px 10px; font-size:12.5px;" onchange="renderIndividualMonthlySection()">
               </select>
-              <select id="indivMemberSelect" class="select" style="width:auto; min-width:160px; padding:6px 10px; font-size:12.5px;" onchange="renderIndividualMonthlySection()">
+
+              <!-- 대상 인원 및 지표 선택 -->
+              <select id="indivMemberSelect" class="select" style="width:auto; min-width:155px; padding:6px 10px; font-size:12.5px;" onchange="renderIndividualMonthlySection()">
               </select>
               <select id="indivMetricSelect" class="select" style="width:auto; padding:6px 10px; font-size:12.5px;" onchange="renderIndividualMonthlySection()">
-                <option value="revenue">① 월별 개인매출 (만원)</option>
-                <option value="kpi">🏆 월별 KPI 종합점수 (점)</option>
-                <option value="revisitRate">④ 월별 재방문 비율 (%)</option>
-                <option value="unitPrice">⑤ 월별 객단가 (원)</option>
-                <option value="customers">②·③ 월별 총고객 / 신규고객 (명)</option>
+                <option value="revenue">① 개인매출 (만원)</option>
+                <option value="kpi">🏆 KPI 종합점수 (점)</option>
+                <option value="revisitRate">④ 재방문 비율 (%)</option>
+                <option value="unitPrice">⑤ 객단가 (원)</option>
+                <option value="customers">②·③ 총고객 / 신규고객 (명)</option>
               </select>
             </div>
           </div>
@@ -1200,8 +1310,8 @@
             <canvas id="indivMonthlyCanvas" class="chart-canvas"></canvas>
           </div>
 
-          <!-- 1월~12월 수치 요약 스트립 -->
-          <div id="indivMonthlyStrip" class="month-strip"></div>
+          <!-- 단위별 하단 요약 (달력 월 그리드 / 4분기 요약 / 12개월 요약) -->
+          <div id="indivMonthlyStrip"></div>
         </div>
 
         <!-- 전체/지점 추이 & 인원 비교 차트 섹션 -->
@@ -1246,12 +1356,12 @@
           </div>
         </div>
 
-        <!-- 대표원장 · 제작자 전용: 전체 가입자 리스트 및 회원탈퇴 관리 -->
+        <!-- 대표원장 · 관리자 전용: 전체 가입자 리스트 및 회원탈퇴 관리 -->
         <div id="adminMemberManageSection" class="card hidden no-print">
           <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;">
             <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
               <h3 style="font-size:16px; font-weight:700;">👥 전체 가입자 리스트 및 회원탈퇴 관리</h3>
-              <span class="badge badge-champagne-soft">대표원장 · 제작자 전용</span>
+              <span class="badge badge-champagne-soft">대표원장 · 관리자 전용</span>
             </div>
             <button type="button" class="btn btn-espresso btn-sm" onclick="openQuickMemberModal()">
               + 신규 임직원 직접 등록
@@ -1333,10 +1443,10 @@
                 </div>
               </div>
 
-              <!-- 대표원장 · 제작자 전용: 객단가 & 목표 객단가 & 목표 객단가 값 범위 직접 설정 패널 -->
+              <!-- 대표원장 · 관리자 전용: 객단가 & 목표 객단가 & 목표 객단가 값 범위 직접 설정 패널 -->
               <div id="crmAdminUnitPricePanel" class="hidden" style="background:var(--champagne-bg); border:1px solid rgba(176,137,104,0.35); border-radius:14px; padding:14px;">
                 <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;">
-                  <span style="font-size:13px; font-weight:700; color:var(--espresso);">👑 대표원장 전용 — 선택 인원 객단가 · 목표 객단가 · 값 범위 자유 설정</span>
+                  <span style="font-size:13px; font-weight:700; color:var(--espresso);">👑 대표원장 · 관리자 전용 — 선택 인원 객단가 · 목표 객단가 · 값 범위 자유 설정</span>
                   <button type="button" class="btn btn-champagne btn-sm" onclick="saveInlineUnitPriceSettings()">
                     객단가 설정 즉시 적용
                   </button>
@@ -1532,13 +1642,13 @@
   </section>
 
   <!-- =========================================================================
-       모달 1: 대표원장 · 제작자 전용 [🎯 목표치 설정] 모달
+       모달 1: 대표원장 · 관리자 전용 [🎯 목표치 설정] 모달
        ========================================================================= -->
   <div id="targetModal" class="modal-backdrop hidden no-print">
     <div class="modal-panel" style="max-width:880px;">
       <div class="modal-header">
         <div style="display:flex; align-items:center; gap:8px;">
-          <span class="badge badge-champagne">대표원장 · 제작자 전용</span>
+          <span class="badge badge-champagne">대표원장 · 관리자 전용</span>
           <h3 style="font-size:16px; font-weight:700;">🎯 매장 · 지점원장 · 디자이너 목표치 및 객단가 범위 설정</h3>
         </div>
         <button type="button" style="color:var(--ivory); font-size:20px; padding:2px 6px;" onclick="closeTargetModal()">&times;</button>
@@ -1857,6 +1967,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     let selectedAdminLoginRole = 'ceo';
     let currentTab = 'dashboard';
     let currentPeriod = 'monthly';
+    let indivGraphUnit = 'month';
     let pendingConfirmFn = null;
     let lastRemoteUpdatedAt = null;
     let pollIntervalId = null;
@@ -2072,6 +2183,10 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function openDbModal() {
+      if (!isCreatorLogged()) {
+        showToast('DB 연동 설정은 관리자 계정에서만 접근할 수 있습니다.', 'error');
+        return;
+      }
       const cfg = getDbConfig();
       document.getElementById('dbUrlInput').value = cfg.url;
       document.getElementById('dbKeyInput').value = cfg.anonKey;
@@ -2192,7 +2307,7 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       const session = {
         role: matchedRole,
-        name: matchedRole === 'ceo' ? '영화 대표원장' : '제작자',
+        name: matchedRole === 'ceo' ? '영화 대표원장' : '관리자',
         branch: '전 지점 총괄',
         memberId: matchedRole
       };
@@ -2333,11 +2448,16 @@ create policy "Allow public read write" on public.yuroso_app_state
       return Boolean(loggedInSession && (loggedInSession.role === 'ceo' || loggedInSession.role === 'creator'));
     }
 
+    function isCreatorLogged() {
+      return Boolean(loggedInSession && loggedInSession.role === 'creator');
+    }
+
     /* =========================================================================
        6. RBAC 뷰 전환 & 탭 제어
        ========================================================================= */
     function switchAdminPreview(viewRole) {
       if (!isTopAdminLogged()) return;
+      if (viewRole === 'creator' && !isCreatorLogged()) return;
       activeView.role = viewRole;
       if (viewRole === 'designer') {
         if (!appState.members.some(function(m) { return m.id === activeView.memberId; })) {
@@ -2659,6 +2779,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       if (!loggedInSession) return;
 
       const topAdmin = isTopAdminLogged();
+      const creatorOnly = isCreatorLogged();
       const viewRole = activeView.role;
 
       const rbacBar = document.getElementById('rbacSwitchBar');
@@ -2666,10 +2787,12 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       if (topAdmin) {
         document.getElementById('rbacBtnCeo').classList.toggle('active', viewRole === 'ceo');
+        document.getElementById('rbacBtnCreator').classList.toggle('hidden', !creatorOnly);
         document.getElementById('rbacBtnCreator').classList.toggle('active', viewRole === 'creator');
         document.getElementById('rbacBtnDirector').classList.toggle('active', viewRole === 'director');
         document.getElementById('rbacBtnDesigner').classList.toggle('active', viewRole === 'designer');
         document.getElementById('rbacBranchSelect').value = activeView.branch;
+        document.getElementById('rbacDbStatusWrap').classList.toggle('hidden', !creatorOnly);
 
         const desSelect = document.getElementById('rbacDesignerSelect');
         if (appState.members.length === 0) {
@@ -2689,7 +2812,7 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       const roleLabels = {
         ceo: '대표원장',
-        creator: '제작자',
+        creator: '관리자',
         director: '지점원장',
         designer: '디자이너'
       };
@@ -2698,7 +2821,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       if (viewRole === 'ceo') {
         document.getElementById('headerUserBadge').textContent = '영화 대표원장';
       } else if (viewRole === 'creator') {
-        document.getElementById('headerUserBadge').textContent = '제작자 · 전 지점';
+        document.getElementById('headerUserBadge').textContent = '관리자 · 전 지점';
       } else if (viewRole === 'director') {
         document.getElementById('headerUserBadge').textContent = topAdmin
           ? (activeView.branch + ' 지점원장 뷰')
@@ -2713,7 +2836,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       document.getElementById('btnOpenTargets').classList.toggle('hidden', !topAdmin);
       document.getElementById('btnOpenVisibility').classList.toggle('hidden', !topAdmin);
       document.getElementById('btnOpenQuickSignup').classList.toggle('hidden', !topAdmin);
-      document.getElementById('btnOpenDbHeader').classList.toggle('hidden', !topAdmin);
+      document.getElementById('btnOpenDbHeader').classList.toggle('hidden', !creatorOnly);
       document.getElementById('bannerTargetBtn').classList.toggle('hidden', !topAdmin);
       document.getElementById('branchTabTargetBtn').classList.toggle('hidden', !topAdmin);
 
@@ -2740,12 +2863,55 @@ create policy "Allow public read write" on public.yuroso_app_state
       renderCoachingPanel();
     }
 
+    function setIndivGraphUnit(unit) {
+      indivGraphUnit = unit;
+      document.getElementById('indivUnitBtnMonth').classList.toggle('active', unit === 'month');
+      document.getElementById('indivUnitBtnQuarter').classList.toggle('active', unit === 'quarter');
+      document.getElementById('indivUnitBtnYear').classList.toggle('active', unit === 'year');
+
+      document.getElementById('indivCalendarMonthWrap').classList.toggle('hidden', unit !== 'month');
+      document.getElementById('indivYearSelect').classList.toggle('hidden', unit === 'month');
+
+      const badgeLabels = {
+        month: '달력 월 단위',
+        quarter: '분기 단위 (1~4분기)',
+        year: '1년 단위 (1~12월)'
+      };
+      document.getElementById('indivUnitBadge').textContent = badgeLabels[unit] || '달력 월 단위';
+      renderIndividualMonthlySection();
+    }
+
+    function shiftIndivCalendarMonth(delta) {
+      const calInput = document.getElementById('indivCalendarMonthInput');
+      if (!calInput) return;
+      const curVal = calInput.value || new Date().toISOString().slice(0, 7);
+      const parts = curVal.split('-');
+      let y = parseInt(parts[0], 10) || new Date().getFullYear();
+      let m = (parseInt(parts[1], 10) || (new Date().getMonth() + 1)) + delta;
+      if (m < 1) {
+        m = 12;
+        y -= 1;
+      } else if (m > 12) {
+        m = 1;
+        y += 1;
+      }
+      calInput.value = String(y) + '-' + String(m).padStart(2, '0');
+      renderIndividualMonthlySection();
+    }
+
     function populateIndividualMonthlySelectors() {
       const yearSel = document.getElementById('indivYearSelect');
+      const calInput = document.getElementById('indivCalendarMonthInput');
       const memSel = document.getElementById('indivMemberSelect');
       if (!yearSel || !memSel) return;
 
-      const curYear = new Date().getFullYear();
+      const now = new Date();
+      const curYear = now.getFullYear();
+      const defaultYm = String(curYear) + '-' + String(now.getMonth() + 1).padStart(2, '0');
+      if (calInput && !calInput.value) {
+        calInput.value = defaultYm;
+      }
+
       const yearsSet = new Set([String(curYear), String(curYear - 1)]);
       appState.crmRecords.forEach(function(r) {
         if (r.date && r.date.length >= 4) yearsSet.add(r.date.slice(0, 4));
@@ -2753,7 +2919,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       const years = Array.from(yearsSet).sort().reverse();
       const prevYear = yearSel.value;
       yearSel.innerHTML = years.map(function(y) {
-        return '<option value="' + y + '">' + y + '년 월별</option>';
+        return '<option value="' + y + '">' + y + '년</option>';
       }).join('');
       yearSel.value = years.indexOf(prevYear) >= 0 ? prevYear : String(curYear);
 
@@ -2788,6 +2954,128 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
     }
 
+    function getMemberCalendarMonthDays(member, ym) {
+      const parts = ym.split('-');
+      const year = parseInt(parts[0], 10) || new Date().getFullYear();
+      const month = parseInt(parts[1], 10) || (new Date().getMonth() + 1);
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const firstDayWeekday = new Date(year, month - 1, 1).getDay();
+      const target = getMemberTarget(member.id);
+
+      const monthRecs = appState.crmRecords.filter(function(r) {
+        return r.memberId === member.id && r.date && r.date.indexOf(ym) === 0;
+      });
+      const monthSummary = aggregateMemberMetricsFromList(member, monthRecs);
+      if (monthRecs.length === 0) {
+        monthSummary.unitPrice = 0;
+        monthSummary.totalScore = 0;
+      }
+
+      const days = [];
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = ym + '-' + String(d).padStart(2, '0');
+        const dayRecs = monthRecs.filter(function(r) { return r.date === dateStr; });
+        const stat = aggregateMemberMetricsFromList(member, dayRecs);
+        if (dayRecs.length === 0) {
+          stat.unitPrice = 0;
+          stat.totalScore = 0;
+        }
+        days.push({
+          day: d,
+          label: d + '일',
+          dateStr: dateStr,
+          hasData: dayRecs.length > 0,
+          revenue: Number(stat.revenue.toFixed(1)),
+          totalCust: stat.totalCust,
+          newCust: stat.newCust,
+          revisitCust: stat.revisitCust,
+          revisitRate: Number(stat.revisitRate.toFixed(1)),
+          unitPrice: stat.unitPrice,
+          kpiScore: Number(stat.totalScore.toFixed(1))
+        });
+      }
+
+      return {
+        year: year,
+        month: month,
+        daysInMonth: daysInMonth,
+        firstDayWeekday: firstDayWeekday,
+        monthSummary: monthSummary,
+        days: days,
+        target: target
+      };
+    }
+
+    function getMemberQuarterSeries(member, yearStr) {
+      const baseTarget = getMemberTarget(member.id);
+      const quarterDefs = [
+        { q: 1, label: '1분기 (1~3월)', months: ['01', '02', '03'] },
+        { q: 2, label: '2분기 (4~6월)', months: ['04', '05', '06'] },
+        { q: 3, label: '3분기 (7~9월)', months: ['07', '08', '09'] },
+        { q: 4, label: '4분기 (10~12월)', months: ['10', '11', '12'] }
+      ];
+
+      const qTarget = {
+        targetRevenue: baseTarget.targetRevenue * 3,
+        targetRevisitRate: baseTarget.targetRevisitRate,
+        targetUnitPrice: baseTarget.targetUnitPrice,
+        targetNewCustomers: baseTarget.targetNewCustomers * 3
+      };
+
+      return quarterDefs.map(function(qd) {
+        const prefixes = qd.months.map(function(mm) { return yearStr + '-' + mm; });
+        const qRecs = appState.crmRecords.filter(function(r) {
+          if (r.memberId !== member.id || !r.date) return false;
+          return prefixes.indexOf(r.date.slice(0, 7)) >= 0;
+        });
+
+        let revenue = 0;
+        let totalCust = 0;
+        let newCust = 0;
+        let revisitCust = 0;
+        let weightedUnitSum = 0;
+        qRecs.forEach(function(r) {
+          const tc = Number(r.totalCust) || 0;
+          revenue += Number(r.revenue) || 0;
+          totalCust += tc;
+          newCust += Number(r.newCust) || 0;
+          revisitCust += Number(r.revisitCust) || 0;
+          weightedUnitSum += (Number(r.unitPrice) || 0) * (tc > 0 ? tc : 1);
+        });
+
+        const denom = qRecs.reduce(function(acc, r) {
+          const tc = Number(r.totalCust) || 0;
+          return acc + (tc > 0 ? tc : 1);
+        }, 0);
+        const unitPrice = qRecs.length > 0 && denom > 0 ? Math.round(weightedUnitSum / denom) : 0;
+
+        const kpi = qRecs.length > 0
+          ? computeDesignerKpiFromMetrics({
+              revenue: revenue,
+              totalCust: totalCust,
+              newCust: newCust,
+              revisitCust: revisitCust,
+              unitPrice: unitPrice
+            }, qTarget)
+          : { revisitRate: 0, totalScore: 0 };
+
+        return {
+          q: qd.q,
+          label: qd.label,
+          hasData: qRecs.length > 0,
+          recordCount: qRecs.length,
+          revenue: Number(revenue.toFixed(1)),
+          totalCust: totalCust,
+          newCust: newCust,
+          revisitCust: revisitCust,
+          revisitRate: Number(kpi.revisitRate.toFixed(1)),
+          unitPrice: unitPrice,
+          kpiScore: Number(kpi.totalScore.toFixed(1)),
+          qTarget: qTarget
+        };
+      });
+    }
+
     function renderIndividualMonthlySection() {
       const section = document.getElementById('individualMonthlyChartSection');
       if (!section) return;
@@ -2803,26 +3091,198 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
       section.classList.remove('hidden');
 
+      document.getElementById('indivCalendarMonthWrap').classList.toggle('hidden', indivGraphUnit !== 'month');
+      document.getElementById('indivYearSelect').classList.toggle('hidden', indivGraphUnit === 'month');
+
       const yearStr = document.getElementById('indivYearSelect').value || String(new Date().getFullYear());
+      const calYm = document.getElementById('indivCalendarMonthInput').value || new Date().toISOString().slice(0, 7);
       const memId = document.getElementById('indivMemberSelect').value;
       const metric = document.getElementById('indivMetricSelect').value || 'revenue';
       const stripEl = document.getElementById('indivMonthlyStrip');
 
       const member = appState.members.find(function(m) { return m.id === memId; }) || null;
       if (!member) {
-        document.getElementById('indivMonthlyTitle').textContent = '📈 개인별 월별(1월~12월) 성과 그래프';
-        drawEmptyChartMessage('indivMonthlyCanvas', '회원가입 및 CRM 지표 입력 시 개인별 1월~12월 성과 그래프가 표시됩니다.');
+        document.getElementById('indivMonthlyTitle').textContent = '📈 월간 성과 그래프';
+        drawEmptyChartMessage('indivMonthlyCanvas', '회원가입 및 CRM 지표 입력 시 달력 월 · 분기 · 1년 단위 성과 그래프가 표시됩니다.');
+        stripEl.className = 'month-strip';
         stripEl.innerHTML = MONTHS_KO.map(function(ml) {
           return '<div class="month-cell"><div style="font-size:11px; color:var(--espresso-muted);">' + ml + '</div><div style="font-size:12.5px; font-weight:700; margin-top:2px;">-</div></div>';
         }).join('');
         return;
       }
 
-      const monthlyData = getMemberMonthlySeries(member, yearStr);
       const target = getMemberTarget(member.id);
       const roleName = member.role === 'director' ? '지점원장' : '디자이너';
+
+      /* 1) 달력 월 단위 (선택 연·월 일자별 추이 + 실제 월간 달력 뷰) */
+      if (indivGraphUnit === 'month') {
+        const calData = getMemberCalendarMonthDays(member, calYm);
+        document.getElementById('indivMonthlyTitle').textContent =
+          '📈 월간 성과 그래프 — ' + member.name + ' ' + roleName + ' (' + calData.year + '년 ' + calData.month + '월)';
+
+        const dayLabels = calData.days.map(function(d) { return d.day + '일'; });
+        if (metric === 'customers') {
+          drawGroupedBarChart(
+            'indivMonthlyCanvas',
+            dayLabels,
+            [
+              { label: '총 고객수(명)', color: '#2C221E', values: calData.days.map(function(d) { return d.totalCust; }) },
+              { label: '재방문(명)', color: '#6B7F6E', values: calData.days.map(function(d) { return d.revisitCust; }) },
+              { label: '신규(명)', color: '#B08968', values: calData.days.map(function(d) { return d.newCust; }) }
+            ],
+            '명'
+          );
+        } else {
+          let barLabel = '일별 매출(만원)';
+          const maxDayRev = calData.days.reduce(function(mx, d) { return d.revenue > mx ? d.revenue : mx; }, 0);
+          const useMonthlyScale = maxDayRev >= target.targetRevenue * 0.4;
+          let targetVal = useMonthlyScale ? target.targetRevenue : Math.max(1, Math.round(target.targetRevenue / 25));
+          let targetLabel = useMonthlyScale
+            ? ('월 목표 ' + formatNumber(target.targetRevenue) + '만원')
+            : ('일 권장 ' + formatNumber(targetVal) + '만원 (월목표 ' + formatNumber(target.targetRevenue) + '만)');
+          let suffix = '';
+          let barColor = '#B08968';
+          let values = calData.days.map(function(d) { return d.revenue; });
+
+          if (metric === 'kpi') {
+            barLabel = 'KPI 점수';
+            targetVal = 90;
+            targetLabel = '우수 기준 90점';
+            suffix = '점';
+            barColor = '#2C221E';
+            values = calData.days.map(function(d) { return d.kpiScore; });
+          } else if (metric === 'revisitRate') {
+            barLabel = '재방문 비율(%)';
+            targetVal = target.targetRevisitRate;
+            targetLabel = '목표 ' + target.targetRevisitRate + '%';
+            suffix = '%';
+            barColor = '#6B7F6E';
+            values = calData.days.map(function(d) { return d.revisitRate; });
+          } else if (metric === 'unitPrice') {
+            barLabel = '객단가(원)';
+            targetVal = target.targetUnitPrice;
+            targetLabel = '목표 ' + formatNumber(target.targetUnitPrice) + '원';
+            suffix = '';
+            barColor = '#8E6A4B';
+            values = calData.days.map(function(d) { return d.unitPrice; });
+          }
+
+          drawMonthlyComboChart('indivMonthlyCanvas', dayLabels, values, barLabel, barColor, targetVal, targetLabel, suffix);
+        }
+
+        const ms = calData.monthSummary;
+        const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+        let calCellsHtml = weekdays.map(function(w) {
+          return '<div class="cal-weekday">' + w + '</div>';
+        }).join('');
+
+        for (let blank = 0; blank < calData.firstDayWeekday; blank++) {
+          calCellsHtml += '<div class="cal-day empty"></div>';
+        }
+
+        calData.days.forEach(function(d) {
+          let cellVal = '';
+          if (d.hasData) {
+            if (metric === 'revenue') cellVal = formatNumber(d.revenue, 1) + '만';
+            else if (metric === 'kpi') cellVal = d.kpiScore.toFixed(1) + '점';
+            else if (metric === 'revisitRate') cellVal = d.revisitRate.toFixed(1) + '%';
+            else if (metric === 'unitPrice') cellVal = formatNumber(Math.round(d.unitPrice / 1000)) + '천원';
+            else cellVal = d.totalCust + '명';
+          }
+          calCellsHtml += '<div class="cal-day' + (d.hasData ? ' has-data' : '') + '">' +
+            '<span style="font-size:11px; font-weight:600; color:var(--espresso-muted);">' + d.day + '일</span>' +
+            '<strong style="font-size:11.5px; color:var(--espresso); text-align:right;">' + (cellVal || '-') + '</strong>' +
+          '</div>';
+        });
+
+        stripEl.className = '';
+        stripEl.innerHTML =
+          '<div class="cal-summary-bar">' +
+            '<strong>📅 ' + calData.year + '년 ' + calData.month + '월 누적 요약</strong>' +
+            '<div style="display:flex; flex-wrap:wrap; gap:12px;">' +
+              '<span>매출: <strong>' + formatNumber(ms.revenue, 1) + '만원</strong> / 목표 ' + formatNumber(target.targetRevenue) + '만</span>' +
+              '<span>고객: <strong>' + formatNumber(ms.totalCust) + '명</strong> (신규 ' + ms.newCust + ' · 재방문 ' + ms.revisitRate.toFixed(1) + '%)</span>' +
+              '<span>객단가: <strong>' + formatNumber(ms.unitPrice) + '원</strong></span>' +
+              '<span>월간 KPI: <strong>' + ms.totalScore.toFixed(1) + '점</strong></span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="cal-grid">' + calCellsHtml + '</div>';
+        return;
+      }
+
+      /* 2) 분기 단위 (1분기 ~ 4분기 비교) */
+      if (indivGraphUnit === 'quarter') {
+        const qSeries = getMemberQuarterSeries(member, yearStr);
+        const qLabels = qSeries.map(function(q) { return q.label; });
+        document.getElementById('indivMonthlyTitle').textContent =
+          '📈 월간 성과 그래프 — ' + member.name + ' ' + roleName + ' (' + yearStr + '년 분기 단위)';
+
+        if (metric === 'customers') {
+          drawGroupedBarChart(
+            'indivMonthlyCanvas',
+            qLabels,
+            [
+              { label: '분기 총 고객수(명)', color: '#2C221E', values: qSeries.map(function(q) { return q.totalCust; }) },
+              { label: '분기 재방문 고객수(명)', color: '#6B7F6E', values: qSeries.map(function(q) { return q.revisitCust; }) },
+              { label: '분기 신규 고객수(명)', color: '#B08968', values: qSeries.map(function(q) { return q.newCust; }) }
+            ],
+            '명'
+          );
+        } else {
+          let barLabel = '분기 매출(만원)';
+          let targetVal = target.targetRevenue * 3;
+          let targetLabel = '분기 목표 ' + formatNumber(targetVal) + '만원';
+          let suffix = '';
+          let barColor = '#B08968';
+          let values = qSeries.map(function(q) { return q.revenue; });
+
+          if (metric === 'kpi') {
+            barLabel = '분기 KPI 점수';
+            targetVal = 90;
+            targetLabel = '우수 기준 90점';
+            suffix = '점';
+            barColor = '#2C221E';
+            values = qSeries.map(function(q) { return q.kpiScore; });
+          } else if (metric === 'revisitRate') {
+            barLabel = '분기 재방문 비율(%)';
+            targetVal = target.targetRevisitRate;
+            targetLabel = '목표 ' + target.targetRevisitRate + '%';
+            suffix = '%';
+            barColor = '#6B7F6E';
+            values = qSeries.map(function(q) { return q.revisitRate; });
+          } else if (metric === 'unitPrice') {
+            barLabel = '분기 평균 객단가(원)';
+            targetVal = target.targetUnitPrice;
+            targetLabel = '목표 ' + formatNumber(target.targetUnitPrice) + '원';
+            suffix = '';
+            barColor = '#8E6A4B';
+            values = qSeries.map(function(q) { return q.unitPrice; });
+          }
+
+          drawMonthlyComboChart('indivMonthlyCanvas', qLabels, values, barLabel, barColor, targetVal, targetLabel, suffix);
+        }
+
+        stripEl.className = 'quarter-strip';
+        stripEl.innerHTML = qSeries.map(function(q) {
+          return '<div class="month-cell' + (q.hasData ? ' has-data' : '') + '" style="padding:12px; text-align:left;">' +
+            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">' +
+              '<strong style="font-size:12.5px;">' + q.label + '</strong>' +
+              '<span class="badge badge-champagne-soft">' + q.kpiScore.toFixed(1) + '점</span>' +
+            '</div>' +
+            '<div style="font-size:12px; color:var(--espresso-light); display:flex; flex-direction:column; gap:2px;">' +
+              '<span>매출: <strong>' + formatNumber(q.revenue, 1) + '만원</strong></span>' +
+              '<span>고객: ' + formatNumber(q.totalCust) + '명 (재방문 ' + q.revisitRate.toFixed(1) + '%)</span>' +
+              '<span>객단가: ' + formatNumber(q.unitPrice) + '원</span>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+        return;
+      }
+
+      /* 3) 1년 단위 (선택 연도 1월~12월 연간 추이 + 연간 총괄 요약) */
+      const monthlyData = getMemberMonthlySeries(member, yearStr);
       document.getElementById('indivMonthlyTitle').textContent =
-        '📈 ' + member.name + ' ' + roleName + ' (' + member.branch + ') — ' + yearStr + '년 월별 성과 그래프';
+        '📈 월간 성과 그래프 — ' + member.name + ' ' + roleName + ' (' + yearStr + '년 1년 단위)';
 
       if (metric === 'customers') {
         drawGroupedBarChart(
@@ -2836,9 +3296,9 @@ create policy "Allow public read write" on public.yuroso_app_state
           '명'
         );
       } else {
-        let barLabel = '개인매출(만원)';
+        let barLabel = '월별 매출(만원)';
         let targetVal = target.targetRevenue;
-        let targetLabel = '목표 ' + formatNumber(target.targetRevenue) + '만원';
+        let targetLabel = '월 목표 ' + formatNumber(target.targetRevenue) + '만원';
         let suffix = '';
         let barColor = '#B08968';
         let values = monthlyData.map(function(d) { return d.revenue; });
@@ -2869,7 +3329,19 @@ create policy "Allow public read write" on public.yuroso_app_state
         drawMonthlyComboChart('indivMonthlyCanvas', MONTHS_KO, values, barLabel, barColor, targetVal, targetLabel, suffix);
       }
 
-      stripEl.innerHTML = monthlyData.map(function(d) {
+      const yearRecs = appState.crmRecords.filter(function(r) {
+        return r.memberId === member.id && r.date && r.date.indexOf(yearStr) === 0;
+      });
+      const yearTotalRev = monthlyData.reduce(function(s, d) { return s + d.revenue; }, 0);
+      const yearTotalCust = monthlyData.reduce(function(s, d) { return s + d.totalCust; }, 0);
+      const yearRevisitCust = monthlyData.reduce(function(s, d) { return s + d.revisitCust; }, 0);
+      const yearRevisitRate = yearTotalCust > 0 ? (yearRevisitCust / yearTotalCust) * 100 : 0;
+      const activeMonths = monthlyData.filter(function(d) { return d.hasData; });
+      const yearAvgKpi = activeMonths.length > 0
+        ? activeMonths.reduce(function(s, d) { return s + d.kpiScore; }, 0) / activeMonths.length
+        : 0;
+
+      const cellsHtml = monthlyData.map(function(d) {
         let valText = '-';
         if (d.hasData) {
           if (metric === 'revenue') valText = formatNumber(d.revenue, 1) + '만';
@@ -2883,6 +3355,18 @@ create policy "Allow public read write" on public.yuroso_app_state
           '<div style="font-size:12.5px; font-weight:700; color:var(--espresso); margin-top:2px;">' + valText + '</div>' +
         '</div>';
       }).join('');
+
+      stripEl.className = '';
+      stripEl.innerHTML =
+        '<div class="cal-summary-bar">' +
+          '<strong>🗓️ ' + yearStr + '년 1년 단위 누적 요약 (' + yearRecs.length + '건)</strong>' +
+          '<div style="display:flex; flex-wrap:wrap; gap:12px;">' +
+            '<span>연간 누적 매출: <strong>' + formatNumber(yearTotalRev, 1) + '만원</strong> (연목표 ' + formatNumber(target.targetRevenue * 12) + '만)</span>' +
+            '<span>연간 총 고객: <strong>' + formatNumber(yearTotalCust) + '명</strong> (재방문율 ' + yearRevisitRate.toFixed(1) + '%)</span>' +
+            '<span>평균 KPI: <strong>' + yearAvgKpi.toFixed(1) + '점</strong></span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="month-strip">' + cellsHtml + '</div>';
     }
 
     function renderDashboardPanel() {
@@ -2908,156 +3392,10 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       if (viewRole === 'ceo' || viewRole === 'creator') {
         const ceo = aggregateCeoMetrics();
-        document.getElementById('summaryBannerBadge').textContent = viewRole === 'ceo' ? '대표원장 종합 KPI' : '제작자 종합 KPI';
+        document.getElementById('summaryBannerBadge').textContent = viewRole === 'ceo' ? '대표원장 종합 KPI' : '관리자 종합 KPI';
         document.getElementById('summaryBannerTitle').textContent =
           '전 지점 종합 KPI 달성 점수: ' + ceo.totalKpiScore.toFixed(1) + '점 / 100점';
-
-        kpiContainer.classList.remove('hidden');
-        kpiContainer.innerHTML =
-          '<div class="kpi-card">' +
-            '<div class="kpi-top"><span class="kpi-title">① 전 지점 매출 성장</span><span class="badge badge-champagne-soft">30%</span></div>' +
-            '<div class="kpi-value">' + formatNumber(ceo.totalRevenue, 1) + '만원</div>' +
-            '<div class="kpi-foot"><span>목표 ' + formatNumber(ceo.totalTargetRev) + '만원</span><strong>' + ceo.scoreRevGrowth.toFixed(1) + ' / 30.0점</strong></div>' +
-          '</div>' +
-          '<div class="kpi-card sage-accent">' +
-            '<div class="kpi-top"><span class="kpi-title">② 전 지점 영업이익</span><span class="badge badge-sage">30%</span></div>' +
-            '<div class="kpi-value">' + formatNumber(ceo.totalProfit, 0) + '만원</div>' +
-            '<div class="kpi-foot"><span>목표 ' + formatNumber(ceo.totalTargetProfit) + '만원</span><strong>' + ceo.scoreProfit.toFixed(1) + ' / 30.0점</strong></div>' +
-          '</div>' +
-          '<div class="kpi-card">' +
-            '<div class="kpi-top"><span class="kpi-title">③ 지점 목표 달성</span><span class="badge badge-champagne-soft">20%</span></div>' +
-            '<div class="kpi-value">' + ceo.targetAchRate.toFixed(1) + '%</div>' +
-            '<div class="kpi-foot"><span>3대 지점 합산 달성률</span><strong>' + ceo.scoreBranchAch.toFixed(1) + ' / 20.0점</strong></div>' +
-          '</div>' +
-          '<div class="kpi-card sage-accent">' +
-            '<div class="kpi-top"><span class="kpi-title">④ 리더 · 인재 성장</span><span class="badge badge-sage">20%</span></div>' +
-            '<div class="kpi-value">' + ceo.avgTalentScore.toFixed(1) + '점</div>' +
-            '<div class="kpi-foot"><span>가입 임직원 ' + appState.members.length + '명 평균</span><strong>' + ceo.scoreTalent.toFixed(1) + ' / 20.0점</strong></div>' +
-          '</div>';
-
-        chartsGrid.classList.remove('hidden');
-        chartsGrid.className = 'two-col-grid two-col-equal';
-        secondaryChartCard.classList.remove('hidden');
-        document.getElementById('primaryChartTitle').textContent = '3대 지점 기간별 성과 비교';
-        document.getElementById('secondaryChartTitle').textContent = '전 지점 임직원 · 지점 KPI 달성 비교';
-
-        memberPerfCard.classList.remove('hidden');
-        document.getElementById('memberTableTitle').textContent = '전 지점 지점원장 · 디자이너 KPI 통합 현황';
-        renderMemberPerformanceTable(appState.members, true);
-
-      } else if (viewRole === 'director') {
-        const bStat = aggregateBranchMetrics(activeView.branch);
-        document.getElementById('summaryBannerBadge').textContent = activeView.branch + ' 지점원장 KPI';
-        document.getElementById('summaryBannerTitle').textContent =
-          activeView.branch + ' 종합 KPI 점수: ' + bStat.directorKpiScore.toFixed(1) + '점 / 100점';
-
-        kpiContainer.classList.toggle('hidden', !vis.directorShowKpi && !topAdmin);
-        kpiContainer.innerHTML =
-          '<div class="kpi-card">' +
-            '<div class="kpi-top"><span class="kpi-title">① 지점 매출</span><span class="badge badge-champagne-soft">35%</span></div>' +
-            '<div class="kpi-value">' + formatNumber(bStat.totalRevenue, 1) + '만원</div>' +
-            '<div class="kpi-foot"><span>목표 ' + formatNumber(bStat.targetRevenue) + '만원</span><strong>' + bStat.scoreBranchRev.toFixed(1) + ' / 35.0점</strong></div>' +
-          '</div>' +
-          '<div class="kpi-card sage-accent">' +
-            '<div class="kpi-top"><span class="kpi-title">② 디자이너 평균매출 성장</span><span class="badge badge-sage">30%</span></div>' +
-            '<div class="kpi-value">' + (bStat.growthPct >= 0 ? '+' : '') + bStat.growthPct.toFixed(1) + '%</div>' +
-            '<div class="kpi-foot"><span>소속 인원 ' + bStat.branchMembers.length + '명</span><strong>' + bStat.scoreAvgGrowth.toFixed(1) + ' / 30.0점</strong></div>' +
-          '</div>' +
-          '<div class="kpi-card">' +
-            '<div class="kpi-top"><span class="kpi-title">③ 재방문 고객 비율</span><span class="badge badge-champagne-soft">20%</span></div>' +
-            '<div class="kpi-value">' + bStat.avgRevisitRate.toFixed(1) + '%</div>' +
-            '<div class="kpi-foot"><span>목표 ' + appState.directorTargets[activeView.branch].targetRevisitRate + '%</span><strong>' + bStat.scoreRevisit.toFixed(1) + ' / 20.0점</strong></div>' +
-          '</div>' +
-          '<div class="kpi-card sage-accent">' +
-            '<div class="kpi-top"><span class="kpi-title">④ 직원 성장 · 유지</span><span class="badge badge-sage">15%</span></div>' +
-            '<div class="kpi-value">' + bStat.scoreRetention.toFixed(1) + '점</div>' +
-            '<div class="kpi-foot"><span>' + ((vis.directorShowProfit || topAdmin) ? ('영업이익 ' + formatNumber(bStat.actualProfit) + '만원') : '지점 안정성 지표') + '</span><strong>' + bStat.scoreRetention.toFixed(1) + ' / 15.0점</strong></div>' +
-          '</div>';
-
-        const showDirCharts = vis.directorShowCharts || topAdmin;
-        chartsGrid.classList.toggle('hidden', !showDirCharts);
-        chartsGrid.className = 'two-col-grid two-col-equal';
-        secondaryChartCard.classList.remove('hidden');
-        document.getElementById('primaryChartTitle').textContent = activeView.branch + ' 기간별 성과 추이';
-        document.getElementById('secondaryChartTitle').textContent = activeView.branch + ' 소속 디자이너 KPI 비교';
-
-        memberPerfCard.classList.remove('hidden');
-        document.getElementById('memberTableTitle').textContent = activeView.branch + ' 소속 임직원 KPI 현황';
-        renderMemberPerformanceTable(bStat.branchMembers, topAdmin);
-
-      } else {
-        const me = appState.members.find(function(m) { return m.id === activeView.memberId; }) || null;
-        if (!me) {
-          document.getElementById('summaryBannerBadge').textContent = '디자이너 KPI';
-          document.getElementById('summaryBannerTitle').textContent = '등록된 디자이너 계정이 없습니다.';
-          kpiContainer.innerHTML = '';
-          chartsGrid.classList.add('hidden');
-          memberPerfCard.classList.add('hidden');
-          return;
-        }
-
-        const myStat = aggregateMemberMetrics(me);
-        document.getElementById('summaryBannerBadge').textContent = me.branch + ' · ' + me.name;
-        document.getElementById('summaryBannerTitle').textContent =
-          '나의 KPI 달성 점수: ' + myStat.totalScore.toFixed(1) + '점 / 100점';
-
-        kpiContainer.classList.toggle('hidden', !vis.designerShowKpi && !topAdmin);
-        const mask = function(flag, text) { return (flag || topAdmin) ? text : '비공개'; };
-
-        kpiContainer.innerHTML =
-          '<div class="kpi-card">' +
-            '<div class="kpi-top"><span class="kpi-title">① 개인매출</span><span class="badge badge-champagne-soft">40%</span></div>' +
-            '<div class="kpi-value">' + mask(vis.colRevenue, formatNumber(myStat.revenue, 1) + '만원') + '</div>' +
-            '<div class="kpi-foot"><span>목표 ' + formatNumber(myStat.target.targetRevenue) + '만원</span><strong>' + myStat.scoreRev.toFixed(1) + ' / 40.0점</strong></div>' +
-          '</div>' +
-          '<div class="kpi-card sage-accent">' +
-            '<div class="kpi-top"><span class="kpi-title">② 재방문 고객 비율</span><span class="badge badge-sage">30%</span></div>' +
-            '<div class="kpi-value">' + mask(vis.colRevisitRate, myStat.revisitRate.toFixed(1) + '%') + '</div>' +
-            '<div class="kpi-foot"><span>목표 ' + myStat.target.targetRevisitRate + '%</span><strong>' + myStat.scoreRevRate.toFixed(1) + ' / 30.0점</strong></div>' +
-          '</div>' +
-          '<div class="kpi-card">' +
-            '<div class="kpi-top"><span class="kpi-title">③ 객단가</span><span class="badge badge-champagne-soft">20%</span></div>' +
-            '<div class="kpi-value">' + mask(vis.colUnitPrice, formatNumber(myStat.unitPrice) + '원') + '</div>' +
-            '<div class="kpi-foot"><span>목표 ' + formatNumber(myStat.target.targetUnitPrice) + '원</span><strong>' + myStat.scoreUnit.toFixed(1) + ' / 20.0점</strong></div>' +
-          '</div>' +
-          '<div class="kpi-card sage-accent">' +
-            '<div class="kpi-top"><span class="kpi-title">④ 신규 고객수</span><span class="badge badge-sage">10%</span></div>' +
-            '<div class="kpi-value">' + mask(vis.colNewCust, formatNumber(myStat.newCust) + '명') + '</div>' +
-            '<div class="kpi-foot"><span>목표 ' + formatNumber(myStat.target.targetNewCustomers) + '명</span><strong>' + myStat.scoreNew.toFixed(1) + ' / 10.0점</strong></div>' +
-          '</div>';
-
-        /* 디자이너 뷰는 상단의 [개인별 월별(1월~12월) 성과 그래프] + [기간별 추이]만 노출하고 타 디자이너 비교 차트는 비노출 */
-        const showMyTrend = vis.designerShowTrend || topAdmin;
-        chartsGrid.classList.toggle('hidden', !showMyTrend);
-        chartsGrid.className = 'two-col-grid';
-        secondaryChartCard.classList.add('hidden');
-        document.getElementById('primaryChartTitle').textContent = me.name + '님의 일·월·년 누적 추이';
-
-        memberPerfCard.classList.remove('hidden');
-        document.getElementById('memberTableTitle').textContent = me.name + '님의 목표 및 달성 요약';
-        renderMemberPerformanceTable([me], topAdmin);
-      }
-
-      renderAllCharts();
-    }
-
-    function selectMemberMonthlyChart(memberId) {
-      const sel = document.getElementById('indivMemberSelect');
-      if (!sel) return;
-      sel.value = memberId;
-      renderIndividualMonthlySection();
-      const sec = document.getElementById('individualMonthlyChartSection');
-      if (sec && sec.scrollIntoView) {
-        sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }
-
-    function renderMemberPerformanceTable(memberList, unmasked) {
-      const vis = appState.visibility;
-      const thead = document.getElementById('memberPerfThead');
-      const tbody = document.getElementById('memberPerfTbody');
-      document.getElementById('memberTableCountBadge').textContent = memberList.length + '명';
-
+// ... existing code ... -->
       thead.innerHTML =
         '<tr>' +
           '<th>이름</th>' +
@@ -3069,7 +3407,7 @@ create policy "Allow public read write" on public.yuroso_app_state
           ((vis.colRevisitRate || unmasked) ? '<th>재방문 비율</th>' : '') +
           ((vis.colUnitPrice || unmasked) ? '<th>객단가 / 목표(범위)</th>' : '') +
           ((vis.colKpiScore || unmasked) ? '<th>KPI 점수</th>' : '') +
-          '<th>월별 그래프</th>' +
+          '<th>성과 그래프</th>' +
         '</tr>';
 
       if (memberList.length === 0) {
@@ -3093,7 +3431,7 @@ create policy "Allow public read write" on public.yuroso_app_state
           ((vis.colRevisitRate || unmasked) ? ('<td>' + st.revisitRate.toFixed(1) + '% (목표 ' + st.target.targetRevisitRate + '%)</td>') : '') +
           ((vis.colUnitPrice || unmasked) ? ('<td><strong>' + formatNumber(st.unitPrice) + '원</strong> / 목표 ' + formatNumber(st.target.targetUnitPrice) + '원' + rangeLabel + '</td>') : '') +
           ((vis.colKpiScore || unmasked) ? ('<td><span class="badge badge-champagne">' + st.totalScore.toFixed(1) + '점</span></td>') : '') +
-          '<td><button type="button" class="btn btn-outline btn-sm" onclick="selectMemberMonthlyChart(\'' + escapeHtml(m.id) + '\')">📈 월별 보기</button></td>' +
+          '<td><button type="button" class="btn btn-outline btn-sm" onclick="selectMemberMonthlyChart(\'' + escapeHtml(m.id) + '\')">📈 그래프 보기</button></td>' +
         '</tr>';
       }).join('');
     }
@@ -3166,43 +3504,43 @@ create policy "Allow public read write" on public.yuroso_app_state
       const width = Math.max(260, Math.floor(rect.width || 420));
       const height = Math.max(220, Math.floor(rect.height || 260));
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      const ctx = canvas.getContext('2d');
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, width, height);
-      return { ctx: ctx, width: width, height: height };
-    }
+      /* 1월~12월 / 일별 / 분기별 막대 & 추세 포인트 */
+      const groupW = plotW / labels.length;
+      const barW = Math.min(36, Math.max(5, groupW * (labels.length > 15 ? 0.62 : 0.54)));
+      const labelStep = (labels.length > 15 && width < 680) ? (width < 460 ? 5 : 2) : 1;
+      const pts = [];
 
-    function drawEmptyChartMessage(canvasId, message) {
-      const canvas = document.getElementById(canvasId);
-      const prep = prepareCanvas(canvas);
-      if (!prep) return;
-      prep.ctx.fillStyle = '#75645B';
-      prep.ctx.font = '500 13px "Noto Sans KR", sans-serif';
-      prep.ctx.textAlign = 'center';
-      prep.ctx.fillText(message, prep.width / 2, prep.height / 2);
-    }
+      labels.forEach(function(lbl, idx) {
+        const v = Math.max(0, Number(values[idx]) || 0);
+        const barH = v > 0 ? Math.max(4, (v / maxVal) * plotH) : 2;
+        const centerX = padLeft + idx * groupW + groupW / 2;
+        const x = centerX - barW / 2;
+        const y = padTop + plotH - barH;
 
-    /* 개인별 1월~12월 막대 + 추세선 + 목표 기준선 복합 차트 */
-    function drawMonthlyComboChart(canvasId, labels, values, barLabel, barColor, targetValue, targetLabel, unitSuffix) {
-      const canvas = document.getElementById(canvasId);
-      const prep = prepareCanvas(canvas);
-      if (!prep) return;
-      const ctx = prep.ctx;
-      const width = prep.width;
-      const height = prep.height;
+        ctx.fillStyle = v > 0 ? barColor : '#EFE9DD';
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(x, y, barW, barH, [5, 5, 0, 0]);
+        } else {
+          ctx.rect(x, y, barW, barH);
+        }
+        ctx.fill();
 
-      const padTop = 38;
-      const padBottom = 38;
-      const padLeft = 58;
-      const padRight = 22;
-      const plotW = width - padLeft - padRight;
-      const plotH = height - padTop - padBottom;
+        if (v > 0) {
+          pts.push({ x: centerX, y: y, v: v });
+          ctx.fillStyle = '#2C221E';
+          ctx.font = '600 10.5px "Inter", "Noto Sans KR", sans-serif';
+          ctx.textAlign = 'center';
+          const disp = v >= 1000 ? formatNumber(Math.round(v)) : (Number.isInteger(v) ? String(v) : v.toFixed(1));
+          ctx.fillText(disp + unitSuffix, centerX, y - 6);
+        }
 
-      let maxVal = Number(targetValue) || 0;
-      values.forEach(function(v) {
-        if (v > maxVal) maxVal = v;
+        if (idx % labelStep === 0 || idx === labels.length - 1) {
+          ctx.fillStyle = '#2C221E';
+          ctx.font = (labels.length > 15 ? '500 10.5px' : '500 11.5px') + ' "Noto Sans KR", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(lbl, centerX, padTop + plotH + 22);
+        }
       });
       maxVal = maxVal > 0 ? maxVal * 1.22 : 100;
 
@@ -3848,10 +4186,14 @@ create policy "Allow public read write" on public.yuroso_app_state
       };
 
       appState.crmRecords.unshift(rec);
+      if (date && date.length >= 7) {
+        const calInput = document.getElementById('indivCalendarMonthInput');
+        if (calInput) calInput.value = date.slice(0, 7);
+      }
       saveStateEverywhere(true);
       resetCrmForm();
       renderWorkspaceAll();
-      showToast(member.name + '님의 CRM 5대 지표가 저장되어 월별 성과 그래프에 반영되었습니다.', 'success');
+      showToast(member.name + '님의 CRM 5대 지표가 저장되어 월간 성과 그래프에 반영되었습니다.', 'success');
     }
 
     function renderCrmHistoryTable() {
@@ -4210,12 +4552,12 @@ create policy "Allow public read write" on public.yuroso_app_state
       const v = appState.visibility;
       const items = [
         { key: 'directorShowKpi', group: '지점원장 열람 설정', label: '지점원장 KPI 카드 노출' },
-        { key: 'directorShowCharts', group: '지점원장 열람 설정', label: '소속 디자이너 월별 · 비교 그래프 노출' },
+        { key: 'directorShowCharts', group: '지점원장 열람 설정', label: '소속 디자이너 월간 · 비교 그래프 노출' },
         { key: 'directorShowProfit', group: '지점원장 열람 설정', label: '지점 영업이익 수치 공개' },
         { key: 'directorShowBranchTab', group: '지점원장 열람 설정', label: '3대 지점 비교 분석 탭 열람 허용' },
         { key: 'directorAllowCrmInput', group: '지점원장 열람 설정', label: '소속 디자이너 CRM 대리 입력 허용' },
         { key: 'designerShowKpi', group: '디자이너 열람 설정', label: '본인 KPI 달성 카드 노출' },
-        { key: 'designerShowTrend', group: '디자이너 열람 설정', label: '본인 월별(1월~12월) 성과 그래프 노출' },
+        { key: 'designerShowTrend', group: '디자이너 열람 설정', label: '본인 월간 성과 그래프 노출' },
         { key: 'designerShowHistory', group: '디자이너 열람 설정', label: '본인 CRM 입력 이력 표 노출' },
         { key: 'designerShowCoaching', group: '디자이너 열람 설정', label: '본인 1:1 코칭 노트 탭 노출' },
         { key: 'colRevenue', group: '세부 지표 컬럼 노출 제어', label: '① 개인매출 수치 표시' },
@@ -4355,6 +4697,7 @@ create policy "Allow public read write" on public.yuroso_app_state
           const parsedSession = JSON.parse(rawSession);
           if (parsedSession && parsedSession.role) {
             if (parsedSession.role === 'ceo' || parsedSession.role === 'creator') {
+              if (parsedSession.role === 'creator') parsedSession.name = '관리자';
               establishSession(parsedSession, true);
             } else {
               const found = appState.members.find(function(m) {
