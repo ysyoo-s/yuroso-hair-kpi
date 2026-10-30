@@ -14,6 +14,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet" />
 
   <style>
+    /* =========================================================================
+       YUROSO HAIR SALON 브랜드 컬러 시스템
+       Warm Ivory (#FAF7F2), Espresso Brown (#2C221E),
+       Champagne Gold (#B08968), Sage Olive (#6B7F6E)
+       ========================================================================= */
     :root {
       --ivory: #FAF7F2;
       --ivory-soft: #F3EDE2;
@@ -41,7 +46,11 @@
       --radius-pill: 9999px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     html, body {
       min-height: 100%;
@@ -55,7 +64,9 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    .hidden { display: none !important; }
+    .hidden {
+      display: none !important;
+    }
 
     button, input, select, textarea {
       font-family: inherit;
@@ -71,7 +82,9 @@
       transition: all 0.18s ease;
     }
 
-    button:active { transform: translateY(1px); }
+    button:active {
+      transform: translateY(1px);
+    }
 
     .container {
       width: 100%;
@@ -80,6 +93,7 @@
       padding: 0 18px;
     }
 
+    /* 공식 로고 배지 */
     .logo-badge {
       display: inline-flex;
       align-items: center;
@@ -92,9 +106,19 @@
       flex-shrink: 0;
     }
 
-    .logo-svg { height: 38px; width: auto; display: block; }
-    .logo-svg-lg { height: 44px; width: auto; display: block; }
+    .logo-svg {
+      height: 38px;
+      width: auto;
+      display: block;
+    }
 
+    .logo-svg-lg {
+      height: 44px;
+      width: auto;
+      display: block;
+    }
+
+    /* 공통 버튼 */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -109,21 +133,72 @@
       border: 1px solid transparent;
     }
 
-    .btn-espresso { background: var(--espresso); color: var(--ivory); }
-    .btn-espresso:hover { background: var(--espresso-light); }
-    .btn-champagne { background: var(--champagne); color: var(--white); }
-    .btn-champagne:hover { background: var(--champagne-dark); }
-    .btn-sage { background: var(--sage); color: var(--white); }
-    .btn-sage:hover { background: var(--sage-dark); }
-    .btn-outline { background: var(--white); color: var(--espresso); border-color: var(--ivory-border); }
-    .btn-outline:hover { background: var(--ivory-soft); border-color: var(--champagne-light); }
-    .btn-dark-outline { background: rgba(255, 255, 255, 0.08); color: var(--ivory); border-color: rgba(201, 168, 139, 0.35); }
-    .btn-dark-outline:hover { background: rgba(255, 255, 255, 0.16); }
-    .btn-danger { background: var(--danger-bg); color: var(--danger); border-color: rgba(184, 74, 57, 0.3); }
-    .btn-danger:hover { background: var(--danger); color: var(--white); }
-    .btn-sm { padding: 6px 11px; font-size: 12px; border-radius: 8px; }
-    .btn-lg { padding: 12px 18px; font-size: 14px; border-radius: 12px; }
+    .btn-espresso {
+      background: var(--espresso);
+      color: var(--ivory);
+    }
+    .btn-espresso:hover {
+      background: var(--espresso-light);
+    }
 
+    .btn-champagne {
+      background: var(--champagne);
+      color: var(--white);
+    }
+    .btn-champagne:hover {
+      background: var(--champagne-dark);
+    }
+
+    .btn-sage {
+      background: var(--sage);
+      color: var(--white);
+    }
+    .btn-sage:hover {
+      background: var(--sage-dark);
+    }
+
+    .btn-outline {
+      background: var(--white);
+      color: var(--espresso);
+      border-color: var(--ivory-border);
+    }
+    .btn-outline:hover {
+      background: var(--ivory-soft);
+      border-color: var(--champagne-light);
+    }
+
+    .btn-dark-outline {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--ivory);
+      border-color: rgba(201, 168, 139, 0.35);
+    }
+    .btn-dark-outline:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .btn-danger {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: rgba(184, 74, 57, 0.3);
+    }
+    .btn-danger:hover {
+      background: var(--danger);
+      color: var(--white);
+    }
+
+    .btn-sm {
+      padding: 6px 11px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    .btn-lg {
+      padding: 12px 18px;
+      font-size: 14px;
+      border-radius: 12px;
+    }
+
+    /* 배지 */
     .badge {
       display: inline-flex;
       align-items: center;
@@ -135,11 +210,30 @@
       white-space: nowrap;
     }
 
-    .badge-champagne { background: var(--champagne); color: var(--white); }
-    .badge-champagne-soft { background: var(--champagne-bg); color: var(--champagne-dark); border: 1px solid rgba(176, 137, 104, 0.3); }
-    .badge-sage { background: var(--sage-bg); color: var(--sage-dark); border: 1px solid rgba(107, 127, 110, 0.3); }
-    .badge-dark { background: rgba(255, 255, 255, 0.1); color: var(--ivory); border: 1px solid rgba(255, 255, 255, 0.16); }
+    .badge-champagne {
+      background: var(--champagne);
+      color: var(--white);
+    }
 
+    .badge-champagne-soft {
+      background: var(--champagne-bg);
+      color: var(--champagne-dark);
+      border: 1px solid rgba(176, 137, 104, 0.3);
+    }
+
+    .badge-sage {
+      background: var(--sage-bg);
+      color: var(--sage-dark);
+      border: 1px solid rgba(107, 127, 110, 0.3);
+    }
+
+    .badge-dark {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--ivory);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    /* 입력 컨트롤 */
     .input, .select, .textarea {
       width: 100%;
       padding: 10px 12px;
@@ -166,6 +260,7 @@
       white-space: nowrap;
     }
 
+    /* 카드 */
     .card {
       background: var(--white);
       border: 1px solid var(--ivory-border);
@@ -182,6 +277,7 @@
       box-shadow: var(--shadow-md);
     }
 
+    /* 로그인 화면 */
     .auth-screen {
       min-height: 100vh;
       display: flex;
@@ -224,7 +320,10 @@
     }
 
     @media (min-width: 860px) {
-      .auth-grid { grid-template-columns: 1fr 1.12fr; align-items: stretch; }
+      .auth-grid {
+        grid-template-columns: 1fr 1.12fr;
+        align-items: stretch;
+      }
     }
 
     .admin-direct-card {
@@ -286,6 +385,7 @@
       box-shadow: var(--shadow-sm);
     }
 
+    /* 상단 RBAC 바 · 헤더 · 탭 */
     .rbac-bar {
       background: var(--espresso-deep);
       color: var(--ivory);
@@ -392,8 +492,15 @@
       border: 1px solid transparent;
     }
 
-    .nav-tab:hover { background: var(--ivory-soft); color: var(--espresso); }
-    .nav-tab.active { background: var(--espresso); color: var(--ivory); }
+    .nav-tab:hover {
+      background: var(--ivory-soft);
+      color: var(--espresso);
+    }
+
+    .nav-tab.active {
+      background: var(--espresso);
+      color: var(--ivory);
+    }
 
     .period-group {
       display: inline-flex;
@@ -412,8 +519,12 @@
       color: var(--espresso-muted);
     }
 
-    .period-btn.active { background: var(--champagne); color: var(--white); }
+    .period-btn.active {
+      background: var(--champagne);
+      color: var(--white);
+    }
 
+    /* 그리드 & 카드 */
     .workspace-body {
       padding: 22px 0 56px;
       display: flex;
@@ -427,8 +538,17 @@
       gap: 14px;
     }
 
-    @media (min-width: 640px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (min-width: 1024px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (min-width: 640px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .kpi-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
 
     .kpi-card {
       background: var(--white);
@@ -443,7 +563,9 @@
       gap: 10px;
     }
 
-    .kpi-card.sage-accent { border-top-color: var(--sage); }
+    .kpi-card.sage-accent {
+      border-top-color: var(--sage);
+    }
 
     .kpi-top {
       display: flex;
@@ -478,31 +600,89 @@
       color: var(--espresso-muted);
     }
 
-    .two-col-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
-    @media (min-width: 960px) {
-      .two-col-grid { grid-template-columns: 1.15fr 0.85fr; }
-      .two-col-equal { grid-template-columns: 1fr 1fr; }
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
     }
 
-    .three-col-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-    @media (min-width: 900px) { .three-col-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 960px) {
+      .two-col-grid {
+        grid-template-columns: 1.15fr 0.85fr;
+      }
+      .two-col-equal {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
 
-    .form-grid-5 { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    @media (min-width: 640px) { .form-grid-5 { grid-template-columns: repeat(2, 1fr); } }
-    @media (min-width: 1024px) { .form-grid-5 { grid-template-columns: repeat(3, 1fr); } }
+    .three-col-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
 
-    .chart-box { position: relative; width: 100%; height: 270px; }
-    .chart-box-tall { position: relative; width: 100%; height: 300px; }
-    .chart-canvas { width: 100%; height: 100%; display: block; }
+    @media (min-width: 900px) {
+      .three-col-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
 
+    .form-grid-5 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .form-grid-5 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .form-grid-5 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* 차트 영역 */
+    .chart-box {
+      position: relative;
+      width: 100%;
+      height: 270px;
+    }
+
+    .chart-box-tall {
+      position: relative;
+      width: 100%;
+      height: 300px;
+    }
+
+    .chart-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* 월별 미니 요약 그리드 */
     .month-strip {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       margin-top: 14px;
     }
-    @media (min-width: 640px) { .month-strip { grid-template-columns: repeat(6, 1fr); } }
-    @media (min-width: 1024px) { .month-strip { grid-template-columns: repeat(12, 1fr); } }
+
+    @media (min-width: 640px) {
+      .month-strip {
+        grid-template-columns: repeat(6, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .month-strip {
+        grid-template-columns: repeat(12, 1fr);
+      }
+    }
 
     .month-cell {
       background: var(--ivory);
@@ -511,8 +691,13 @@
       padding: 8px 6px;
       text-align: center;
     }
-    .month-cell.has-data { background: var(--champagne-bg); border-color: rgba(176, 137, 104, 0.45); }
 
+    .month-cell.has-data {
+      background: var(--champagne-bg);
+      border-color: rgba(176, 137, 104, 0.45);
+    }
+
+    /* 월간 성과 그래프 단위 전환 컨트롤 & 달력 그리드 */
     .unit-toggle-group {
       display: inline-flex;
       align-items: center;
@@ -529,7 +714,11 @@
       font-weight: 600;
       color: var(--espresso-muted);
     }
-    .unit-toggle-btn.active { background: var(--espresso); color: var(--ivory); }
+
+    .unit-toggle-btn.active {
+      background: var(--espresso);
+      color: var(--ivory);
+    }
 
     .quarter-strip {
       display: grid;
@@ -537,8 +726,18 @@
       gap: 10px;
       margin-top: 14px;
     }
-    @media (min-width: 640px) { .quarter-strip { grid-template-columns: repeat(2, 1fr); } }
-    @media (min-width: 1024px) { .quarter-strip { grid-template-columns: repeat(4, 1fr); } }
+
+    @media (min-width: 640px) {
+      .quarter-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .quarter-strip {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
 
     .cal-summary-bar {
       display: flex;
@@ -579,9 +778,19 @@
       flex-direction: column;
       justify-content: space-between;
     }
-    .cal-day.empty { background: transparent; border-color: transparent; min-height: 0; }
-    .cal-day.has-data { background: var(--champagne-bg); border-color: var(--champagne); }
 
+    .cal-day.empty {
+      background: transparent;
+      border-color: transparent;
+      min-height: 0;
+    }
+
+    .cal-day.has-data {
+      background: var(--champagne-bg);
+      border-color: var(--champagne);
+    }
+
+    /* 진행률 바 */
     .progress-track {
       width: 100%;
       height: 8px;
@@ -597,6 +806,7 @@
       transition: width 0.3s ease;
     }
 
+    /* 테이블 */
     .table-wrap {
       width: 100%;
       overflow-x: auto;
@@ -605,7 +815,11 @@
       background: var(--white);
     }
 
-    table { width: 100%; border-collapse: collapse; text-align: left; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
 
     thead th {
       background: var(--ivory-soft);
@@ -624,9 +838,16 @@
       color: var(--espresso);
       white-space: nowrap;
     }
-    tbody tr:last-child td { border-bottom: none; }
-    tbody tr:hover td { background: #FCF9F4; }
 
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover td {
+      background: #FCF9F4;
+    }
+
+    /* 모달 & 토스트 */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -651,7 +872,10 @@
       flex-direction: column;
       overflow: hidden;
     }
-    .modal-panel.modal-sm { max-width: 440px; }
+
+    .modal-panel.modal-sm {
+      max-width: 440px;
+    }
 
     .modal-header {
       background: var(--espresso);
@@ -703,8 +927,14 @@
       font-size: 13px;
       font-weight: 500;
     }
-    .toast-item.toast-error { border-left-color: var(--danger); }
-    .toast-item.toast-success { border-left-color: var(--sage); }
+
+    .toast-item.toast-error {
+      border-left-color: var(--danger);
+    }
+
+    .toast-item.toast-success {
+      border-left-color: var(--sage);
+    }
 
     .toggle-row {
       display: flex;
@@ -730,17 +960,28 @@
     }
 
     @media print {
-      .no-print { display: none !important; }
-      body { background: #FFFFFF !important; }
-      .card, .kpi-card { box-shadow: none !important; break-inside: avoid; }
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: #FFFFFF !important;
+      }
+      .card, .kpi-card {
+        box-shadow: none !important;
+        break-inside: avoid;
+      }
     }
   </style>
 </head>
 <body>
 
+  <!-- 알림 토스트 컨테이너 -->
   <div id="toastContainer" class="toast-container no-print"></div>
 
-  <!-- 1. 로그인 및 임직원 회원가입 게이트 화면 -->
+  <!-- =========================================================================
+       1. 로그인 및 임직원 회원가입 게이트 화면
+       (로그인 화면에서는 DB 연동 버튼 비노출 — 관리자 접속 후에만 노출)
+       ========================================================================= -->
   <section id="authGateView" class="auth-screen">
     <header class="auth-topbar">
       <div class="auth-topbar-inner">
@@ -763,6 +1004,7 @@
 
     <main class="auth-main">
       <div class="auth-grid">
+        <!-- 좌측: 대표원장 · 관리자 패스워드 직통 접속 (동일 마스터 패스워드 적용) -->
         <div class="admin-direct-card">
           <div>
             <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:14px;">
@@ -804,6 +1046,7 @@
           </div>
         </div>
 
+        <!-- 우측: 지점원장 · 디자이너 이름·비밀번호 로그인 및 신규 회원가입 -->
         <div class="card" style="padding:26px; display:flex; flex-direction:column; justify-content:space-between;">
           <div>
             <div class="auth-tab-bar">
@@ -815,6 +1058,7 @@
               </button>
             </div>
 
+            <!-- 임직원 로그인 폼 -->
             <form id="memberLoginForm" onsubmit="handleMemberLogin(event)" style="display:flex; flex-direction:column; gap:14px;">
               <div>
                 <label class="field-label">이름</label>
@@ -833,6 +1077,7 @@
               </button>
             </form>
 
+            <!-- 임직원 회원가입 폼 -->
             <form id="memberSignupForm" class="hidden" onsubmit="handleMemberSignup(event)" style="display:flex; flex-direction:column; gap:12px;">
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <div>
@@ -883,7 +1128,9 @@
     </main>
   </section>
 
-  <!-- 2. 메인 워크스페이스 화면 -->
+  <!-- =========================================================================
+       2. 메인 워크스페이스 화면
+       ========================================================================= -->
   <section id="appWorkspaceView" class="hidden" style="min-height:100vh; display:flex; flex-direction:column;">
 
     <!-- 최상단 RBAC 전환 바 (웹 화면 비노출 고정) -->
@@ -891,29 +1138,42 @@
       <div class="container rbac-inner">
         <div class="rbac-group">
           <span class="badge badge-champagne">RBAC 뷰 전환</span>
-          <button type="button" id="rbacBtnCeo" class="rbac-pill" onclick="switchAdminPreview('ceo')">👑 대표원장</button>
-          <button type="button" id="rbacBtnAdmin" class="rbac-pill" onclick="switchAdminPreview('admin')">🛠️ 관리자</button>
+          <button type="button" id="rbacBtnCeo" class="rbac-pill" onclick="switchAdminPreview('ceo')">
+            👑 대표원장
+          </button>
+          <button type="button" id="rbacBtnAdmin" class="rbac-pill" onclick="switchAdminPreview('admin')">
+            🛠️ 관리자
+          </button>
+
           <div style="display:inline-flex; align-items:center; gap:5px;">
-            <button type="button" id="rbacBtnDirector" class="rbac-pill" onclick="switchAdminPreview('director')">🏢 지점원장 뷰</button>
+            <button type="button" id="rbacBtnDirector" class="rbac-pill" onclick="switchAdminPreview('director')">
+              🏢 지점원장 뷰
+            </button>
             <select id="rbacBranchSelect" class="rbac-select" onchange="onRbacBranchChange(this.value)">
               <option value="파주 운정점">파주 운정점</option>
               <option value="운정역점">운정역점</option>
               <option value="마곡발산점">마곡발산점</option>
             </select>
           </div>
+
           <div style="display:inline-flex; align-items:center; gap:5px;">
-            <button type="button" id="rbacBtnDesigner" class="rbac-pill" onclick="switchAdminPreview('designer')">✂️ 디자이너 뷰</button>
+            <button type="button" id="rbacBtnDesigner" class="rbac-pill" onclick="switchAdminPreview('designer')">
+              ✂️ 디자이너 뷰
+            </button>
             <select id="rbacDesignerSelect" class="rbac-select" onchange="onRbacDesignerChange(this.value)">
               <option value="">등록 디자이너 없음</option>
             </select>
           </div>
         </div>
+
+        <!-- DB 연동 상태 배지 (관리자 모드일 때만 표시) -->
         <div id="rbacDbStatusWrap" class="rbac-group hidden">
           <span id="workspaceDbStatusBadge" class="badge badge-dark">☁️ 로컬 연동</span>
         </div>
       </div>
     </div>
 
+    <!-- 메인 브랜드 헤더 (좌측 공식 유로소 로고 + 직급 배지) -->
     <header class="main-header no-print">
       <div class="container header-inner">
         <div class="header-left">
@@ -929,22 +1189,42 @@
         </div>
 
         <div class="header-right">
-          <button type="button" id="btnOpenTargets" class="btn btn-champagne btn-sm hidden" onclick="openTargetModal()">🎯 목표치 설정</button>
-          <button type="button" id="btnOpenVisibility" class="btn btn-dark-outline btn-sm hidden" onclick="openVisibilityModal()">🔐 열람 데이터 설정</button>
-          <button type="button" id="btnOpenQuickSignup" class="btn btn-dark-outline btn-sm hidden" onclick="openQuickMemberModal()">+ 임직원 등록</button>
-          <button type="button" id="btnOpenDbHeader" class="btn btn-dark-outline btn-sm hidden" onclick="openDbModal()">☁️ DB 연동</button>
-          <button type="button" class="btn btn-dark-outline btn-sm" onclick="handleLogout()">로그아웃</button>
+          <button type="button" id="btnOpenTargets" class="btn btn-champagne btn-sm hidden" onclick="openTargetModal()">
+            🎯 목표치 설정
+          </button>
+          <button type="button" id="btnOpenVisibility" class="btn btn-dark-outline btn-sm hidden" onclick="openVisibilityModal()">
+            🔐 열람 데이터 설정
+          </button>
+          <button type="button" id="btnOpenQuickSignup" class="btn btn-dark-outline btn-sm hidden" onclick="openQuickMemberModal()">
+            + 임직원 등록
+          </button>
+          <!-- DB 연동 버튼은 '관리자(admin)' 모드에서만 노출 -->
+          <button type="button" id="btnOpenDbHeader" class="btn btn-dark-outline btn-sm hidden" onclick="openDbModal()">
+            ☁️ DB 연동
+          </button>
+          <button type="button" class="btn btn-dark-outline btn-sm" onclick="handleLogout()">
+            로그아웃
+          </button>
         </div>
       </div>
     </header>
 
+    <!-- 서브 메뉴 탭 & 기간 필터 -->
     <nav class="subnav-bar no-print">
       <div class="container subnav-inner">
         <div class="nav-tabs">
-          <button type="button" id="tabBtnDashboard" class="nav-tab active" onclick="switchMainTab('dashboard')">📊 KPI 대시보드</button>
-          <button type="button" id="tabBtnCrm" class="nav-tab" onclick="switchMainTab('crm')">🧮 고객관리(CRM) 5대 지표 입력·자동계산</button>
-          <button type="button" id="tabBtnBranchCompare" class="nav-tab hidden" onclick="switchMainTab('branches')">🏆 3대 지점원장 &amp; 총 결과 KPI 비교 분석</button>
-          <button type="button" id="tabBtnCoaching" class="nav-tab" onclick="switchMainTab('coaching')">💬 1:1 코칭 노트</button>
+          <button type="button" id="tabBtnDashboard" class="nav-tab active" onclick="switchMainTab('dashboard')">
+            📊 KPI 대시보드
+          </button>
+          <button type="button" id="tabBtnCrm" class="nav-tab" onclick="switchMainTab('crm')">
+            🧮 고객관리(CRM) 5대 지표 입력·자동계산
+          </button>
+          <button type="button" id="tabBtnBranchCompare" class="nav-tab hidden" onclick="switchMainTab('branches')">
+            🏆 3대 지점원장 &amp; 총 결과 KPI 비교 분석
+          </button>
+          <button type="button" id="tabBtnCoaching" class="nav-tab" onclick="switchMainTab('coaching')">
+            💬 1:1 코칭 노트
+          </button>
         </div>
 
         <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
@@ -959,26 +1239,37 @@
       </div>
     </nav>
 
+    <!-- 메인 바디 -->
     <main class="container workspace-body" style="flex:1;">
-      <!-- TAB 1: KPI 대시보드 -->
+
+      <!-- ==================== TAB 1: KPI 대시보드 ==================== -->
       <div id="tabPanelDashboard" style="display:flex; flex-direction:column; gap:20px;">
+
+        <!-- 종합 점수 배너 -->
         <div class="card-espresso" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px;">
           <div>
             <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:6px;">
               <span id="summaryBannerBadge" class="badge badge-champagne">KPI 종합 평가</span>
               <span id="summaryPeriodLabel" style="font-size:12.5px; color:rgba(250,247,242,0.8);">월별 기준</span>
             </div>
-            <h2 id="summaryBannerTitle" style="font-size:22px; font-weight:700;">종합 KPI 달성 점수: 0.0점 / 100점</h2>
+            <h2 id="summaryBannerTitle" style="font-size:22px; font-weight:700;">
+              종합 KPI 달성 점수: 0.0점 / 100점
+            </h2>
           </div>
           <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;" class="no-print">
-            <button type="button" id="bannerTargetBtn" class="btn btn-champagne btn-sm hidden" onclick="openTargetModal()">🎯 목표치 설정</button>
-            <button type="button" class="btn btn-dark-outline btn-sm" onclick="switchMainTab('crm')">🧮 CRM 5대 지표 입력 &rarr;</button>
+            <button type="button" id="bannerTargetBtn" class="btn btn-champagne btn-sm hidden" onclick="openTargetModal()">
+              🎯 목표치 설정
+            </button>
+            <button type="button" class="btn btn-dark-outline btn-sm" onclick="switchMainTab('crm')">
+              🧮 CRM 5대 지표 입력 &rarr;
+            </button>
           </div>
         </div>
 
+        <!-- 4대 핵심 KPI 카드 그리드 -->
         <div id="kpiCardsContainer" class="kpi-grid"></div>
 
-        <!-- 월간 성과 그래프 (달력 월 단위 · 분기 단위 · 1년 단위) -->
+        <!-- ==================== 월간 성과 그래프 (달력 월 단위 · 분기 단위 · 1년 단위) ==================== -->
         <div id="individualMonthlyChartSection" class="card">
           <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;">
             <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
@@ -987,20 +1278,27 @@
             </div>
 
             <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
+              <!-- 조회 단위 토글: 달력 월 단위 / 분기 단위 / 1년 단위 -->
               <div class="unit-toggle-group">
                 <button type="button" id="indivUnitBtnMonth" class="unit-toggle-btn active" onclick="setIndivGraphUnit('month')">달력 월 단위</button>
                 <button type="button" id="indivUnitBtnQuarter" class="unit-toggle-btn" onclick="setIndivGraphUnit('quarter')">분기 단위</button>
                 <button type="button" id="indivUnitBtnYear" class="unit-toggle-btn" onclick="setIndivGraphUnit('year')">1년 단위</button>
               </div>
 
+              <!-- 달력 월 선택기 (달력 월 단위 모드) -->
               <div id="indivCalendarMonthWrap" style="display:inline-flex; align-items:center; gap:4px;">
                 <button type="button" class="btn btn-outline btn-sm" style="padding:6px 9px;" onclick="shiftIndivCalendarMonth(-1)" title="이전 달">&lsaquo;</button>
                 <input type="month" id="indivCalendarMonthInput" class="input" style="width:auto; padding:5px 10px; font-size:12.5px;" onchange="renderIndividualMonthlySection()" />
                 <button type="button" class="btn btn-outline btn-sm" style="padding:6px 9px;" onclick="shiftIndivCalendarMonth(1)" title="다음 달">&rsaquo;</button>
               </div>
 
-              <select id="indivYearSelect" class="select hidden" style="width:auto; padding:6px 10px; font-size:12.5px;" onchange="renderIndividualMonthlySection()"></select>
-              <select id="indivMemberSelect" class="select" style="width:auto; min-width:155px; padding:6px 10px; font-size:12.5px;" onchange="renderIndividualMonthlySection()"></select>
+              <!-- 연도 선택기 (분기 단위 · 1년 단위 모드) -->
+              <select id="indivYearSelect" class="select hidden" style="width:auto; padding:6px 10px; font-size:12.5px;" onchange="renderIndividualMonthlySection()">
+              </select>
+
+              <!-- 대상 인원 및 지표 선택 -->
+              <select id="indivMemberSelect" class="select" style="width:auto; min-width:155px; padding:6px 10px; font-size:12.5px;" onchange="renderIndividualMonthlySection()">
+              </select>
               <select id="indivMetricSelect" class="select" style="width:auto; padding:6px 10px; font-size:12.5px;" onchange="renderIndividualMonthlySection()">
                 <option value="revenue">① 개인매출 (만원)</option>
                 <option value="kpi">🏆 KPI 종합점수 (점)</option>
@@ -1015,9 +1313,11 @@
             <canvas id="indivMonthlyCanvas" class="chart-canvas"></canvas>
           </div>
 
+          <!-- 단위별 하단 요약 (달력 월 그리드 / 4분기 요약 / 12개월 요약) -->
           <div id="indivMonthlyStrip"></div>
         </div>
 
+        <!-- 전체/지점 추이 & 인원 비교 차트 섹션 -->
         <div id="dashboardChartsGrid" class="two-col-grid two-col-equal">
           <div id="primaryChartCard" class="card">
             <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:14px;">
@@ -1045,6 +1345,7 @@
           </div>
         </div>
 
+        <!-- 소속 인원 성과 요약 테이블 -->
         <div id="memberPerformanceCard" class="card">
           <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;">
             <h3 id="memberTableTitle" style="font-size:16px; font-weight:700;">지점원장 · 디자이너 KPI 현황</h3>
@@ -1058,13 +1359,16 @@
           </div>
         </div>
 
+        <!-- 대표원장 · 관리자 전용: 전체 가입자 리스트 및 회원탈퇴 관리 -->
         <div id="adminMemberManageSection" class="card hidden no-print">
           <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;">
             <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
               <h3 style="font-size:16px; font-weight:700;">👥 전체 가입자 리스트 및 회원탈퇴 관리</h3>
               <span class="badge badge-champagne-soft">대표원장 · 관리자 전용</span>
             </div>
-            <button type="button" class="btn btn-espresso btn-sm" onclick="openQuickMemberModal()">+ 신규 임직원 직접 등록</button>
+            <button type="button" class="btn btn-espresso btn-sm" onclick="openQuickMemberModal()">
+              + 신규 임직원 직접 등록
+            </button>
           </div>
           <div class="table-wrap">
             <table>
@@ -1084,11 +1388,13 @@
             </table>
           </div>
         </div>
+
       </div>
 
-      <!-- TAB 2: CRM 5대 지표 입력·자동계산 -->
+      <!-- ==================== TAB 2: CRM 5대 지표 입력·자동계산 ==================== -->
       <div id="tabPanelCrm" class="hidden" style="display:flex; flex-direction:column; gap:20px;">
         <div class="two-col-grid">
+          <!-- 좌측: 5대 지표 입력 폼 -->
           <div class="card">
             <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px;">
               <h3 style="font-size:17px; font-weight:700;">🧮 고객관리(CRM) 5대 지표 입력</h3>
@@ -1123,24 +1429,30 @@
                 <div>
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:5px;">
                     <label class="field-label" style="margin-bottom:0;">④ 재방문 고객수 (명)</label>
-                    <button type="button" style="font-size:11.5px; color:var(--champagne-dark); font-weight:600;" onclick="autoFillRevisitFromTotal()">총고객-신규 자동적용</button>
+                    <button type="button" style="font-size:11.5px; color:var(--champagne-dark); font-weight:600;" onclick="autoFillRevisitFromTotal()">
+                      총고객-신규 자동적용
+                    </button>
                   </div>
                   <input type="number" step="1" min="0" id="crmRevisitCustInput" class="input" placeholder="예: 138" oninput="recalcCrmLive()" required />
                 </div>
                 <div id="crmUnitPriceFieldWrap" class="hidden">
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:5px;">
                     <label class="field-label" style="margin-bottom:0;">⑤ 객단가 (원)</label>
-                    <button type="button" style="font-size:11.5px; color:var(--champagne-dark); font-weight:600;" onclick="autoFillUnitPriceFromRevenue()">매출÷고객수 자동계산</button>
+                    <button type="button" style="font-size:11.5px; color:var(--champagne-dark); font-weight:600;" onclick="autoFillUnitPriceFromRevenue()">
+                      매출÷고객수 자동계산
+                    </button>
                   </div>
                   <input type="number" step="1" min="0" id="crmUnitPriceInput" class="input" placeholder="예: 102000" oninput="recalcCrmLive()" />
                 </div>
               </div>
 
-              <!-- 대표원장 뷰 전용 객단가 설정 패널 -->
+              <!-- 대표원장 뷰 전용: 객단가 & 목표 객단가 & 목표 객단가 값 범위 직접 설정 패널 -->
               <div id="crmAdminUnitPricePanel" class="hidden" style="background:var(--champagne-bg); border:1px solid rgba(176,137,104,0.35); border-radius:14px; padding:14px;">
                 <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;">
                   <span style="font-size:13px; font-weight:700; color:var(--espresso);">👑 대표원장 전용 — 선택 인원 객단가 · 목표 객단가 · 값 범위 자유 설정</span>
-                  <button type="button" class="btn btn-champagne btn-sm" onclick="saveInlineUnitPriceSettings()">객단가 설정 즉시 적용</button>
+                  <button type="button" class="btn btn-champagne btn-sm" onclick="saveInlineUnitPriceSettings()">
+                    객단가 설정 즉시 적용
+                  </button>
                 </div>
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:10px;">
                   <div>
@@ -1170,6 +1482,7 @@
             </form>
           </div>
 
+          <!-- 우측: 실시간 자동 계산 결과 프리뷰 -->
           <div style="display:flex; flex-direction:column; gap:16px;">
             <div class="card-espresso">
               <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
@@ -1190,6 +1503,7 @@
 
             <div class="card" style="display:flex; flex-direction:column; gap:12px;">
               <h4 style="font-size:14.5px; font-weight:700;">항목별 실시간 달성 현황</h4>
+
               <div>
                 <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:4px;">
                   <span>개인매출 (40%)</span>
@@ -1197,6 +1511,7 @@
                 </div>
                 <div class="progress-track"><div id="liveBarRev" class="progress-fill" style="width:0%;"></div></div>
               </div>
+
               <div>
                 <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:4px;">
                   <span>재방문 비율 (30%)</span>
@@ -1204,6 +1519,7 @@
                 </div>
                 <div class="progress-track"><div id="liveBarRevRate" class="progress-fill" style="width:0%;"></div></div>
               </div>
+
               <div>
                 <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:4px;">
                   <span id="liveUnitPriceLabel">객단가 (20%)</span>
@@ -1211,6 +1527,7 @@
                 </div>
                 <div class="progress-track"><div id="liveBarUnit" class="progress-fill" style="width:0%;"></div></div>
               </div>
+
               <div>
                 <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:4px;">
                   <span>신규 고객수 (10%)</span>
@@ -1222,6 +1539,7 @@
           </div>
         </div>
 
+        <!-- CRM 입력 이력 목록 -->
         <div id="crmHistoryCard" class="card">
           <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;">
             <h3 style="font-size:16px; font-weight:700;">📋 CRM 입력 이력</h3>
@@ -1236,26 +1554,34 @@
         </div>
       </div>
 
-      <!-- TAB 3: 3대 지점원장 & 총 결과 KPI 비교 분석 -->
+      <!-- ==================== TAB 3: 3대 지점원장 & 총 결과 KPI 비교 분석 ==================== -->
       <div id="tabPanelBranches" class="hidden" style="display:flex; flex-direction:column; gap:20px;">
         <div class="card-espresso" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;">
           <div>
             <span class="badge badge-champagne" style="margin-bottom:6px;">3대 지점 통합 비교</span>
             <h2 style="font-size:20px; font-weight:700;">파주 운정점 · 운정역점 · 마곡발산점 KPI 달성 비교</h2>
           </div>
-          <button type="button" id="branchTabTargetBtn" class="btn btn-champagne btn-sm hidden" onclick="openTargetModal()">🎯 매장 · 지점원장 목표치 수정</button>
+          <button type="button" id="branchTabTargetBtn" class="btn btn-champagne btn-sm hidden" onclick="openTargetModal()">
+            🎯 매장 · 지점원장 목표치 수정
+          </button>
         </div>
 
+        <!-- 3대 지점 카드 -->
         <div id="branchComparisonCards" class="three-col-grid"></div>
 
+        <!-- 3대 지점 차트 -->
         <div class="two-col-grid two-col-equal">
           <div class="card">
             <h3 style="font-size:15.5px; font-weight:700; margin-bottom:12px;">3대 지점 매출 목표 대비 실적 (만원)</h3>
-            <div class="chart-box"><canvas id="branchRevChartCanvas" class="chart-canvas"></canvas></div>
+            <div class="chart-box">
+              <canvas id="branchRevChartCanvas" class="chart-canvas"></canvas>
+            </div>
           </div>
           <div class="card">
             <h3 style="font-size:15.5px; font-weight:700; margin-bottom:12px;">3대 지점원장 종합 KPI 점수 비교</h3>
-            <div class="chart-box"><canvas id="branchKpiChartCanvas" class="chart-canvas"></canvas></div>
+            <div class="chart-box">
+              <canvas id="branchKpiChartCanvas" class="chart-canvas"></canvas>
+            </div>
           </div>
         </div>
 
@@ -1281,7 +1607,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: 1:1 코칭 노트 -->
+      <!-- ==================== TAB 4: 1:1 코칭 노트 ==================== -->
       <div id="tabPanelCoaching" class="hidden" style="display:flex; flex-direction:column; gap:20px;">
         <div id="coachingWriteCard" class="card no-print">
           <h3 style="font-size:16px; font-weight:700; margin-bottom:14px;">✍️ 1:1 코칭 및 성장 피드백 작성</h3>
@@ -1314,10 +1640,13 @@
           <div id="coachingListContainer" style="display:flex; flex-direction:column; gap:12px;"></div>
         </div>
       </div>
+
     </main>
   </section>
 
-  <!-- 모달 1: 목표치 설정 -->
+  <!-- =========================================================================
+       모달 1: 대표원장 · 관리자 전용 [🎯 목표치 설정] 모달
+       ========================================================================= -->
   <div id="targetModal" class="modal-backdrop hidden no-print">
     <div class="modal-panel" style="max-width:880px;">
       <div class="modal-header">
@@ -1327,16 +1656,25 @@
         </div>
         <button type="button" style="color:var(--ivory); font-size:20px; padding:2px 6px;" onclick="closeTargetModal()">&times;</button>
       </div>
+
       <div class="modal-body">
         <div style="display:flex; flex-wrap:wrap; gap:6px; border-bottom:1px solid var(--ivory-border); padding-bottom:12px;">
-          <button type="button" id="targetSubTab1" class="btn btn-espresso btn-sm" onclick="switchTargetModalTab(1)">① 3대 매장별 목표치</button>
-          <button type="button" id="targetSubTab2" class="btn btn-outline btn-sm" onclick="switchTargetModalTab(2)">② 각 지점원장 개별 목표치</button>
-          <button type="button" id="targetSubTab3" class="btn btn-outline btn-sm" onclick="switchTargetModalTab(3)">③ 각 임직원별 목표치 · 객단가 범위 설정</button>
+          <button type="button" id="targetSubTab1" class="btn btn-espresso btn-sm" onclick="switchTargetModalTab(1)">
+            ① 3대 매장별 목표치
+          </button>
+          <button type="button" id="targetSubTab2" class="btn btn-outline btn-sm" onclick="switchTargetModalTab(2)">
+            ② 각 지점원장 개별 목표치
+          </button>
+          <button type="button" id="targetSubTab3" class="btn btn-outline btn-sm" onclick="switchTargetModalTab(3)">
+            ③ 각 임직원별 목표치 · 객단가 범위 설정
+          </button>
         </div>
+
         <div id="targetModalPane1" style="display:flex; flex-direction:column; gap:14px;"></div>
         <div id="targetModalPane2" class="hidden" style="display:flex; flex-direction:column; gap:14px;"></div>
         <div id="targetModalPane3" class="hidden" style="display:flex; flex-direction:column; gap:16px;"></div>
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-outline" onclick="closeTargetModal()">닫기</button>
         <button type="button" class="btn btn-champagne" onclick="saveAllTargetsFromModal()">전체 목표치 저장 및 즉시 반영</button>
@@ -1344,7 +1682,9 @@
     </div>
   </div>
 
-  <!-- 모달 2: 열람 데이터 설정 -->
+  <!-- =========================================================================
+       모달 2: 대표원장 · 관리자 전용 [🔐 열람 데이터 설정] 모달
+       ========================================================================= -->
   <div id="visibilityModal" class="modal-backdrop hidden no-print">
     <div class="modal-panel">
       <div class="modal-header">
@@ -1354,7 +1694,9 @@
         </div>
         <button type="button" style="color:var(--ivory); font-size:20px; padding:2px 6px;" onclick="closeVisibilityModal()">&times;</button>
       </div>
+
       <div class="modal-body" id="visibilityModalBody"></div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-outline" onclick="closeVisibilityModal()">닫기</button>
         <button type="button" class="btn btn-espresso" onclick="saveVisibilitySettings()">열람 설정 저장</button>
@@ -1362,7 +1704,9 @@
     </div>
   </div>
 
-  <!-- 모달 3: 신규 임직원 등록 -->
+  <!-- =========================================================================
+       모달 3: [+ 임직원 등록] 모달
+       ========================================================================= -->
   <div id="quickMemberModal" class="modal-backdrop hidden no-print">
     <div class="modal-panel modal-sm">
       <div class="modal-header">
@@ -1405,7 +1749,9 @@
     </div>
   </div>
 
-  <!-- 모달 4: 관리자 전용 Supabase DB 연동 설정 -->
+  <!-- =========================================================================
+       모달 4: 관리자 전용 [☁️ Supabase Cloud DB 연동 점검] 모달
+       ========================================================================= -->
   <div id="dbModal" class="modal-backdrop hidden no-print">
     <div class="modal-panel">
       <div class="modal-header">
@@ -1415,13 +1761,16 @@
         </div>
         <button type="button" style="color:var(--ivory); font-size:20px; padding:2px 6px;" onclick="closeDbModal()">&times;</button>
       </div>
+
       <div class="modal-body">
         <div style="background:var(--ivory); border:1px solid var(--ivory-border); border-radius:12px; padding:14px;">
           <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;">
             <strong style="font-size:13.5px;">실시간 REST 연결 점검 결과</strong>
             <button type="button" class="btn btn-espresso btn-sm" onclick="testAndSyncSupabase(true)">🔄 지금 연결 상태 재점검</button>
           </div>
-          <div id="dbDiagnosticText" style="font-size:12.5px; color:var(--espresso-light); line-height:1.6;">연결 상태를 확인 중입니다...</div>
+          <div id="dbDiagnosticText" style="font-size:12.5px; color:var(--espresso-light); line-height:1.6;">
+            연결 상태를 확인 중입니다...
+          </div>
         </div>
 
         <div>
@@ -1459,6 +1808,7 @@ create policy "Allow public read write" on public.yuroso_app_state
   for all using (true) with check (true);</pre>
         </div>
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-outline" onclick="resetDefaultDbConfig()">기본 내장 키 복원</button>
         <button type="button" class="btn btn-outline" onclick="closeDbModal()">닫기</button>
@@ -1467,7 +1817,9 @@ create policy "Allow public read write" on public.yuroso_app_state
     </div>
   </div>
 
-  <!-- 모달 5: 커스텀 확인 모달 -->
+  <!-- =========================================================================
+       모달 5: 커스텀 확인 모달 (confirm() 완전 대체)
+       ========================================================================= -->
   <div id="confirmModal" class="modal-backdrop hidden no-print">
     <div class="modal-panel modal-sm">
       <div class="modal-header">
@@ -1485,7 +1837,9 @@ create policy "Allow public read write" on public.yuroso_app_state
   </div>
 
   <script>
-    /* 1. 안전한 스토리지 래퍼 */
+    /* =========================================================================
+       1. 안전한 스토리지 래퍼 (iframe 샌드박스 SecurityError 방어)
+       ========================================================================= */
     const memoryStore = {};
     const safeStorage = {
       getItem: function(key) {
@@ -1516,7 +1870,10 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
     };
 
-    /* 2. 고정 상수 및 기본 상태 */
+    /* =========================================================================
+       2. 고정 상수 및 기본 상태 정의
+       (대표원장 패스워드와 관리자 패스워드를 ^^yuroso1004 로 통일)
+       ========================================================================= */
     const BRANCHES = ['파주 운정점', '운정역점', '마곡발산점'];
     const MONTHS_KO = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
     const INVITE_CODE = 'Yuroso1007';
@@ -1678,7 +2035,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
     }
 
-    /* 3. 토스트 알림 & 커스텀 확인 모달 */
+    /* =========================================================================
+       3. 토스트 알림 & 커스텀 확인 모달
+       ========================================================================= */
     function showToast(message, type) {
       const container = document.getElementById('toastContainer');
       if (!container) return;
@@ -1710,7 +2069,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       if (typeof fn === 'function') fn();
     });
 
-    /* 4. Supabase 순수 HTTPS REST 연동 (fetchWithTimeout 복구 완료) */
+    /* =========================================================================
+       4. Supabase 순수 HTTPS REST 연동 (관리자 전용 설정 UI)
+       ========================================================================= */
     async function fetchWithTimeout(url, options, timeoutMs) {
       const ms = timeoutMs || 8000;
       if (typeof AbortController !== 'undefined') {
@@ -1948,7 +2309,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       document.body.removeChild(ta);
     }
 
-    /* 5. 로그인 · 회원가입 · 세션 유지 관리 */
+    /* =========================================================================
+       5. 로그인 · 회원가입 · 세션 유지 관리
+       ========================================================================= */
     function escapeHtml(str) {
       return String(str == null ? '' : str)
         .replace(/&/g, '&amp;')
@@ -1991,6 +2354,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       const pw = document.getElementById('adminPasswordInput').value;
       const keep = document.getElementById('adminKeepLogin').checked;
 
+      /* 대표원장과 관리자 패스워드를 ^^yuroso1004 로 완전 통일 */
       if (pw !== UNIFIED_MASTER_PASSWORD) {
         showToast('패스워드가 일치하지 않습니다.', 'error');
         return;
@@ -2062,6 +2426,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       const pw = document.getElementById('loginPasswordInput').value;
       const keep = document.getElementById('memberKeepLogin').checked;
 
+      /* 임직원 로그인 폼에서도 통일된 대표원장/관리자 패스워드 입력 시 직통 접속 지원 */
       if (pw === UNIFIED_MASTER_PASSWORD && (name === '영화' || name === '대표원장' || name === '영화 대표원장')) {
         document.getElementById('loginPasswordInput').value = '';
         establishSession({ role: 'ceo', name: '영화 대표원장', branch: '전 지점 총괄', memberId: CEO_MEMBER_ID }, keep);
@@ -2159,22 +2524,25 @@ create policy "Allow public read write" on public.yuroso_app_state
       return Boolean(loggedInSession && (loggedInSession.role === 'ceo' || loggedInSession.role === 'admin'));
     }
 
+    /* 객단가 설정 UI 노출 기준: 오직 '대표원장(ceo)' 뷰에서만 노출 */
     function isCeoViewVisible() {
       return Boolean(isTopAdminLogged() && activeView.role === 'ceo');
     }
 
+    /* DB 연동 버튼 및 모달 노출 기준: 오직 '관리자(admin)' 모드에서만 노출 */
     function isAdminViewVisible() {
       return Boolean(isTopAdminLogged() && activeView.role === 'admin');
     }
 
-    /* 6. RBAC 뷰 전환 & 탭 제어 */
+    /* =========================================================================
+       6. RBAC 뷰 전환 & 탭 제어
+       ========================================================================= */
     function switchAdminPreview(viewRole) {
       if (!isTopAdminLogged()) return;
       activeView.role = viewRole;
       if (viewRole === 'designer') {
-        const staffOnly = getStaffMembersOnly();
-        if (!staffOnly.some(function(m) { return m.id === activeView.memberId; })) {
-          activeView.memberId = staffOnly[0] ? staffOnly[0].id : '';
+        if (!appState.members.some(function(m) { return m.id === activeView.memberId; })) {
+          activeView.memberId = appState.members[0] ? appState.members[0].id : '';
         }
         if (currentTab === 'branches') currentTab = 'dashboard';
       } else if (viewRole === 'director') {
@@ -2226,7 +2594,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       renderWorkspaceAll();
     }
 
-    /* 7. KPI & CRM 핵심 계산 로직 */
+    /* =========================================================================
+       7. KPI & CRM 핵심 계산 로직
+       ========================================================================= */
     function getMemberTarget(memberId) {
       const def = appState.defaultDesignerTarget;
       const custom = (memberId && appState.memberTargets[memberId]) ? appState.memberTargets[memberId] : {};
@@ -2486,7 +2856,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       };
     }
 
-    /* 8. 화면 전체 렌더링 */
+    /* =========================================================================
+       8. 화면 전체 렌더링 (권한별 엄격 분리 + DB 연동 관리자 전용화)
+       ========================================================================= */
     function renderWorkspaceAll() {
       if (!loggedInSession) return;
 
@@ -2494,6 +2866,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       const showAdminDbUi = isAdminViewVisible();
       const viewRole = activeView.role;
 
+      /* RBAC 뷰 전환 바는 웹 화면에서 항상 숨김 유지 */
       const rbacBar = document.getElementById('rbacSwitchBar');
       if (rbacBar) rbacBar.classList.add('hidden');
 
@@ -2575,7 +2948,13 @@ create policy "Allow public read write" on public.yuroso_app_state
       const parts = curVal.split('-');
       let y = parseInt(parts[0], 10) || new Date().getFullYear();
       let m = (parseInt(parts[1], 10) || (new Date().getMonth() + 1)) + delta;
-      if (m < 1) { m = 12; y -= 1; } else if (m > 12) { m = 1; y += 1; }
+      if (m < 1) {
+        m = 12;
+        y -= 1;
+      } else if (m > 12) {
+        m = 1;
+        y += 1;
+      }
       calInput.value = String(y) + '-' + String(m).padStart(2, '0');
       renderIndividualMonthlySection();
     }
@@ -3098,7 +3477,7 @@ create policy "Allow public read write" on public.yuroso_app_state
           buildKpiCardHtml('전 지점 매출 성장', '30%', formatNumber(ceo.totalRevenue, 1) + '만원', '목표 합계 ' + formatNumber(ceo.totalTargetRev) + '만원', ceo.scoreRevGrowth.toFixed(1) + ' / 30점', false),
           buildKpiCardHtml('전 지점 영업이익', '30%', formatNumber(ceo.totalProfit) + '만원', '목표 영업이익 ' + formatNumber(ceo.totalTargetProfit) + '만원', ceo.scoreProfit.toFixed(1) + ' / 30점', true),
           buildKpiCardHtml('3대 지점 목표 달성률', '20%', ceo.targetAchRate.toFixed(1) + '%', '파주 운정 · 운정역 · 마곡발산', ceo.scoreBranchAch.toFixed(1) + ' / 20점', false),
-          buildKpiCardHtml('리더 · 인재 성장 지수', '20%', ceo.avgTalentScore.toFixed(1) + '점', '대상 임직원 ' + appState.members.length + '명 평균', ceo.scoreTalent.toFixed(1) + ' / 20점', true)
+          buildKpiCardHtml('리더 · 인재 성장 지수', '20%', ceo.avgTalentScore.toFixed(1) + '점', '등록 임직원 ' + appState.members.length + '명 평균', ceo.scoreTalent.toFixed(1) + ' / 20점', true)
         ].join('');
 
         chartsGrid.classList.remove('hidden');
@@ -3107,7 +3486,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         document.getElementById('secondaryChartTitle').textContent = '전 지점 임직원 KPI 점수 비교';
 
         memberPerfCard.classList.remove('hidden');
-        document.getElementById('memberTableTitle').textContent = '전 지점 대표원장 · 지점원장 · 디자이너 KPI 현황';
+        document.getElementById('memberTableTitle').textContent = '전 지점 지점원장 · 디자이너 KPI 현황';
         renderMemberPerformanceTable(appState.members, true);
 
       } else if (viewRole === 'director') {
@@ -3301,7 +3680,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       );
     }
 
-    /* 9. 자체 내장형 고해상도 HTML5 Canvas 차트 엔진 */
+    /* =========================================================================
+       9. 자체 내장형 고해상도 HTML5 Canvas 차트 엔진
+       ========================================================================= */
     function prepareCanvas(canvas) {
       if (!canvas) return null;
       const rect = canvas.parentElement ? canvas.parentElement.getBoundingClientRect() : { width: 420, height: 260 };
@@ -3333,6 +3714,63 @@ create policy "Allow public read write" on public.yuroso_app_state
       ctx.fillText(message, prep.width / 2, prep.height / 2);
     }
 
+    /* 월간 성과 그래프 눈금 계산: 기본 0~40 (10단위: 0, 10, 20, 30, 40) 고정, 실적이 40 초과 시에만 깔끔한 단위로 자동 확장 */
+    function computeMonthlyAxisScale(maxDataVal) {
+      const m = Math.max(0, Number(maxDataVal) || 0);
+      if (m <= 40) {
+        return { axisMax: 40, step: 10, ticks: [0, 10, 20, 30, 40] };
+      }
+      if (m <= 100) {
+        const top10 = Math.ceil(m / 10) * 10;
+        const ticks10 = [];
+        for (let v = 0; v <= top10; v += 10) {
+          ticks10.push(v);
+        }
+        return { axisMax: top10, step: 10, ticks: ticks10 };
+      }
+      const rawStep = m / 4;
+      const mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
+      const norm = rawStep / mag;
+      let niceMult = 10;
+      if (norm <= 1) niceMult = 1;
+      else if (norm <= 2) niceMult = 2;
+      else if (norm <= 2.5) niceMult = 2.5;
+      else if (norm <= 5) niceMult = 5;
+      const step = niceMult * mag;
+      const count = Math.max(4, Math.ceil(m / step));
+      const axisMax = step * count;
+      const ticks = [];
+      for (let i = 0; i <= count; i++) {
+        ticks.push(Math.round(step * i));
+      }
+      return { axisMax: axisMax, step: step, ticks: ticks };
+    }
+
+    function formatBarTopValue(v, suffix) {
+      const num = Number(v) || 0;
+      if (num <= 0) return '0';
+      const disp = num >= 1000
+        ? formatNumber(Math.round(num))
+        : (Number.isInteger(num) ? String(num) : num.toFixed(1));
+      return disp + (suffix || '');
+    }
+
+    function drawBarValueLabel(ctx, text, x, y, isZero) {
+      ctx.save();
+      ctx.font = (isZero ? '600 10px' : '700 11.5px') + ' "Inter", "Noto Sans KR", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.lineJoin = 'round';
+      ctx.miterLimit = 2;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.96)';
+      ctx.lineWidth = isZero ? 3 : 4;
+      ctx.strokeText(text, x, y);
+      ctx.fillStyle = isZero ? '#8C7B70' : '#1E1714';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    /* 달력 월 / 분기 / 1년 단위 전용 막대 + 추세선 + 목표 기준선 복합 차트 */
     function drawMonthlyComboChart(canvasId, labels, values, barLabel, barColor, targetVal, targetLabel, suffix) {
       const unitSuffix = suffix || '';
       const canvas = document.getElementById(canvasId);
@@ -3342,7 +3780,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       const width = prep.width;
       const height = prep.height;
 
-      const padTop = 38;
+      const padTop = 52;
       const padBottom = 42;
       const padLeft = 58;
       const padRight = 20;
@@ -3350,15 +3788,22 @@ create policy "Allow public read write" on public.yuroso_app_state
       const plotH = height - padTop - padBottom;
 
       const targetValue = Number(targetVal) || 0;
-      let maxVal = targetValue;
-      values.forEach(function(v) { if (v > maxVal) maxVal = v; });
-      maxVal = maxVal > 0 ? maxVal * 1.22 : 100;
+      let maxData = 0;
+      values.forEach(function(v) {
+        const nv = Math.max(0, Number(v) || 0);
+        if (nv > maxData) maxData = nv;
+      });
 
+      const scale = computeMonthlyAxisScale(maxData);
+      const maxVal = scale.axisMax;
+
+      /* 상단 범례 */
       ctx.font = '600 11.5px "Noto Sans KR", sans-serif';
       ctx.fillStyle = barColor;
       ctx.fillRect(padLeft, 9, 12, 12);
       ctx.fillStyle = '#2C221E';
       ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
       ctx.fillText(barLabel, padLeft + 17, 19);
 
       const leg2X = padLeft + ctx.measureText(barLabel).width + 38;
@@ -3373,23 +3818,33 @@ create policy "Allow public read write" on public.yuroso_app_state
       ctx.fillStyle = '#526455';
       ctx.fillText(targetLabel, leg2X + 23, 19);
 
-      const steps = 4;
-      ctx.font = '400 11px "Inter", "Noto Sans KR", sans-serif';
-      for (let i = 0; i <= steps; i++) {
-        const ratio = i / steps;
+      /* 눈금선 (기본 0 ~ 40, 10단위: 0, 10, 20, 30, 40) */
+      ctx.font = '500 11px "Inter", "Noto Sans KR", sans-serif';
+      scale.ticks.forEach(function(tickVal) {
+        const ratio = maxVal > 0 ? (tickVal / maxVal) : 0;
         const y = padTop + plotH - ratio * plotH;
-        ctx.strokeStyle = '#ECE5D8';
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = tickVal === 0 ? '#D6C8B4' : '#ECE5D8';
+        ctx.lineWidth = tickVal === 0 ? 1.3 : 1;
         ctx.beginPath();
         ctx.moveTo(padLeft, y);
         ctx.lineTo(width - padRight, y);
         ctx.stroke();
 
-        ctx.fillStyle = '#75645B';
+        ctx.fillStyle = '#6E5D53';
         ctx.textAlign = 'right';
-        ctx.fillText(formatNumber(Math.round(maxVal * ratio)), padLeft - 8, y + 4);
-      }
+        ctx.textBaseline = 'middle';
+        ctx.fillText(formatNumber(tickVal), padLeft - 8, y);
+      });
 
+      /* 좌측 세로 기준선 */
+      ctx.strokeStyle = '#E2D7C5';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padLeft, padTop);
+      ctx.lineTo(padLeft, padTop + plotH);
+      ctx.stroke();
+
+      /* 목표 기준선 (점선 — 현재 눈금 범위 내에 있을 때 표시) */
       if (targetValue > 0 && targetValue <= maxVal) {
         const ty = padTop + plotH - (targetValue / maxVal) * plotH;
         ctx.strokeStyle = '#6B7F6E';
@@ -3402,41 +3857,45 @@ create policy "Allow public read write" on public.yuroso_app_state
         ctx.setLineDash([]);
       }
 
+      /* 막대 렌더링 */
       const groupW = plotW / labels.length;
-      const barW = Math.min(36, Math.max(5, groupW * (labels.length > 15 ? 0.62 : 0.54)));
+      const barW = Math.min(38, Math.max(6, groupW * (labels.length > 15 ? 0.62 : 0.54)));
       const labelStep = (labels.length > 15 && width < 680) ? (width < 460 ? 5 : 2) : 1;
       const pts = [];
+      const barMeta = [];
 
       labels.forEach(function(lbl, idx) {
         const v = Math.max(0, Number(values[idx]) || 0);
-        const barH = v > 0 ? Math.max(4, (v / maxVal) * plotH) : 2;
+        const clampedV = Math.min(maxVal, v);
+        const barH = v > 0 ? Math.max(4, (clampedV / maxVal) * plotH) : 2;
         const centerX = padLeft + idx * groupW + groupW / 2;
         const x = centerX - barW / 2;
         const y = padTop + plotH - barH;
 
         ctx.fillStyle = v > 0 ? barColor : '#EFE9DD';
         ctx.beginPath();
-        if (ctx.roundRect) ctx.roundRect(x, y, barW, barH, [5, 5, 0, 0]);
-        else ctx.rect(x, y, barW, barH);
+        if (ctx.roundRect) {
+          ctx.roundRect(x, y, barW, barH, [5, 5, 0, 0]);
+        } else {
+          ctx.rect(x, y, barW, barH);
+        }
         ctx.fill();
 
+        barMeta.push({ centerX: centerX, y: y, v: v });
         if (v > 0) {
           pts.push({ x: centerX, y: y, v: v });
-          ctx.fillStyle = '#2C221E';
-          ctx.font = '600 10.5px "Inter", "Noto Sans KR", sans-serif';
-          ctx.textAlign = 'center';
-          const disp = v >= 1000 ? formatNumber(Math.round(v)) : (Number.isInteger(v) ? String(v) : v.toFixed(1));
-          ctx.fillText(disp + unitSuffix, centerX, y - 6);
         }
 
         if (idx % labelStep === 0 || idx === labels.length - 1) {
           ctx.fillStyle = '#2C221E';
           ctx.font = (labels.length > 15 ? '500 10.5px' : '500 11.5px') + ' "Noto Sans KR", sans-serif';
           ctx.textAlign = 'center';
+          ctx.textBaseline = 'alphabetic';
           ctx.fillText(lbl, centerX, padTop + plotH + 22);
         }
       });
 
+      /* 실적이 있는 지점 간 연결선 (수치 텍스트보다 먼저 그려 숫자가 가려지지 않도록 처리) */
       if (pts.length >= 2) {
         ctx.strokeStyle = '#2C221E';
         ctx.lineWidth = 2;
@@ -3450,13 +3909,24 @@ create policy "Allow public read write" on public.yuroso_app_state
         pts.forEach(function(p) {
           ctx.fillStyle = '#FFFFFF';
           ctx.beginPath();
-          ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, 3.8, 0, Math.PI * 2);
           ctx.fill();
           ctx.strokeStyle = '#2C221E';
           ctx.lineWidth = 2;
           ctx.stroke();
         });
       }
+
+      /* 막대 그래프 위 수치 표시 (최상단 레이어) */
+      barMeta.forEach(function(bm) {
+        if (bm.v > 0) {
+          const txt = formatBarTopValue(bm.v, unitSuffix);
+          const labelY = Math.max(26, bm.y - (pts.length >= 2 ? 7 : 4));
+          drawBarValueLabel(ctx, txt, bm.centerX, labelY, false);
+        } else if (labels.length <= 12 || groupW >= 20) {
+          drawBarValueLabel(ctx, '0', bm.centerX, bm.y - 3, true);
+        }
+      });
     }
 
     function drawGroupedBarChart(canvasId, labels, datasets, unitSuffix) {
@@ -3473,20 +3943,35 @@ create policy "Allow public read write" on public.yuroso_app_state
         return;
       }
 
-      const padTop = 34;
+      const isIndivMonthly = canvasId === 'indivMonthlyCanvas';
+      const padTop = isIndivMonthly ? 50 : 38;
       const padBottom = 42;
-      const padLeft = 52;
+      const padLeft = 56;
       const padRight = 18;
       const plotW = width - padLeft - padRight;
       const plotH = height - padTop - padBottom;
 
-      let maxVal = 0;
+      let maxData = 0;
       datasets.forEach(function(ds) {
-        ds.values.forEach(function(v) { if (v > maxVal) maxVal = v; });
+        ds.values.forEach(function(v) {
+          const nv = Math.max(0, Number(v) || 0);
+          if (nv > maxData) maxData = nv;
+        });
       });
-      maxVal = maxVal > 0 ? maxVal * 1.18 : 100;
+
+      let maxVal = 40;
+      let tickValues = [0, 10, 20, 30, 40];
+      if (isIndivMonthly) {
+        const scale = computeMonthlyAxisScale(maxData);
+        maxVal = scale.axisMax;
+        tickValues = scale.ticks;
+      } else {
+        maxVal = maxData > 0 ? maxData * 1.18 : 100;
+        tickValues = [0, 0.25, 0.5, 0.75, 1].map(function(r) { return Math.round(maxVal * r); });
+      }
 
       ctx.font = '600 11.5px "Noto Sans KR", sans-serif';
+      ctx.textBaseline = 'alphabetic';
       let legendX = padLeft;
       datasets.forEach(function(ds) {
         ctx.fillStyle = ds.color;
@@ -3497,23 +3982,22 @@ create policy "Allow public read write" on public.yuroso_app_state
         legendX += ctx.measureText(ds.label).width + 30;
       });
 
-      const steps = 4;
-      ctx.font = '400 11px "Inter", "Noto Sans KR", sans-serif';
-      for (let i = 0; i <= steps; i++) {
-        const ratio = i / steps;
+      ctx.font = '500 11px "Inter", "Noto Sans KR", sans-serif';
+      tickValues.forEach(function(val, i) {
+        const ratio = maxVal > 0 ? (val / maxVal) : (i / Math.max(1, tickValues.length - 1));
         const y = padTop + plotH - ratio * plotH;
-        const val = maxVal * ratio;
-        ctx.strokeStyle = '#ECE5D8';
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = val === 0 ? '#D6C8B4' : '#ECE5D8';
+        ctx.lineWidth = val === 0 ? 1.3 : 1;
         ctx.beginPath();
         ctx.moveTo(padLeft, y);
         ctx.lineTo(width - padRight, y);
         ctx.stroke();
 
-        ctx.fillStyle = '#75645B';
+        ctx.fillStyle = '#6E5D53';
         ctx.textAlign = 'right';
-        ctx.fillText(formatNumber(Math.round(val)), padLeft - 8, y + 4);
-      }
+        ctx.textBaseline = 'middle';
+        ctx.fillText(formatNumber(val), padLeft - 8, y);
+      });
 
       const groupW = plotW / labels.length;
       const barCount = datasets.length;
@@ -3521,27 +4005,41 @@ create policy "Allow public read write" on public.yuroso_app_state
       const gapPx = labels.length > 15 ? 1 : 3;
       const totalBarsW = barW * barCount + (barCount - 1) * gapPx;
       const labelStep = (labels.length > 15 && width < 680) ? (width < 460 ? 5 : 2) : 1;
+      const pendingLabels = [];
 
       labels.forEach(function(lbl, idx) {
         const startX = padLeft + idx * groupW + (groupW - totalBarsW) / 2;
         datasets.forEach(function(ds, dIdx) {
           const v = Math.max(0, Number(ds.values[idx]) || 0);
-          const barH = Math.max(2, (v / maxVal) * plotH);
+          const clampedV = Math.min(maxVal, v);
+          const barH = v > 0 ? Math.max(4, (clampedV / maxVal) * plotH) : 2;
           const x = startX + dIdx * (barW + gapPx);
           const y = padTop + plotH - barH;
 
           ctx.fillStyle = ds.color;
           ctx.beginPath();
-          if (ctx.roundRect) ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]);
-          else ctx.rect(x, y, barW, barH);
+          if (ctx.roundRect) {
+            ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]);
+          } else {
+            ctx.rect(x, y, barW, barH);
+          }
           ctx.fill();
 
-          if (v > 0 && labels.length <= 8) {
-            ctx.fillStyle = '#2C221E';
-            ctx.font = '600 10.5px "Inter", "Noto Sans KR", sans-serif';
-            ctx.textAlign = 'center';
-            const txt = v >= 1000 ? formatNumber(Math.round(v)) : (Number.isInteger(v) ? String(v) : v.toFixed(1));
-            ctx.fillText(txt + suffix, x + barW / 2, y - 5);
+          if (v > 0) {
+            const showUnit = labels.length <= 8 ? suffix : '';
+            pendingLabels.push({
+              txt: formatBarTopValue(v, showUnit),
+              cx: x + barW / 2,
+              y: Math.max(26, y - 3),
+              isZero: false
+            });
+          } else if (isIndivMonthly && labels.length <= 12 && barW >= 14) {
+            pendingLabels.push({
+              txt: '0',
+              cx: x + barW / 2,
+              y: y - 2,
+              isZero: true
+            });
           }
         });
 
@@ -3549,9 +4047,14 @@ create policy "Allow public read write" on public.yuroso_app_state
           ctx.fillStyle = '#2C221E';
           ctx.font = (labels.length > 15 ? '500 10.5px' : '500 11.5px') + ' "Noto Sans KR", sans-serif';
           ctx.textAlign = 'center';
+          ctx.textBaseline = 'alphabetic';
           const shortLbl = lbl.length > 9 ? (lbl.slice(0, 8) + '…') : lbl;
           ctx.fillText(shortLbl, padLeft + idx * groupW + groupW / 2, padTop + plotH + 22);
         }
+      });
+
+      pendingLabels.forEach(function(pl) {
+        drawBarValueLabel(ctx, pl.txt, pl.cx, pl.y, pl.isZero);
       });
     }
 
@@ -3709,7 +4212,7 @@ create policy "Allow public read write" on public.yuroso_app_state
           }
 
         } else if (viewRole === 'director') {
-          const branchMembers = appState.members.filter(function(m) { return !m.isSystemCeo && m.role !== 'ceo' && m.branch === activeView.branch; });
+          const branchMembers = appState.members.filter(function(m) { return m.branch === activeView.branch; });
           const bMemIds = new Set(branchMembers.map(function(m) { return m.id; }));
           const branchRecs = appState.crmRecords.filter(function(r) { return bMemIds.has(r.memberId); });
           const buckets = Array.from(new Set(branchRecs.map(function(r) { return getBucketKey(r.date); }))).sort().slice(-6);
@@ -3773,7 +4276,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       if (loggedInSession) renderAllCharts();
     });
 
-    /* 10. TAB 2: CRM 5대 지표 자동계산기 & 대표원장 뷰 전용 객단가 설정 */
+    /* =========================================================================
+       10. TAB 2: CRM 5대 지표 자동계산기 & 대표원장 뷰 전용 객단가 설정
+       ========================================================================= */
     function getPermittedMembersForCrm() {
       if (activeView.role === 'ceo' || activeView.role === 'admin') {
         return appState.members;
@@ -3829,6 +4334,7 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       sel.disabled = activeView.role === 'designer';
 
+      /* 객단가 입력 및 설정 패널은 오직 대표원장 뷰에서만 노출 */
       const showCeoUnitSettings = isCeoViewVisible();
       const unitFieldWrap = document.getElementById('crmUnitPriceFieldWrap');
       if (unitFieldWrap) unitFieldWrap.classList.toggle('hidden', !showCeoUnitSettings);
@@ -4037,7 +4543,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       if (activeView.role === 'ceo' || activeView.role === 'admin') {
         list = appState.crmRecords;
       } else if (activeView.role === 'director') {
-        const bIds = new Set(appState.members.filter(function(m) { return !m.isSystemCeo && m.role !== 'ceo' && m.branch === activeView.branch; }).map(function(m) { return m.id; }));
+        const bIds = new Set(appState.members.filter(function(m) { return m.branch === activeView.branch; }).map(function(m) { return m.id; }));
         list = appState.crmRecords.filter(function(r) { return bIds.has(r.memberId); });
       } else {
         list = appState.crmRecords.filter(function(r) { return r.memberId === activeView.memberId; });
@@ -4088,7 +4594,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       });
     }
 
-    /* 11. TAB 3: 3대 지점원장 & 총 결과 KPI 비교 분석 */
+    /* =========================================================================
+       11. TAB 3: 3대 지점원장 & 총 결과 KPI 비교 분석
+       ========================================================================= */
     function renderBranchComparePanel() {
       const container = document.getElementById('branchComparisonCards');
       const tbody = document.getElementById('branchCompareTbody');
@@ -4135,7 +4643,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       renderAllCharts();
     }
 
-    /* 12. TAB 4: 1:1 코칭 노트 */
+    /* =========================================================================
+       12. TAB 4: 1:1 코칭 노트
+       ========================================================================= */
     function renderCoachingPanel() {
       const writeCard = document.getElementById('coachingWriteCard');
       const targetSel = document.getElementById('coachingTargetSelect');
@@ -4233,7 +4743,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       showToast('코칭 노트가 삭제되었습니다.', 'info');
     }
 
-    /* 13. 대표원장 · 관리자 전용 모달 (중복 선언 제거 완료) */
+    /* =========================================================================
+       13. 대표원장 · 관리자 전용 모달 (목표치 설정 / 열람 데이터 설정 / 임직원 등록)
+       ========================================================================= */
     function openTargetModal() {
       if (!isTopAdminLogged()) return;
       const ceoOnly = isCeoViewVisible();
@@ -4486,7 +4998,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       showToast(branch + ' ' + name + ' (' + (role === 'director' ? '지점원장' : '디자이너') + ') 등록 완료!', 'success');
     }
 
-    /* 14. CSV 내보내기 */
+    /* =========================================================================
+       14. CSV 내보내기
+       ========================================================================= */
     function exportPermittedCsv() {
       const rows = [['기준일자', '지점', '이름', '개인매출(만원)', '총고객수(명)', '신규고객수(명)', '재방문고객수(명)', '재방문율(%)', '객단가(원)', 'KPI점수', '메모']];
       let targetRecs = [];
@@ -4494,7 +5008,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       if (activeView.role === 'ceo' || activeView.role === 'admin') {
         targetRecs = appState.crmRecords;
       } else if (activeView.role === 'director') {
-        const bIds = new Set(appState.members.filter(function(m) { return !m.isSystemCeo && m.role !== 'ceo' && m.branch === activeView.branch; }).map(function(m) { return m.id; }));
+        const bIds = new Set(appState.members.filter(function(m) { return m.branch === activeView.branch; }).map(function(m) { return m.id; }));
         targetRecs = appState.crmRecords.filter(function(r) { return bIds.has(r.memberId); });
       } else {
         targetRecs = appState.crmRecords.filter(function(r) { return r.memberId === activeView.memberId; });
@@ -4529,7 +5043,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       showToast('CSV 파일 다운로드가 시작되었습니다.', 'success');
     }
 
-    /* 15. 앱 초기화 */
+    /* =========================================================================
+       15. 앱 초기화
+       ========================================================================= */
     window.addEventListener('DOMContentLoaded', function() {
       updateLoginMemberCount();
 
