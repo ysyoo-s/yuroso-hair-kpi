@@ -691,21 +691,27 @@
       display: block;
     }
 
-    /* 월별 미니 요약 그리드 */
+    /* 월별 미니 요약 그리드 (모바일 3열 · 태블릿 6열 · 데스크톱 12열 가독성 최적화) */
     .month-strip {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
       margin-top: 14px;
     }
 
-    @media (min-width: 640px) {
+    @media (min-width: 560px) {
+      .month-strip {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    @media (min-width: 768px) {
       .month-strip {
         grid-template-columns: repeat(6, 1fr);
       }
     }
 
-    @media (min-width: 1024px) {
+    @media (min-width: 1120px) {
       .month-strip {
         grid-template-columns: repeat(12, 1fr);
       }
@@ -713,15 +719,82 @@
 
     .month-cell {
       background: var(--ivory);
-      border: 1px solid var(--ivory-border);
-      border-radius: 10px;
-      padding: 8px 6px;
+      border: 1.5px solid var(--ivory-border);
+      border-radius: 12px;
+      padding: 10px 8px;
       text-align: center;
+      cursor: pointer;
+      transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+    }
+
+    .month-cell:hover {
+      transform: translateY(-1px);
+      border-color: var(--champagne);
+      box-shadow: var(--shadow-sm);
     }
 
     .month-cell.has-data {
       background: var(--champagne-bg);
-      border-color: rgba(176, 137, 104, 0.45);
+      border-color: rgba(176, 137, 104, 0.55);
+    }
+
+    .month-cell.active-month {
+      background: var(--espresso);
+      border-color: var(--espresso);
+      color: var(--ivory);
+      box-shadow: 0 5px 14px rgba(44, 34, 30, 0.22);
+    }
+
+    .month-cell .mc-month {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--espresso-muted);
+    }
+
+    .month-cell.active-month .mc-month {
+      color: var(--champagne-light);
+    }
+
+    .month-cell .mc-val {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--espresso);
+      line-height: 1.25;
+    }
+
+    .month-cell.active-month .mc-val {
+      color: var(--white);
+    }
+
+    .month-cell .mc-target {
+      font-size: 11px;
+      color: var(--espresso-muted);
+      line-height: 1.2;
+    }
+
+    .month-cell.active-month .mc-target {
+      color: rgba(250, 247, 242, 0.78);
+    }
+
+    .month-cell .mc-score {
+      display: inline-block;
+      margin-top: 2px;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(176, 137, 104, 0.16);
+      color: var(--champagne-dark);
+    }
+
+    .month-cell.active-month .mc-score {
+      background: var(--champagne);
+      color: var(--white);
     }
 
     /* 월간 성과 그래프 단위 전환 컨트롤 & 달력 그리드 */
@@ -1553,12 +1626,12 @@
               <span class="badge badge-champagne-soft">재방문·신규 입력 시 총 고객수 자동계산</span>
             </div>
 
-            <!-- ③ 수정 모드 안내 배너 (표에서 [수정] 클릭 시 활성화) -->
+            <!-- ③ 수정 모드 안내 배너 (기존 월간 실적이 있거나 표에서 [수정] 클릭 시 활성화) -->
             <div id="crmEditModeBanner" class="hidden" style="background:var(--champagne-bg); border:1px solid var(--champagne); border-radius:12px; padding:11px 14px; margin-bottom:14px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px;">
               <div style="font-size:13px; color:var(--espresso);">
                 ✏️ <strong id="crmEditModeLabel">기존 입력 내역 수정 중</strong> — 숫자를 고친 뒤 하단 <strong>[수정 내용 저장]</strong>을 눌러주세요.
               </div>
-              <button type="button" class="btn btn-outline btn-sm" onclick="resetCrmForm()">수정 취소</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="resetCrmForm()">입력칸 비우기</button>
             </div>
 
             <form onsubmit="handleSaveCrmRecord(event)" style="display:flex; flex-direction:column; gap:16px;">
@@ -1569,14 +1642,17 @@
                 </div>
                 <div>
                   <label class="field-label">기준 월 (해당 월 목표치 · 월별/연별 그래프 반영)</label>
-                  <input type="month" id="crmDateInput" class="input" onchange="syncInlineUnitPriceInputs(); recalcCrmLive();" required />
+                  <input type="month" id="crmDateInput" class="input" onchange="onCrmDateMonthChange()" required />
                 </div>
               </div>
 
               <div class="form-grid-5">
                 <div>
                   <label class="field-label">① 개인매출 (만원)</label>
-                  <input type="number" step="0.1" min="0" id="crmRevenueInput" class="input" placeholder="예: 1850" oninput="recalcCrmLive()" required />
+                  <input type="number" step="0.1" min="0" id="crmRevenueInput" class="input" placeholder="예: 1850" oninput="onCrmRevenueInput()" required />
+                  <div id="crmRevenueHelperText" style="font-size:11.5px; color:var(--espresso-muted); margin-top:4px; line-height:1.35;">
+                    💡 1,850만 원이면 <strong>1850</strong>만 입력하세요.
+                  </div>
                 </div>
                 <div>
                   <label class="field-label">② 재방문 고객수 (명)</label>
@@ -4007,12 +4083,12 @@ create policy "Allow public read write" on public.yuroso_app_state
           else valText = d.totalCust + '명';
         }
         const isSelectedYm = d.ym === calYm;
-        const activeBorder = isSelectedYm ? ' style="border:2px solid var(--espresso); cursor:pointer;"' : ' style="cursor:pointer;"';
-        return '<div class="month-cell' + (d.hasData ? ' has-data' : '') + '"' + activeBorder + ' title="클릭하여 ' + d.monthLabel + ' 매출·KPI 점수 확인" onclick="onGlobalPeriodMonthChange(\'' + d.ym + '\')">' +
-          '<div style="font-size:11px; color:var(--espresso-muted); font-weight:600;">' + d.monthLabel + '</div>' +
-          '<div style="font-size:12.5px; font-weight:700; color:var(--espresso); margin-top:2px;">' + valText + '</div>' +
-          '<div style="font-size:10px; color:var(--espresso-muted); margin-top:1px;">목표 ' + formatNumber(d.target.targetRevenue) + '만</div>' +
-          '<div style="font-size:10.5px; color:var(--champagne-dark); font-weight:700; margin-top:1px;">' + (d.hasData ? (d.kpiScore.toFixed(1) + '점') : '0.0점') + '</div>' +
+        const cellClasses = 'month-cell' + (d.hasData ? ' has-data' : '') + (isSelectedYm ? ' active-month' : '');
+        return '<div class="' + cellClasses + '" title="클릭하여 ' + d.monthLabel + ' 매출·KPI 점수 확인" onclick="onGlobalPeriodMonthChange(\'' + d.ym + '\')">' +
+          '<div class="mc-month">' + (isSelectedYm ? ('● ' + d.monthLabel) : d.monthLabel) + '</div>' +
+          '<div class="mc-val">' + valText + '</div>' +
+          '<div class="mc-target">목표 ' + formatNumber(d.target.targetRevenue) + '만</div>' +
+          '<div class="mc-score">' + (d.hasData ? (d.kpiScore.toFixed(1) + '점') : '0.0점') + '</div>' +
         '</div>';
       }).join('');
 
@@ -4175,7 +4251,7 @@ create policy "Allow public read write" on public.yuroso_app_state
 
         chartsGrid.classList.toggle('hidden', !vis.directorShowCharts && !topAdmin);
         secondaryChartCard.classList.remove('hidden');
-        document.getElementById('primaryChartTitle').textContent = activeView.branch + ' 기간별 성과 추이';
+        document.getElementById('primaryChartTitle').textContent = activeView.branch + ' 지점 전체 기간별 성과 추이';
         document.getElementById('secondaryChartTitle').textContent = activeView.branch + ' 소속 인원 KPI 비교' + periodShortSuffix;
 
         memberPerfCard.classList.remove('hidden');
@@ -4232,9 +4308,9 @@ create policy "Allow public read write" on public.yuroso_app_state
           buildKpiCardHtml('③ 신규 고객수', '10%', (vis.colNewCust || topAdmin) ? (formatNumber(myStat.newCust) + '명') : '비공개', '목표 ' + formatNumber(myStat.target.targetNewCustomers) + '명', myStat.scoreNew.toFixed(1) + ' / 10점', true)
         ].join('');
 
-        chartsGrid.classList.toggle('hidden', !vis.designerShowTrend && !topAdmin);
+        /* 디자이너 뷰에서는 상단 월별·연별 성과 그래프와 중복되는 하단 12개월 추이 차트를 숨겨 화면을 깔끔하게 유지 */
+        chartsGrid.classList.add('hidden');
         secondaryChartCard.classList.add('hidden');
-        document.getElementById('primaryChartTitle').textContent = me.name + '님 기간별 성과 추이';
 
         memberPerfCard.classList.remove('hidden');
         document.getElementById('memberTableTitle').textContent = me.name + '님 KPI 요약' + periodShortSuffix;
@@ -5064,6 +5140,8 @@ create policy "Allow public read write" on public.yuroso_app_state
       return 0;
     }
 
+    let lastAutoLoadedCrmPairKey = '';
+
     function renderCrmPanel() {
       const dateInput = document.getElementById('crmDateInput');
       if (!dateInput.value || dateInput.value.length > 7) {
@@ -5100,14 +5178,106 @@ create policy "Allow public read write" on public.yuroso_app_state
       const adminUnitPanel = document.getElementById('crmAdminUnitPricePanel');
       if (adminUnitPanel) adminUnitPanel.classList.toggle('hidden', !showTopAdminUnitSettings);
 
-      syncInlineUnitPriceInputs();
-      recalcCrmLive();
+      const curPairKey = (sel.value || '') + '__' + getCrmTargetMonthKey();
+      if (curPairKey !== lastAutoLoadedCrmPairKey) {
+        autoLoadExistingMonthlyCrmRecordIfPresent(false);
+      } else {
+        syncInlineUnitPriceInputs();
+        updateCrmRevenueHelperUi();
+        recalcCrmLive();
+      }
       renderCrmHistoryTable();
+    }
+
+    function autoLoadExistingMonthlyCrmRecordIfPresent(forceLoad) {
+      const memId = document.getElementById('crmMemberSelect').value;
+      const crmYm = getCrmTargetMonthKey();
+      lastAutoLoadedCrmPairKey = (memId || '') + '__' + crmYm;
+
+      const existingRec = appState.crmRecords.find(function(r) {
+        return r.memberId === memId && r.date && r.date.slice(0, 7) === crmYm;
+      });
+
+      if (existingRec) {
+        editingCrmRecordId = existingRec.id;
+        const revisitVal = Math.max(0, Math.round(Number(existingRec.revisitCust) || 0));
+        const newVal = Math.max(0, Math.round(Number(existingRec.newCust) || 0));
+        const totalVal = (revisitVal + newVal) > 0 ? (revisitVal + newVal) : Math.max(0, Math.round(Number(existingRec.totalCust) || 0));
+
+        document.getElementById('crmRevenueInput').value = existingRec.revenue;
+        document.getElementById('crmRevisitCustInput').value = revisitVal;
+        document.getElementById('crmNewCustInput').value = newVal;
+        document.getElementById('crmTotalCustInput').value = totalVal;
+        document.getElementById('crmUnitPriceInput').value = existingRec.unitPrice || '';
+        document.getElementById('crmMemoInput').value = existingRec.memo || '';
+
+        const editLbl = document.getElementById('crmEditModeLabel');
+        if (editLbl) {
+          editLbl.textContent = '[' + formatSelectedMonthLabel(crmYm) + ' · ' + (existingRec.memberName || '') + '] 저장된 월간 실적을 자동으로 불러왔습니다';
+        }
+      } else if (forceLoad || editingCrmRecordId) {
+        editingCrmRecordId = null;
+        document.getElementById('crmRevenueInput').value = '';
+        document.getElementById('crmRevisitCustInput').value = '';
+        document.getElementById('crmNewCustInput').value = '';
+        document.getElementById('crmTotalCustInput').value = '';
+        document.getElementById('crmUnitPriceInput').value = '';
+        document.getElementById('crmMemoInput').value = '';
+      }
+
+      updateCrmEditModeUi();
+      syncInlineUnitPriceInputs();
+      updateCrmRevenueHelperUi();
+      recalcCrmLive();
     }
 
     function onCrmMemberSelectChange() {
       document.getElementById('crmUnitPriceInput').value = '';
-      syncInlineUnitPriceInputs();
+      autoLoadExistingMonthlyCrmRecordIfPresent(true);
+      renderCrmHistoryTable();
+    }
+
+    function onCrmDateMonthChange() {
+      const crmYm = getCrmTargetMonthKey();
+      selectedPeriodMonth = crmYm;
+      selectedPeriodYear = crmYm.slice(0, 4);
+      const indivCalInput = document.getElementById('indivCalendarMonthInput');
+      if (indivCalInput) indivCalInput.value = crmYm;
+      syncGlobalPeriodPickerUi();
+      autoLoadExistingMonthlyCrmRecordIfPresent(true);
+      renderCrmHistoryTable();
+    }
+
+    function updateCrmRevenueHelperUi() {
+      const helperEl = document.getElementById('crmRevenueHelperText');
+      if (!helperEl) return;
+      const rawVal = document.getElementById('crmRevenueInput').value;
+      const numVal = Number(rawVal) || 0;
+      if (!rawVal || numVal <= 0) {
+        helperEl.innerHTML = '💡 1,850만 원이면 <strong>1850</strong>만 입력하세요.';
+        return;
+      }
+      if (numVal >= 100000) {
+        const convertedManwon = Number((numVal / 10000).toFixed(1));
+        helperEl.innerHTML =
+          '<span style="color:#B84A39; font-weight:600;">⚠️ 만원 단위 입력칸입니다! 혹시 ' + formatNumber(numVal) + '원(' + formatNumber(convertedManwon, 1) + '만원)을 입력하셨나요?</span> ' +
+          '<button type="button" class="btn btn-champagne btn-sm" style="padding:2px 8px; font-size:11px; margin-left:4px;" onclick="convertCrmRevenueWonToManwon(' + convertedManwon + ')">👉 ' + convertedManwon + '만원으로 자동 변환</button>';
+        return;
+      }
+      const wonAmount = Math.round(numVal * 10000);
+      helperEl.innerHTML = '💰 입력 금액 확인: <strong style="color:var(--espresso);">' + formatNumber(numVal, numVal % 1 === 0 ? 0 : 1) + '만 원</strong> (= ' + formatNumber(wonAmount) + '원)';
+    }
+
+    function convertCrmRevenueWonToManwon(manwonVal) {
+      const revInput = document.getElementById('crmRevenueInput');
+      if (!revInput) return;
+      revInput.value = manwonVal;
+      onCrmRevenueInput();
+      showToast(formatNumber(manwonVal, 1) + '만원으로 단위가 자동 보정되었습니다.', 'info');
+    }
+
+    function onCrmRevenueInput() {
+      updateCrmRevenueHelperUi();
       recalcCrmLive();
     }
 
@@ -5279,7 +5449,7 @@ create policy "Allow public read write" on public.yuroso_app_state
           submitBtn.textContent = '✏️ 수정 내용 저장 및 성과 그래프 반영';
           submitBtn.className = 'btn btn-champagne btn-lg';
         }
-        if (cancelBtn) cancelBtn.textContent = '수정 취소';
+        if (cancelBtn) cancelBtn.textContent = '입력칸 비우기';
       } else {
         if (editBanner) editBanner.classList.add('hidden');
         if (submitBtn) {
@@ -5300,6 +5470,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       document.getElementById('crmMemoInput').value = '';
       updateCrmEditModeUi();
       syncInlineUnitPriceInputs();
+      updateCrmRevenueHelperUi();
       recalcCrmLive();
       renderCrmHistoryTable();
     }
@@ -5316,6 +5487,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
 
       const recYm = (rec.date && rec.date.length >= 7) ? rec.date.slice(0, 7) : getLocalDateParts().ym;
+      lastAutoLoadedCrmPairKey = (rec.memberId || '') + '__' + recYm;
       const revisitVal = Math.max(0, Math.round(Number(rec.revisitCust) || 0));
       const newVal = Math.max(0, Math.round(Number(rec.newCust) || 0));
       const totalVal = revisitVal + newVal;
@@ -5335,6 +5507,7 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       updateCrmEditModeUi();
       syncInlineUnitPriceInputs();
+      updateCrmRevenueHelperUi();
       recalcCrmLive();
       renderCrmHistoryTable();
 
@@ -5413,9 +5586,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       selectedPeriodYear = recYm.slice(0, 4);
       const calInput = document.getElementById('indivCalendarMonthInput');
       if (calInput) calInput.value = selectedPeriodMonth;
+      lastAutoLoadedCrmPairKey = '';
 
       saveStateEverywhere(true);
-      resetCrmForm();
       renderWorkspaceAll();
       showToast(
         existingIdx >= 0
