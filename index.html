@@ -1449,6 +1449,7 @@
           </div>
           <select id="globalPeriodYearSelect" class="select hidden" style="width:auto; padding:5px 10px; font-size:12.5px; font-weight:700;" onchange="onGlobalPeriodYearChange(this.value)">
           </select>
+          <button type="button" class="btn btn-champagne btn-sm" onclick="copyKakaoBriefingText()">💬 카톡 브리핑 복사</button>
           <button type="button" class="btn btn-outline btn-sm" onclick="exportPermittedCsv()">📥 CSV 내보내기</button>
           <button type="button" class="btn btn-outline btn-sm" onclick="window.print()">🖨️ 인쇄</button>
         </div>
@@ -1468,12 +1469,16 @@
               <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:6px;">
                 <span id="summaryBannerBadge" class="badge badge-champagne">KPI 종합 평가</span>
                 <span id="summaryPeriodLabel" style="font-size:12.5px; color:rgba(250,247,242,0.8);">월별 기준</span>
+                <span id="summaryMomDeltaBadge" class="badge badge-dark hidden">전월 대비 -</span>
               </div>
               <h2 id="summaryBannerTitle" style="font-size:22px; font-weight:700;">
                 종합 KPI 달성 점수: 0.0점 / 100점
               </h2>
             </div>
             <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;" class="no-print">
+              <button type="button" class="btn btn-dark-outline btn-sm" onclick="copyKakaoBriefingText()">
+                💬 카톡 성적표 복사
+              </button>
               <button type="button" id="bannerTargetBtn" class="btn btn-champagne btn-sm hidden" onclick="openTargetModal()">
                 🎯 목표치 설정
               </button>
@@ -1772,6 +1777,65 @@
                 <div class="progress-track"><div id="liveBarNew" class="progress-fill" style="width:0%;"></div></div>
               </div>
             </div>
+
+            <!-- 🎛️ 3. "내가 이번 달 몇 점 받을까?" 가상 목표 시뮬레이터 -->
+            <div class="card" style="background:var(--ivory); border:1.5px solid rgba(176,137,104,0.45); display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px;">
+                <div>
+                  <span class="badge badge-champagne-soft" style="margin-bottom:3px;">가상 목표 계산기 (저장 안 됨)</span>
+                  <h4 style="font-size:14.5px; font-weight:700; color:var(--espresso);">🎛️ "이번 달 얼마나 더 하면 몇 점일까?" 시뮬레이터</h4>
+                </div>
+                <button type="button" class="btn btn-outline btn-sm" style="padding:4px 9px; font-size:11.5px;" onclick="resetKpiSimulator()">초기화</button>
+              </div>
+              <div style="font-size:12px; color:var(--espresso-muted); line-height:1.4;">
+                현재 입력된 실적에서 <strong>남은 기간 동안 추가로 달성할 예상 매출·재방문·신규 고객수</strong>를 더해보세요!
+              </div>
+
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(145px, 1fr)); gap:8px;">
+                <div style="background:var(--white); border:1px solid var(--ivory-border); border-radius:10px; padding:9px;">
+                  <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:600; margin-bottom:6px;">
+                    <span>추가 매출</span>
+                    <strong id="simDeltaRevLabel" style="color:var(--champagne-dark);">+0만원</strong>
+                  </div>
+                  <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('rev', 100)">+100만</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('rev', 300)">+300만</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px;" onclick="adjustKpiSimulator('rev', -100)">-100</button>
+                  </div>
+                </div>
+
+                <div style="background:var(--white); border:1px solid var(--ivory-border); border-radius:10px; padding:9px;">
+                  <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:600; margin-bottom:6px;">
+                    <span>추가 재방문 고객</span>
+                    <strong id="simDeltaRevisitLabel" style="color:var(--sage-dark);">+0명</strong>
+                  </div>
+                  <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('revisit', 5)">+5명</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('revisit', 10)">+10명</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px;" onclick="adjustKpiSimulator('revisit', -5)">-5</button>
+                  </div>
+                </div>
+
+                <div style="background:var(--white); border:1px solid var(--ivory-border); border-radius:10px; padding:9px;">
+                  <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:600; margin-bottom:6px;">
+                    <span>추가 신규 고객</span>
+                    <strong id="simDeltaNewLabel" style="color:var(--champagne-dark);">+0명</strong>
+                  </div>
+                  <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('new', 5)">+5명</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('new', 10)">+10명</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px;" onclick="adjustKpiSimulator('new', -5)">-5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div id="simResultSummaryBox" style="background:var(--espresso); color:var(--ivory); border-radius:11px; padding:11px 13px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; font-size:12.5px;">
+                <div id="simResultText" style="line-height:1.45;">
+                  ✨ 위 버튼(+100만, +5명)을 눌러 예상 KPI 점수를 시뮬레이션해 보세요.
+                </div>
+                <span id="simResultScoreBadge" class="badge badge-champagne" style="font-size:13px;">예상 0.0점</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1852,12 +1916,30 @@
       <!-- ==================== TAB 4: 1:1 코칭 노트 ==================== -->
       <div id="tabPanelCoaching" class="hidden" style="display:flex; flex-direction:column; gap:20px;">
         <div id="coachingWriteCard" class="card no-print">
-          <h3 style="font-size:16px; font-weight:700; margin-bottom:14px;">✍️ 1:1 코칭 및 성장 피드백 작성</h3>
+          <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px;">
+            <h3 style="font-size:16px; font-weight:700;">✍️ 1:1 코칭 및 성장 피드백 작성</h3>
+            <span class="badge badge-champagne-soft">선택 월 KPI 성적표 자동 첨부</span>
+          </div>
+
+          <!-- 📝 5. 선택 임직원의 당월 KPI 성적표 실시간 프리뷰 박스 -->
+          <div id="coachingMemberKpiPreviewBar" style="background:var(--champagne-bg); border:1px solid rgba(176,137,104,0.4); border-radius:11px; padding:10px 13px; margin-bottom:12px; font-size:12.5px; color:var(--espresso); line-height:1.5;">
+            📊 대상 임직원을 선택하면 해당 월 KPI 성적표 요약이 자동으로 첨부됩니다.
+          </div>
+
+          <!-- 원클릭 코칭 템플릿 버튼 -->
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-bottom:12px;">
+            <span style="font-size:12px; font-weight:700; color:var(--espresso-muted); margin-right:2px;">⚡ 1분 코칭 양식 자동입력:</span>
+            <button type="button" class="btn btn-outline btn-sm" style="padding:4px 10px; font-size:11.5px;" onclick="applyCoachingTemplate('revisit')">🔄 재방문율 개선 코칭</button>
+            <button type="button" class="btn btn-outline btn-sm" style="padding:4px 10px; font-size:11.5px;" onclick="applyCoachingTemplate('unitPrice')">💎 객단가 업셀링 코칭</button>
+            <button type="button" class="btn btn-outline btn-sm" style="padding:4px 10px; font-size:11.5px;" onclick="applyCoachingTemplate('newCust')">✨ 신규 고객 정착 코칭</button>
+            <button type="button" class="btn btn-outline btn-sm" style="padding:4px 10px; font-size:11.5px;" onclick="applyCoachingTemplate('praise')">🏆 목표 달성 칭찬·동기부여</button>
+          </div>
+
           <form onsubmit="handleSaveCoachingNote(event)" style="display:flex; flex-direction:column; gap:12px;">
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
               <div>
                 <label class="field-label">대상 임직원</label>
-                <select id="coachingTargetSelect" class="select" required></select>
+                <select id="coachingTargetSelect" class="select" onchange="updateCoachingMemberKpiPreview()" required></select>
               </div>
               <div>
                 <label class="field-label">핵심 코칭 주제</label>
@@ -1866,10 +1948,10 @@
             </div>
             <div>
               <label class="field-label">코칭 상세 내용</label>
-              <textarea id="coachingContentInput" rows="3" class="textarea" placeholder="상담 피드백 및 다음 달 액션 플랜을 입력하세요." required></textarea>
+              <textarea id="coachingContentInput" rows="4" class="textarea" placeholder="위 [1분 코칭 양식 자동입력] 버튼을 누르거나 상담 피드백 및 다음 달 액션 플랜을 입력하세요." required></textarea>
             </div>
             <div style="display:flex; justify-content:flex-end;">
-              <button type="submit" class="btn btn-espresso">코칭 노트 등록</button>
+              <button type="submit" class="btn btn-espresso">코칭 노트 등록 (당월 성적표 자동 첨부)</button>
             </div>
           </form>
         </div>
@@ -4149,6 +4231,109 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
     }
 
+    function getPreviousMonthYm(ymStr) {
+      const safeYm = resolveTargetMonthKey(ymStr || selectedPeriodMonth);
+      const parts = safeYm.split('-');
+      let y = parseInt(parts[0], 10) || new Date().getFullYear();
+      let m = (parseInt(parts[1], 10) || (new Date().getMonth() + 1)) - 1;
+      if (m < 1) {
+        m = 12;
+        y -= 1;
+      }
+      return String(y) + '-' + String(m).padStart(2, '0');
+    }
+
+    function formatMomDeltaChipHtml(currVal, prevVal, unitSuffix, decimals, hasPrevData) {
+      if (currentPeriod === 'yearly' || !hasPrevData) return '';
+      const dec = decimals != null ? decimals : 1;
+      const diff = (Number(currVal) || 0) - (Number(prevVal) || 0);
+      if (Math.abs(diff) < 0.05) {
+        return '<span style="display:inline-block; font-size:11px; font-weight:600; color:var(--espresso-muted); background:var(--ivory-soft); border-radius:999px; padding:1px 7px;">전월과 동일</span>';
+      }
+      const isUp = diff > 0;
+      const sign = isUp ? '▲ +' : '▼ ';
+      const dispVal = dec === 0 ? formatNumber(Math.round(diff)) : formatNumber(diff, dec);
+      const color = isUp ? '#3B6E4C' : '#B84A39';
+      const bg = isUp ? 'rgba(107, 127, 110, 0.16)' : 'rgba(184, 74, 57, 0.13)';
+      return '<span style="display:inline-block; font-size:11px; font-weight:700; color:' + color + '; background:' + bg + '; border-radius:999px; padding:1px 7px;">전월 대비 ' + sign + dispVal + (unitSuffix || '') + '</span>';
+    }
+
+    function copyKakaoBriefingText() {
+      const viewRole = activeView.role;
+      const isYearly = currentPeriod === 'yearly';
+      const yearStr = selectedPeriodYear || (selectedPeriodMonth ? selectedPeriodMonth.slice(0, 4) : getLocalDateParts().year);
+      const periodTitle = isYearly ? (yearStr + '년 연간') : formatSelectedMonthLabel(selectedPeriodMonth);
+      const prevYm = getPreviousMonthYm(selectedPeriodMonth);
+      const lines = [];
+
+      if (viewRole === 'ceo' || viewRole === 'admin') {
+        const ceo = aggregateCeoMetrics();
+        const prevCeo = !isYearly ? aggregateCeoMetricsForMonth(prevYm) : null;
+        const momRevTxt = (prevCeo && prevCeo.hasData)
+          ? (' (전월 대비 ' + ((ceo.totalRevenue - prevCeo.totalRevenue) >= 0 ? '+' : '') + formatNumber(ceo.totalRevenue - prevCeo.totalRevenue, 1) + '만원)')
+          : '';
+        lines.push('📋 [유로소 헤어 ' + periodTitle + ' 전 지점 KPI 브리핑]');
+        lines.push('• 전 지점 종합 KPI: ' + ceo.totalKpiScore.toFixed(1) + '점 / 100점');
+        lines.push('• 전 지점 매출: ' + formatNumber(ceo.totalRevenue, 1) + '만원 / 목표 ' + formatNumber(ceo.totalTargetRev) + '만원 (' + ceo.targetAchRate.toFixed(1) + '%)' + momRevTxt);
+        lines.push('• 전 지점 영업이익: ' + formatNumber(ceo.totalProfit) + '만원 / 목표 ' + formatNumber(ceo.totalTargetProfit) + '만원');
+        lines.push('');
+        lines.push('[3대 지점별 현황]');
+        BRANCHES.forEach(function(b) {
+          const bst = aggregateBranchMetrics(b);
+          const bAch = bst.targetRevenue > 0 ? ((bst.totalRevenue / bst.targetRevenue) * 100).toFixed(1) : '0.0';
+          lines.push('▪ ' + b + ': 매출 ' + formatNumber(bst.totalRevenue, 1) + '만(' + bAch + '%) | 재방문 ' + bst.avgRevisitRate.toFixed(1) + '% | KPI ' + bst.directorKpiScore.toFixed(1) + '점');
+        });
+      } else if (viewRole === 'director') {
+        const br = aggregateBranchMetrics(activeView.branch);
+        const prevBr = !isYearly ? aggregateBranchMetricsForMonth(activeView.branch, prevYm) : null;
+        const brAch = br.targetRevenue > 0 ? ((br.totalRevenue / br.targetRevenue) * 100).toFixed(1) : '0.0';
+        const momTxt = (prevBr && prevBr.hasData)
+          ? (' (전월 대비 ' + ((br.totalRevenue - prevBr.totalRevenue) >= 0 ? '+' : '') + formatNumber(br.totalRevenue - prevBr.totalRevenue, 1) + '만원)')
+          : '';
+        lines.push('📋 [유로소 헤어 ' + activeView.branch + ' ' + periodTitle + ' KPI 브리핑]');
+        lines.push('• 지점 종합 KPI: ' + br.directorKpiScore.toFixed(1) + '점 / 100점');
+        lines.push('• 지점 매출: ' + formatNumber(br.totalRevenue, 1) + '만원 / 목표 ' + formatNumber(br.targetRevenue) + '만원 (' + brAch + '%)' + momTxt);
+        lines.push('• 평균 재방문율: ' + br.avgRevisitRate.toFixed(1) + '% | 평균 객단가: ' + formatNumber(br.avgUnitPrice) + '원');
+        if (br.branchMembers.length > 0) {
+          lines.push('');
+          lines.push('[소속 임직원 KPI 현황]');
+          br.branchMembers.forEach(function(m) {
+            const mst = aggregateMemberMetrics(m);
+            lines.push('▪ ' + m.name + ': 매출 ' + formatNumber(mst.revenue, 1) + '만 | 총고객 ' + mst.totalCust + '명(재방문 ' + mst.revisitCust + '+신규 ' + mst.newCust + ') | KPI ' + mst.totalScore.toFixed(1) + '점');
+          });
+        }
+      } else {
+        const me = appState.members.find(function(m) { return m.id === activeView.memberId; });
+        if (!me) {
+          showToast('공유할 임직원 정보가 없습니다.', 'error');
+          return;
+        }
+        const myStat = aggregateMemberMetrics(me);
+        const prevMy = !isYearly ? aggregateMemberMetrics(me, prevYm) : null;
+        const myAch = myStat.target.targetRevenue > 0 ? ((myStat.revenue / myStat.target.targetRevenue) * 100).toFixed(1) : '0.0';
+        const momTxt = (prevMy && prevMy.recordCount > 0)
+          ? (' (전월 대비 ' + ((myStat.revenue - prevMy.revenue) >= 0 ? '+' : '') + formatNumber(myStat.revenue - prevMy.revenue, 1) + '만원)')
+          : '';
+        lines.push('📋 [유로소 헤어 ' + me.branch + ' ' + me.name + ' ' + periodTitle + ' KPI 성적표]');
+        lines.push('• 종합 KPI 달성 점수: ' + myStat.totalScore.toFixed(1) + '점 / 100점');
+        lines.push('• 개인매출: ' + formatNumber(myStat.revenue, 1) + '만원 / 목표 ' + formatNumber(myStat.target.targetRevenue) + '만원 (' + myAch + '%)' + momTxt);
+        lines.push('• 총 고객수: ' + formatNumber(myStat.totalCust) + '명 (재방문 ' + formatNumber(myStat.revisitCust) + '명 + 신규 ' + formatNumber(myStat.newCust) + '명)');
+        lines.push('• 재방문율: ' + myStat.revisitRate.toFixed(1) + '% (목표 ' + myStat.target.targetRevisitRate + '%)');
+        lines.push('• 객단가: ' + formatNumber(myStat.unitPrice) + '원 (목표 ' + formatNumber(myStat.target.targetUnitPrice) + '원)');
+      }
+
+      const textToCopy = lines.join('\n');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(textToCopy).then(function() {
+          showToast('💬 카카오톡 공유용 KPI 성적표 브리핑이 복사되었습니다! 단톡방에 붙여넣기 하세요.', 'success');
+        }).catch(function() {
+          fallbackCopyText(textToCopy);
+        });
+      } else {
+        fallbackCopyText(textToCopy);
+      }
+    }
+
     function renderDashboardPanel() {
       const viewRole = activeView.role;
       const topAdmin = isTopAdminLogged();
@@ -4161,6 +4346,8 @@ create policy "Allow public read write" on public.yuroso_app_state
       };
       document.getElementById('summaryPeriodLabel').textContent = periodNames[currentPeriod] || ('월별 기준 · ' + monthLabelKo);
       const periodShortSuffix = currentPeriod === 'yearly' ? (' (' + yearLabelKo + ' 월별목표 연간통계)') : (' (' + monthLabelKo + ')');
+      const prevYm = getPreviousMonthYm(selectedPeriodMonth);
+      const momBannerBadge = document.getElementById('summaryMomDeltaBadge');
 
       const kpiContainer = document.getElementById('kpiCardsContainer');
       const chartsGrid = document.getElementById('dashboardChartsGrid');
@@ -4182,9 +4369,22 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       if (viewRole === 'ceo' || viewRole === 'admin') {
         const ceo = aggregateCeoMetrics();
+        const prevCeo = currentPeriod === 'monthly' ? aggregateCeoMetricsForMonth(prevYm) : null;
+        const hasPrevCeo = Boolean(prevCeo && prevCeo.hasData);
+
         document.getElementById('summaryBannerBadge').textContent = viewRole === 'ceo' ? '대표원장 종합 KPI' : '관리자 종합 KPI';
         document.getElementById('summaryBannerTitle').textContent =
           '전 지점 종합 KPI 달성 점수' + periodShortSuffix + ': ' + ceo.totalKpiScore.toFixed(1) + '점 / 100점';
+
+        if (momBannerBadge) {
+          if (hasPrevCeo) {
+            const sDiff = ceo.totalKpiScore - prevCeo.totalKpiScore;
+            momBannerBadge.classList.remove('hidden');
+            momBannerBadge.textContent = '전월 대비 ' + (sDiff >= 0 ? '▲ +' : '▼ ') + sDiff.toFixed(1) + '점';
+          } else {
+            momBannerBadge.classList.add('hidden');
+          }
+        }
 
         if (guideTextEl && guideChipEl) {
           const remainRev = Math.max(0, ceo.totalTargetRev - ceo.totalRevenue);
@@ -4201,10 +4401,10 @@ create policy "Allow public read write" on public.yuroso_app_state
 
         kpiContainer.classList.remove('hidden');
         kpiContainer.innerHTML = [
-          buildKpiCardHtml('전 지점 매출 성장', '30%', formatNumber(ceo.totalRevenue, 1) + '만원', '목표 합계 ' + formatNumber(ceo.totalTargetRev) + '만원', ceo.scoreRevGrowth.toFixed(1) + ' / 30점', false),
-          buildKpiCardHtml('전 지점 영업이익', '30%', formatNumber(ceo.totalProfit) + '만원', '목표 영업이익 ' + formatNumber(ceo.totalTargetProfit) + '만원', ceo.scoreProfit.toFixed(1) + ' / 30점', true),
-          buildKpiCardHtml('3대 지점 목표 달성률', '20%', ceo.targetAchRate.toFixed(1) + '%', '파주 운정 · 운정역 · 마곡발산', ceo.scoreBranchAch.toFixed(1) + ' / 20점', false),
-          buildKpiCardHtml('리더 · 인재 성장 지수', '20%', ceo.avgTalentScore.toFixed(1) + '점', '등록 임직원 ' + appState.members.length + '명 평균', ceo.scoreTalent.toFixed(1) + ' / 20점', true)
+          buildKpiCardHtml('전 지점 매출 성장', '30%', formatNumber(ceo.totalRevenue, 1) + '만원', '목표 합계 ' + formatNumber(ceo.totalTargetRev) + '만원', ceo.scoreRevGrowth.toFixed(1) + ' / 30점', false, formatMomDeltaChipHtml(ceo.totalRevenue, hasPrevCeo ? prevCeo.totalRevenue : 0, '만원', 1, hasPrevCeo)),
+          buildKpiCardHtml('전 지점 영업이익', '30%', formatNumber(ceo.totalProfit) + '만원', '목표 영업이익 ' + formatNumber(ceo.totalTargetProfit) + '만원', ceo.scoreProfit.toFixed(1) + ' / 30점', true, formatMomDeltaChipHtml(ceo.totalProfit, hasPrevCeo ? prevCeo.totalProfit : 0, '만원', 0, hasPrevCeo)),
+          buildKpiCardHtml('3대 지점 목표 달성률', '20%', ceo.targetAchRate.toFixed(1) + '%', '파주 운정 · 운정역 · 마곡발산', ceo.scoreBranchAch.toFixed(1) + ' / 20점', false, formatMomDeltaChipHtml(ceo.targetAchRate, hasPrevCeo ? prevCeo.targetAchRate : 0, '%p', 1, hasPrevCeo)),
+          buildKpiCardHtml('리더 · 인재 성장 지수', '20%', ceo.avgTalentScore.toFixed(1) + '점', '등록 임직원 ' + appState.members.length + '명 평균', ceo.scoreTalent.toFixed(1) + ' / 20점', true, formatMomDeltaChipHtml(ceo.avgTalentScore, hasPrevCeo ? prevCeo.avgTalentScore : 0, '점', 1, hasPrevCeo))
         ].join('');
 
         chartsGrid.classList.remove('hidden');
@@ -4218,10 +4418,22 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       } else if (viewRole === 'director') {
         const br = aggregateBranchMetrics(activeView.branch);
+        const prevBr = currentPeriod === 'monthly' ? aggregateBranchMetricsForMonth(activeView.branch, prevYm) : null;
+        const hasPrevBr = Boolean(prevBr && prevBr.hasData);
         const curDirTarget = br.directorTarget || getDirectorTarget(activeView.branch, selectedPeriodMonth);
         document.getElementById('summaryBannerBadge').textContent = activeView.branch + ' 지점원장 KPI';
         document.getElementById('summaryBannerTitle').textContent =
           activeView.branch + ' 종합 KPI 달성 점수' + periodShortSuffix + ': ' + br.directorKpiScore.toFixed(1) + '점 / 100점';
+
+        if (momBannerBadge) {
+          if (hasPrevBr) {
+            const sDiff = br.directorKpiScore - prevBr.directorKpiScore;
+            momBannerBadge.classList.remove('hidden');
+            momBannerBadge.textContent = '전월 대비 ' + (sDiff >= 0 ? '▲ +' : '▼ ') + sDiff.toFixed(1) + '점';
+          } else {
+            momBannerBadge.classList.add('hidden');
+          }
+        }
 
         if (guideTextEl && guideChipEl) {
           const remainBrRev = Math.max(0, br.targetRevenue - br.totalRevenue);
@@ -4243,10 +4455,10 @@ create policy "Allow public read write" on public.yuroso_app_state
           : ('목표 ' + formatNumber(br.targetRevenue) + '만원');
 
         kpiContainer.innerHTML = [
-          buildKpiCardHtml('지점 매출 달성', '35%', formatNumber(br.totalRevenue, 1) + '만원', profitSub, br.scoreBranchRev.toFixed(1) + ' / 35점', false),
-          buildKpiCardHtml('디자이너 평균매출 성장', '30%', (br.growthPct >= 0 ? '+' : '') + br.growthPct.toFixed(1) + '%', '목표 성장률 ' + curDirTarget.targetAvgGrowth + '%', br.scoreAvgGrowth.toFixed(1) + ' / 30점', true),
-          buildKpiCardHtml('재방문 고객 비율', '20%', br.avgRevisitRate.toFixed(1) + '%', '목표 재방문율 ' + curDirTarget.targetRevisitRate + '%', br.scoreRevisit.toFixed(1) + ' / 20점', false),
-          buildKpiCardHtml('직원 성장 · 유지', '15%', br.branchMembers.length + '명', '소속 디자이너 ' + br.designers.length + '명', br.scoreRetention.toFixed(1) + ' / 15점', true)
+          buildKpiCardHtml('지점 매출 달성', '35%', formatNumber(br.totalRevenue, 1) + '만원', profitSub, br.scoreBranchRev.toFixed(1) + ' / 35점', false, formatMomDeltaChipHtml(br.totalRevenue, hasPrevBr ? prevBr.totalRevenue : 0, '만원', 1, hasPrevBr)),
+          buildKpiCardHtml('디자이너 평균매출 성장', '30%', (br.growthPct >= 0 ? '+' : '') + br.growthPct.toFixed(1) + '%', '목표 성장률 ' + curDirTarget.targetAvgGrowth + '%', br.scoreAvgGrowth.toFixed(1) + ' / 30점', true, ''),
+          buildKpiCardHtml('재방문 고객 비율', '20%', br.avgRevisitRate.toFixed(1) + '%', '목표 재방문율 ' + curDirTarget.targetRevisitRate + '%', br.scoreRevisit.toFixed(1) + ' / 20점', false, formatMomDeltaChipHtml(br.avgRevisitRate, hasPrevBr ? prevBr.avgRevisitRate : 0, '%p', 1, hasPrevBr)),
+          buildKpiCardHtml('직원 성장 · 유지', '15%', br.branchMembers.length + '명', '소속 디자이너 ' + br.designers.length + '명', br.scoreRetention.toFixed(1) + ' / 15점', true, '')
         ].join('');
 
         chartsGrid.classList.toggle('hidden', !vis.directorShowCharts && !topAdmin);
@@ -4271,9 +4483,21 @@ create policy "Allow public read write" on public.yuroso_app_state
         }
 
         const myStat = aggregateMemberMetrics(me);
+        const prevMy = currentPeriod === 'monthly' ? aggregateMemberMetrics(me, prevYm) : null;
+        const hasPrevMy = Boolean(prevMy && prevMy.recordCount > 0);
         document.getElementById('summaryBannerBadge').textContent = me.branch + ' · ' + me.name;
         document.getElementById('summaryBannerTitle').textContent =
           me.name + '님 종합 KPI 달성 점수' + periodShortSuffix + ': ' + myStat.totalScore.toFixed(1) + '점 / 100점';
+
+        if (momBannerBadge) {
+          if (hasPrevMy) {
+            const sDiff = myStat.totalScore - prevMy.totalScore;
+            momBannerBadge.classList.remove('hidden');
+            momBannerBadge.textContent = '전월 대비 ' + (sDiff >= 0 ? '▲ +' : '▼ ') + sDiff.toFixed(1) + '점';
+          } else {
+            momBannerBadge.classList.add('hidden');
+          }
+        }
 
         if (guideTextEl && guideChipEl) {
           const remainMyRev = Math.max(0, myStat.target.targetRevenue - myStat.revenue);
@@ -4302,10 +4526,10 @@ create policy "Allow public read write" on public.yuroso_app_state
           : ('목표 ' + formatNumber(myStat.target.targetUnitPrice) + '원');
 
         kpiContainer.innerHTML = [
-          buildKpiCardHtml('① 개인매출', '40%', (vis.colRevenue || topAdmin) ? (formatNumber(myStat.revenue, 1) + '만원') : '비공개', '목표 ' + formatNumber(myStat.target.targetRevenue) + '만원', myStat.scoreRev.toFixed(1) + ' / 40점', false),
-          buildKpiCardHtml('④ 재방문 고객 비율', '30%', (vis.colRevisitRate || topAdmin) ? (myStat.revisitRate.toFixed(1) + '%') : '비공개', '재방문 ' + myStat.revisitCust + '명 / 총 ' + myStat.totalCust + '명', myStat.scoreRevRate.toFixed(1) + ' / 30점', true),
-          buildKpiCardHtml('⑤ 객단가', '20%', (vis.colUnitPrice || topAdmin) ? (formatNumber(myStat.unitPrice) + '원') : '비공개', unitSub, myStat.scoreUnit.toFixed(1) + ' / 20점', false),
-          buildKpiCardHtml('③ 신규 고객수', '10%', (vis.colNewCust || topAdmin) ? (formatNumber(myStat.newCust) + '명') : '비공개', '목표 ' + formatNumber(myStat.target.targetNewCustomers) + '명', myStat.scoreNew.toFixed(1) + ' / 10점', true)
+          buildKpiCardHtml('① 개인매출', '40%', (vis.colRevenue || topAdmin) ? (formatNumber(myStat.revenue, 1) + '만원') : '비공개', '목표 ' + formatNumber(myStat.target.targetRevenue) + '만원', myStat.scoreRev.toFixed(1) + ' / 40점', false, (vis.colRevenue || topAdmin) ? formatMomDeltaChipHtml(myStat.revenue, hasPrevMy ? prevMy.revenue : 0, '만원', 1, hasPrevMy) : ''),
+          buildKpiCardHtml('④ 재방문 고객 비율', '30%', (vis.colRevisitRate || topAdmin) ? (myStat.revisitRate.toFixed(1) + '%') : '비공개', '재방문 ' + myStat.revisitCust + '명 / 총 ' + myStat.totalCust + '명', myStat.scoreRevRate.toFixed(1) + ' / 30점', true, (vis.colRevisitRate || topAdmin) ? formatMomDeltaChipHtml(myStat.revisitRate, hasPrevMy ? prevMy.revisitRate : 0, '%p', 1, hasPrevMy) : ''),
+          buildKpiCardHtml('⑤ 객단가', '20%', (vis.colUnitPrice || topAdmin) ? (formatNumber(myStat.unitPrice) + '원') : '비공개', unitSub, myStat.scoreUnit.toFixed(1) + ' / 20점', false, (vis.colUnitPrice || topAdmin) ? formatMomDeltaChipHtml(myStat.unitPrice, hasPrevMy ? prevMy.unitPrice : 0, '원', 0, hasPrevMy) : ''),
+          buildKpiCardHtml('③ 신규 고객수', '10%', (vis.colNewCust || topAdmin) ? (formatNumber(myStat.newCust) + '명') : '비공개', '목표 ' + formatNumber(myStat.target.targetNewCustomers) + '명', myStat.scoreNew.toFixed(1) + ' / 10점', true, (vis.colNewCust || topAdmin) ? formatMomDeltaChipHtml(myStat.newCust, hasPrevMy ? prevMy.newCust : 0, '명', 0, hasPrevMy) : '')
         ].join('');
 
         /* 디자이너 뷰에서는 상단 월별·연별 성과 그래프와 중복되는 하단 12개월 추이 차트를 숨겨 화면을 깔끔하게 유지 */
@@ -4320,13 +4544,16 @@ create policy "Allow public read write" on public.yuroso_app_state
       renderAllCharts();
     }
 
-    function buildKpiCardHtml(title, weight, mainVal, subText, scoreText, useSage) {
+    function buildKpiCardHtml(title, weight, mainVal, subText, scoreText, useSage, momHtml) {
       return '<div class="kpi-card' + (useSage ? ' sage-accent' : '') + '">' +
         '<div class="kpi-top">' +
           '<span class="kpi-title">' + escapeHtml(title) + '</span>' +
           '<span class="badge ' + (useSage ? 'badge-sage' : 'badge-champagne-soft') + '">가중치 ' + escapeHtml(weight) + '</span>' +
         '</div>' +
-        '<div class="kpi-value">' + mainVal + '</div>' +
+        '<div style="display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:6px;">' +
+          '<div class="kpi-value">' + mainVal + '</div>' +
+          (momHtml || '') +
+        '</div>' +
         '<div class="kpi-foot">' +
           '<span>' + subText + '</span>' +
           '<strong style="color:var(--espresso);">' + escapeHtml(scoreText) + '</strong>' +
@@ -4336,6 +4563,7 @@ create policy "Allow public read write" on public.yuroso_app_state
 
     function renderMemberPerformanceTable(memberList, unmasked) {
       const vis = appState.visibility;
+      const prevYm = getPreviousMonthYm(selectedPeriodMonth);
       document.getElementById('memberTableCountBadge').textContent = memberList.length + '명';
 
       const thead = document.getElementById('memberPerfThead');
@@ -4346,12 +4574,12 @@ create policy "Allow public read write" on public.yuroso_app_state
           '<th>이름</th>' +
           '<th>직급</th>' +
           '<th>소속 지점</th>' +
-          ((vis.colRevenue || unmasked) ? '<th>개인매출 / 목표</th>' : '') +
-          ((vis.colTotalCust || unmasked) ? '<th>총 고객수</th>' : '') +
+          ((vis.colRevenue || unmasked) ? '<th>개인매출 / 목표 (전월대비)</th>' : '') +
+          ((vis.colTotalCust || unmasked) ? '<th>총 고객수 (재방문+신규)</th>' : '') +
           ((vis.colNewCust || unmasked) ? '<th>신규 고객수</th>' : '') +
           ((vis.colRevisitRate || unmasked) ? '<th>재방문 비율</th>' : '') +
           ((vis.colUnitPrice || unmasked) ? '<th>객단가 / 목표(범위)</th>' : '') +
-          ((vis.colKpiScore || unmasked) ? '<th>KPI 점수</th>' : '') +
+          ((vis.colKpiScore || unmasked) ? '<th>KPI 점수 (전월대비)</th>' : '') +
           '<th>성과 그래프</th>' +
         '</tr>';
 
@@ -4365,6 +4593,10 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       tbody.innerHTML = memberList.map(function(m) {
         const st = aggregateMemberMetrics(m);
+        const prevSt = currentPeriod === 'monthly' ? aggregateMemberMetrics(m, prevYm) : null;
+        const hasPrev = Boolean(prevSt && prevSt.recordCount > 0);
+        const revMomChip = hasPrev ? (' ' + formatMomDeltaChipHtml(st.revenue, prevSt.revenue, '만', 1, true)) : '';
+        const kpiMomChip = hasPrev ? (' ' + formatMomDeltaChipHtml(st.totalScore, prevSt.totalScore, '점', 1, true)) : '';
         const rangeLabel = st.target.unitPriceRange ? (' · ' + escapeHtml(st.target.unitPriceRange)) : '';
         const roleBadgeClass = (m.role === 'ceo' || m.isSystemCeo)
           ? 'badge-champagne'
@@ -4373,12 +4605,12 @@ create policy "Allow public read write" on public.yuroso_app_state
           '<td><strong>' + escapeHtml(m.name) + '</strong></td>' +
           '<td><span class="badge ' + roleBadgeClass + '">' + formatMemberRoleLabel(m) + '</span></td>' +
           '<td>' + escapeHtml(m.branch) + '</td>' +
-          ((vis.colRevenue || unmasked) ? ('<td><strong>' + formatNumber(st.revenue, 1) + '</strong> / ' + formatNumber(st.target.targetRevenue) + '만원</td>') : '') +
-          ((vis.colTotalCust || unmasked) ? ('<td>' + formatNumber(st.totalCust) + '명</td>') : '') +
+          ((vis.colRevenue || unmasked) ? ('<td><strong>' + formatNumber(st.revenue, 1) + '</strong> / ' + formatNumber(st.target.targetRevenue) + '만원' + revMomChip + '</td>') : '') +
+          ((vis.colTotalCust || unmasked) ? ('<td><strong>' + formatNumber(st.totalCust) + '명</strong> <span style="font-size:11.5px; color:var(--espresso-muted);">(' + st.revisitCust + '+' + st.newCust + ')</span></td>') : '') +
           ((vis.colNewCust || unmasked) ? ('<td>' + formatNumber(st.newCust) + ' / ' + formatNumber(st.target.targetNewCustomers) + '명</td>') : '') +
           ((vis.colRevisitRate || unmasked) ? ('<td>' + st.revisitRate.toFixed(1) + '% (목표 ' + st.target.targetRevisitRate + '%)</td>') : '') +
           ((vis.colUnitPrice || unmasked) ? ('<td><strong>' + formatNumber(st.unitPrice) + '원</strong> / 목표 ' + formatNumber(st.target.targetUnitPrice) + '원' + rangeLabel + '</td>') : '') +
-          ((vis.colKpiScore || unmasked) ? ('<td><span class="badge badge-champagne">' + st.totalScore.toFixed(1) + '점</span></td>') : '') +
+          ((vis.colKpiScore || unmasked) ? ('<td><span class="badge badge-champagne">' + st.totalScore.toFixed(1) + '점</span>' + kpiMomChip + '</td>') : '') +
           '<td><button type="button" class="btn btn-outline btn-sm" onclick="selectMemberMonthlyChart(\'' + escapeHtml(m.id) + '\')">📈 그래프 보기</button></td>' +
         '</tr>';
       }).join('');
@@ -5406,6 +5638,87 @@ create policy "Allow public read write" on public.yuroso_app_state
       recalcCrmLive();
     }
 
+    let simDeltaRevenue = 0;
+    let simDeltaRevisit = 0;
+    let simDeltaNew = 0;
+
+    function adjustKpiSimulator(field, delta) {
+      if (field === 'rev') {
+        simDeltaRevenue = Math.max(-5000, simDeltaRevenue + delta);
+      } else if (field === 'revisit') {
+        simDeltaRevisit = Math.max(-500, simDeltaRevisit + delta);
+      } else if (field === 'new') {
+        simDeltaNew = Math.max(-500, simDeltaNew + delta);
+      }
+      updateKpiSimulatorUi();
+    }
+
+    function resetKpiSimulator() {
+      simDeltaRevenue = 0;
+      simDeltaRevisit = 0;
+      simDeltaNew = 0;
+      updateKpiSimulatorUi();
+    }
+
+    function updateKpiSimulatorUi() {
+      const revLbl = document.getElementById('simDeltaRevLabel');
+      const revisitLbl = document.getElementById('simDeltaRevisitLabel');
+      const newLbl = document.getElementById('simDeltaNewLabel');
+      const resTextEl = document.getElementById('simResultText');
+      const resBadgeEl = document.getElementById('simResultScoreBadge');
+      if (!resTextEl || !resBadgeEl) return;
+
+      if (revLbl) revLbl.textContent = (simDeltaRevenue >= 0 ? '+' : '') + formatNumber(simDeltaRevenue) + '만원';
+      if (revisitLbl) revisitLbl.textContent = (simDeltaRevisit >= 0 ? '+' : '') + formatNumber(simDeltaRevisit) + '명';
+      if (newLbl) newLbl.textContent = (simDeltaNew >= 0 ? '+' : '') + formatNumber(simDeltaNew) + '명';
+
+      const memId = document.getElementById('crmMemberSelect').value;
+      const crmYm = getCrmTargetMonthKey();
+      const target = getMemberTarget(memId, crmYm);
+
+      const baseRev = Number(document.getElementById('crmRevenueInput').value) || 0;
+      const baseRevisit = Math.max(0, Math.round(Number(document.getElementById('crmRevisitCustInput').value) || 0));
+      const baseNew = Math.max(0, Math.round(Number(document.getElementById('crmNewCustInput').value) || 0));
+      const baseTotal = baseRevisit + baseNew;
+      const baseUnit = resolveEffectiveUnitPrice(memId, baseRev, baseTotal, crmYm);
+      const baseKpi = computeDesignerKpiFromMetrics({
+        revenue: baseRev,
+        totalCust: baseTotal,
+        newCust: baseNew,
+        revisitCust: baseRevisit,
+        unitPrice: baseUnit
+      }, target);
+
+      const simRev = Math.max(0, baseRev + simDeltaRevenue);
+      const simRevisit = Math.max(0, baseRevisit + simDeltaRevisit);
+      const simNew = Math.max(0, baseNew + simDeltaNew);
+      const simTotal = simRevisit + simNew;
+      const simUnit = resolveEffectiveUnitPrice(memId, simRev, simTotal, crmYm);
+      const simKpi = computeDesignerKpiFromMetrics({
+        revenue: simRev,
+        totalCust: simTotal,
+        newCust: simNew,
+        revisitCust: simRevisit,
+        unitPrice: simUnit
+      }, target);
+
+      const scoreDiff = simKpi.totalScore - baseKpi.totalScore;
+      const gradeLabel = simKpi.totalScore >= 90 ? '🏆 S등급(우수)' : (simKpi.totalScore >= 80 ? '✨ A등급' : '📈 성장 중');
+      resBadgeEl.textContent = '예상 ' + simKpi.totalScore.toFixed(1) + '점 (' + (scoreDiff >= 0 ? '+' : '') + scoreDiff.toFixed(1) + '점)';
+
+      if (simDeltaRevenue === 0 && simDeltaRevisit === 0 && simDeltaNew === 0) {
+        const needFor90 = Math.max(0, 90 - baseKpi.totalScore);
+        if (needFor90 <= 0) {
+          resTextEl.innerHTML = '🎉 현재 입력 실적으로 이미 <strong>90점 이상(' + baseKpi.totalScore.toFixed(1) + '점 · S등급)</strong>을 달성했습니다!';
+        } else {
+          resTextEl.innerHTML = '💡 현재 <strong>' + baseKpi.totalScore.toFixed(1) + '점</strong>입니다. 위 버튼(<code>+100만</code>, <code>+5명</code>)을 눌러 <strong>90점(우수 기준)</strong> 달성 조건을 시뮬레이션해 보세요!';
+        }
+      } else {
+        resTextEl.innerHTML =
+          '🎯 시뮬레이션 결과: 예상 매출 <strong>' + formatNumber(simRev, 1) + '만원</strong> · 총고객 <strong>' + simTotal + '명</strong>(재방문율 ' + simKpi.revisitRate.toFixed(1) + '%) → <strong>종합 ' + simKpi.totalScore.toFixed(1) + '점 (' + gradeLabel + ')</strong>';
+      }
+    }
+
     function recalcCrmLive() {
       const memId = document.getElementById('crmMemberSelect').value;
       const crmYm = getCrmTargetMonthKey();
@@ -5437,6 +5750,8 @@ create policy "Allow public read write" on public.yuroso_app_state
       document.getElementById('liveBarRevRate').style.width = ((kpi.scoreRevRate / 30) * 100) + '%';
       document.getElementById('liveBarUnit').style.width = ((kpi.scoreUnit / 20) * 100) + '%';
       document.getElementById('liveBarNew').style.width = ((kpi.scoreNew / 10) * 100) + '%';
+
+      updateKpiSimulatorUi();
     }
 
     function updateCrmEditModeUi() {
@@ -5468,6 +5783,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       document.getElementById('crmTotalCustInput').value = '';
       document.getElementById('crmUnitPriceInput').value = '';
       document.getElementById('crmMemoInput').value = '';
+      resetKpiSimulator();
       updateCrmEditModeUi();
       syncInlineUnitPriceInputs();
       updateCrmRevenueHelperUi();
@@ -5746,8 +6062,71 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     /* =========================================================================
-       12. TAB 4: 1:1 코칭 노트
+       12. TAB 4: 1:1 코칭 노트 (당월 KPI 성적표 자동 첨부 + 1분 코칭 템플릿)
        ========================================================================= */
+    function buildCoachingKpiSnapshotString(member, ymKey) {
+      if (!member) return '';
+      const targetYm = resolveTargetMonthKey(ymKey || selectedPeriodMonth);
+      const st = aggregateMemberMetrics(member, targetYm);
+      return '[' + formatSelectedMonthLabel(targetYm) + ' KPI 성적표] 매출 ' +
+        formatNumber(st.revenue, 1) + '/' + formatNumber(st.target.targetRevenue) + '만원 · ' +
+        '총고객 ' + st.totalCust + '명(재방문 ' + st.revisitCust + '+신규 ' + st.newCust + ') · ' +
+        '재방문율 ' + st.revisitRate.toFixed(1) + '%(목표 ' + st.target.targetRevisitRate + '%) · ' +
+        '객단가 ' + formatNumber(st.unitPrice) + '원 · 종합 ' + st.totalScore.toFixed(1) + '점';
+    }
+
+    function updateCoachingMemberKpiPreview() {
+      const previewEl = document.getElementById('coachingMemberKpiPreviewBar');
+      const targetSel = document.getElementById('coachingTargetSelect');
+      if (!previewEl || !targetSel) return;
+      const member = appState.members.find(function(m) { return m.id === targetSel.value; });
+      if (!member) {
+        previewEl.innerHTML = '📊 대상 임직원을 선택하면 해당 월 KPI 성적표 요약이 자동으로 첨부됩니다.';
+        return;
+      }
+      const snapStr = buildCoachingKpiSnapshotString(member, selectedPeriodMonth);
+      previewEl.innerHTML = '📌 <strong>' + escapeHtml(member.name) + ' (' + escapeHtml(member.branch) + ') 자동 첨부 성적표:</strong> ' + escapeHtml(snapStr);
+    }
+
+    function applyCoachingTemplate(templateType) {
+      const targetSel = document.getElementById('coachingTargetSelect');
+      const titleInput = document.getElementById('coachingTitleInput');
+      const contentInput = document.getElementById('coachingContentInput');
+      if (!targetSel || !titleInput || !contentInput) return;
+
+      const member = appState.members.find(function(m) { return m.id === targetSel.value; });
+      const memName = member ? member.name : '디자이너';
+      const st = member ? aggregateMemberMetrics(member, selectedPeriodMonth) : null;
+      const monthKo = formatSelectedMonthLabel(selectedPeriodMonth);
+
+      if (templateType === 'revisit') {
+        titleInput.value = '[' + monthKo + '] 재방문 고객 고정화 및 리텐션 향상 코칭';
+        contentInput.value =
+          '1. 현재 현황: ' + memName + '님 현재 재방문율 ' + (st ? st.revisitRate.toFixed(1) : '0.0') + '% (목표 ' + (st ? st.target.targetRevisitRate : 72) + '%)\n' +
+          '2. 핵심 피드백: 시술 후 2주 차 홈케어 안부 메시지 발송 및 다음 시술 권장 주기(펌/염색 골든타임) 사전 예약 안내 강화\n' +
+          '3. 다음 달 액션플랜: 기존 방문 고객 대상 두피/클리닉 연계 혜택 안내로 재방문 고객 +10명 추가 확보 목표';
+      } else if (templateType === 'unitPrice') {
+        titleInput.value = '[' + monthKo + '] 프리미엄 시술 제안 및 객단가 업셀링 코칭';
+        contentInput.value =
+          '1. 현재 현황: ' + memName + '님 현재 객단가 ' + (st ? formatNumber(st.unitPrice) : '0') + '원 (목표 ' + (st ? formatNumber(st.target.targetUnitPrice) : '100,000') + '원)\n' +
+          '2. 핵심 피드백: 커트·단품 시술 고객 상담 시 모발 손상도 진단 후 맞춤형 케어/클리닉 세트 메뉴 자연스러운 제안\n' +
+          '3. 다음 달 액션플랜: 세트 메뉴 선택 비중 20% 확대하여 목표 객단가 달성';
+      } else if (templateType === 'newCust') {
+        titleInput.value = '[' + monthKo + '] 신규 고객 첫 방문 만족도 및 재방문 전환 코칭';
+        contentInput.value =
+          '1. 현재 현황: ' + memName + '님 당월 신규 고객 ' + (st ? st.newCust : 0) + '명 (목표 ' + (st ? st.target.targetNewCustomers : 40) + '명)\n' +
+          '2. 핵심 피드백: 첫 방문 고객 시술 전 스타일북/체크리스트 상담 5분 집중 및 네이버 리뷰/포트폴리오 사진 확보\n' +
+          '3. 다음 달 액션플랜: 신규 고객 첫 시술 후 재방문 쿠폰 안내 100% 실행';
+      } else {
+        titleInput.value = '[' + monthKo + '] 월간 목표 달성 우수 성과 격려 및 성장 피드백';
+        contentInput.value =
+          '1. 현재 현황: ' + memName + '님 당월 매출 ' + (st ? formatNumber(st.revenue, 1) : '0') + '만원 · 종합 KPI ' + (st ? st.totalScore.toFixed(1) : '0.0') + '점 달성!\n' +
+          '2. 칭찬 포인트: 꾸준한 고객 관리와 밝은 매장 에너지로 지점 매출 성장에 크게 기여함\n' +
+          '3. 다음 달 성장 목표: 현재의 높은 재방문율을 유지하면서 시그니처 스타일 브랜딩 강화';
+      }
+      showToast('✨ 1분 코칭 양식이 자동 입력되었습니다. 내용을 자유롭게 다듬어 등록하세요!', 'info');
+    }
+
     function renderCoachingPanel() {
       const writeCard = document.getElementById('coachingWriteCard');
       const targetSel = document.getElementById('coachingTargetSelect');
@@ -5769,13 +6148,19 @@ create policy "Allow public read write" on public.yuroso_app_state
         ? appState.members
         : appState.members.filter(function(m) { return !m.isSystemCeo && m.role !== 'ceo' && m.branch === activeView.branch; });
 
+      const prevSelectedId = targetSel.value;
       if (targets.length === 0) {
         targetSel.innerHTML = '<option value="">등록된 임직원 없음</option>';
       } else {
         targetSel.innerHTML = targets.map(function(m) {
           return '<option value="' + escapeHtml(m.id) + '">' + escapeHtml(formatMemberOptionText(m)) + '</option>';
         }).join('');
+        if (prevSelectedId && targets.some(function(m) { return m.id === prevSelectedId; })) {
+          targetSel.value = prevSelectedId;
+        }
       }
+
+      updateCoachingMemberKpiPreview();
 
       const targetIds = new Set(targets.map(function(m) { return m.id; }));
       const notes = (activeView.role === 'ceo' || activeView.role === 'admin')
@@ -5793,8 +6178,11 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
 
       container.innerHTML = notes.map(function(n) {
+        const snapTagHtml = n.kpiSnapshot
+          ? ('<div style="background:var(--champagne-bg); border:1px solid rgba(176,137,104,0.35); border-radius:9px; padding:7px 11px; margin-bottom:8px; font-size:12px; color:var(--espresso); font-weight:600;">📊 ' + escapeHtml(n.kpiSnapshot) + '</div>')
+          : '';
         return '<div style="background:var(--ivory); border:1px solid var(--ivory-border); border-radius:12px; padding:14px;">' +
-          '<div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;">' +
+          '<div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;">' +
             '<div style="display:flex; flex-wrap:wrap; align-items:center; gap:6px;">' +
               '<span class="badge badge-champagne-soft">' + escapeHtml(n.branch) + ' · ' + escapeHtml(n.memberName) + '</span>' +
               '<strong style="font-size:14px;">' + escapeHtml(n.title) + '</strong>' +
@@ -5804,7 +6192,8 @@ create policy "Allow public read write" on public.yuroso_app_state
               (allowDelete ? ('<button type="button" class="btn btn-danger btn-sm" onclick="deleteCoachingNote(\'' + escapeHtml(n.id) + '\')">삭제</button>') : '') +
             '</div>' +
           '</div>' +
-          '<p style="font-size:13.5px; color:var(--espresso); white-space:pre-line;">' + escapeHtml(n.content) + '</p>' +
+          snapTagHtml +
+          '<p style="font-size:13.5px; color:var(--espresso); white-space:pre-line; line-height:1.55;">' + escapeHtml(n.content) + '</p>' +
         '</div>';
       }).join('');
     }
@@ -5819,6 +6208,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
       const title = document.getElementById('coachingTitleInput').value.trim();
       const content = document.getElementById('coachingContentInput').value.trim();
+      const kpiSnapshot = buildCoachingKpiSnapshotString(member, selectedPeriodMonth);
 
       appState.coachingNotes.unshift({
         id: 'coach_' + Date.now(),
@@ -5827,6 +6217,8 @@ create policy "Allow public read write" on public.yuroso_app_state
         branch: member.branch,
         author: loggedInSession ? loggedInSession.name : '관리자',
         date: getLocalDateParts().ymd,
+        ym: selectedPeriodMonth,
+        kpiSnapshot: kpiSnapshot,
         title: title,
         content: content
       });
