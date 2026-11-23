@@ -1530,8 +1530,8 @@
                   <select id="crmMemberSelect" class="select" onchange="onCrmMemberSelectChange()"></select>
                 </div>
                 <div>
-                  <label class="field-label">기준 일자 (달력 월 · 분기 · 1년 그래프 반영)</label>
-                  <input type="date" id="crmDateInput" class="input" required />
+                  <label class="field-label">기준 일자 (해당 월 목표치 · 월간 성과 그래프 반영)</label>
+                  <input type="date" id="crmDateInput" class="input" onchange="syncInlineUnitPriceInputs(); recalcCrmLive();" required />
                 </div>
               </div>
 
@@ -1773,29 +1773,57 @@
   </section>
 
   <!-- =========================================================================
-       모달 1: 대표원장 · 관리자 전용 [🎯 목표치 설정] 모달
+       모달 1: 대표원장 · 관리자 전용 [🎯 월별 목표치 & 임직원별 객단가 범위 설정] 모달
        ========================================================================= -->
   <div id="targetModal" class="modal-backdrop hidden no-print">
-    <div class="modal-panel" style="max-width:880px;">
+    <div class="modal-panel" style="max-width:940px;">
       <div class="modal-header">
         <div style="display:flex; align-items:center; gap:8px;">
-          <span id="targetModalBadge" class="badge badge-champagne">대표원장 전용</span>
-          <h3 id="targetModalTitle" style="font-size:16px; font-weight:700;">🎯 매장 · 지점원장 · 임직원 목표치 및 객단가 범위 설정</h3>
+          <span id="targetModalBadge" class="badge badge-champagne">대표원장 · 관리자</span>
+          <h3 id="targetModalTitle" style="font-size:16px; font-weight:700;">🎯 월별 매장 · 지점원장 · 임직원 목표치 및 객단가 범위 설정</h3>
         </div>
         <button type="button" style="color:var(--ivory); font-size:20px; padding:2px 6px;" onclick="closeTargetModal()">&times;</button>
       </div>
 
       <div class="modal-body">
-        <div style="display:flex; flex-wrap:wrap; gap:6px; border-bottom:1px solid var(--ivory-border); padding-bottom:12px;">
-          <button type="button" id="targetSubTab1" class="btn btn-espresso btn-sm" onclick="switchTargetModalTab(1)">
-            ① 3대 매장별 목표치
-          </button>
-          <button type="button" id="targetSubTab2" class="btn btn-outline btn-sm" onclick="switchTargetModalTab(2)">
-            ② 각 지점원장 개별 목표치
-          </button>
-          <button type="button" id="targetSubTab3" class="btn btn-outline btn-sm" onclick="switchTargetModalTab(3)">
-            ③ 각 임직원별 목표치 · 객단가 범위 설정
-          </button>
+        <!-- 월별 목표치 설정 기준월 선택 바 -->
+        <div style="background:linear-gradient(135deg, var(--espresso) 0%, var(--espresso-deep) 100%); color:var(--ivory); border-radius:14px; padding:14px 16px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; border:1px solid rgba(176,137,104,0.45);">
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px;">
+            <span class="badge badge-champagne">📅 설정 대상 월</span>
+            <div style="display:inline-flex; align-items:center; gap:4px; background:var(--white); border-radius:9px; padding:2px 5px;">
+              <button type="button" class="btn btn-sm" style="padding:4px 8px; font-weight:700; color:var(--espresso);" onclick="shiftTargetModalMonth(-1)" title="이전 달">&lsaquo;</button>
+              <input type="month" id="targetModalMonthInput" style="border:none; outline:none; background:transparent; font-size:13px; font-weight:700; color:var(--espresso); padding:3px 4px; cursor:pointer;" onchange="onTargetModalMonthChange(this.value)" />
+              <button type="button" class="btn btn-sm" style="padding:4px 8px; font-weight:700; color:var(--espresso);" onclick="shiftTargetModalMonth(1)" title="다음 달">&rsaquo;</button>
+            </div>
+            <strong id="targetModalMonthTitleLabel" style="font-size:14.5px; color:var(--champagne-light);">2026년 11월 목표치</strong>
+            <span id="targetModalMonthCustomBadge" class="badge badge-sage">월별 맞춤 설정</span>
+          </div>
+
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:6px;">
+            <button type="button" class="btn btn-dark-outline btn-sm" onclick="copyPrevMonthTargetsToCurrentModal()">
+              📋 전월 목표치 불러오기
+            </button>
+            <button type="button" class="btn btn-champagne btn-sm" onclick="applyCurrentModalTargetsToAllYear()">
+              🗓️ 현재 입력값을 올해 1~12월 전체 일괄 적용
+            </button>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; border-bottom:1px solid var(--ivory-border); padding-bottom:12px;">
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            <button type="button" id="targetSubTab1" class="btn btn-espresso btn-sm" onclick="switchTargetModalTab(1)">
+              ① 3대 매장별 월별 목표치
+            </button>
+            <button type="button" id="targetSubTab2" class="btn btn-outline btn-sm" onclick="switchTargetModalTab(2)">
+              ② 지점원장 월별 목표치 · 객단가 범위
+            </button>
+            <button type="button" id="targetSubTab3" class="btn btn-outline btn-sm" onclick="switchTargetModalTab(3)">
+              ③ 대표원장 · 지점원장 · 디자이너 개별 목표치 · 객단가 범위
+            </button>
+          </div>
+          <span style="font-size:12px; color:var(--espresso-muted);">
+            💡 각 달마다 설정된 목표치로 해당 월 KPI 점수가 산출되며, 연간 통계는 월별 목표치 대비 점수로 자동 집계됩니다.
+          </span>
         </div>
 
         <div id="targetModalPane1" style="display:flex; flex-direction:column; gap:14px;"></div>
@@ -1803,9 +1831,15 @@
         <div id="targetModalPane3" class="hidden" style="display:flex; flex-direction:column; gap:16px;"></div>
       </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline" onclick="closeTargetModal()">닫기</button>
-        <button type="button" class="btn btn-champagne" onclick="saveAllTargetsFromModal()">전체 목표치 저장 및 즉시 반영</button>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <label style="display:inline-flex; align-items:center; gap:7px; font-size:12.5px; color:var(--espresso); font-weight:600; cursor:pointer;">
+          <input type="checkbox" id="targetModalAlsoSetDefaultChk" checked />
+          미설정 월의 기본 목표치로도 함께 업데이트
+        </label>
+        <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
+          <button type="button" class="btn btn-outline" onclick="closeTargetModal()">닫기</button>
+          <button type="button" class="btn btn-champagne" onclick="saveAllTargetsFromModal()">선택 월 목표치 · 객단가 범위 저장</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1867,6 +1901,20 @@
                 <option value="director">지점원장</option>
               </select>
             </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+              <label class="field-label">개별 월 목표매출 (만원)</label>
+              <input type="number" id="quickRegTargetRev" class="input" placeholder="예: 1800" />
+            </div>
+            <div>
+              <label class="field-label">개별 목표 객단가 (원)</label>
+              <input type="number" id="quickRegTargetUnitPrice" class="input" placeholder="예: 100000" />
+            </div>
+          </div>
+          <div>
+            <label class="field-label">개별 목표 객단가 범위 (자유 설정)</label>
+            <input type="text" id="quickRegUnitPriceRange" class="input" placeholder="예: 80,000원 ~ 150,000원" />
           </div>
         </div>
         <div class="modal-footer">
@@ -2269,12 +2317,13 @@ create policy "Allow public read write" on public.yuroso_app_state
           '마곡발산점': { targetRevenue: 10500, prevRevenue: 9200, actualProfit: 0, targetProfit: 2600 }
         },
         directorTargets: {
-          '파주 운정점': { targetRevenue: 11000, targetAvgGrowth: 12, targetRevisitRate: 72, retentionScore: 90 },
-          '운정역점': { targetRevenue: 9500, targetAvgGrowth: 12, targetRevisitRate: 72, retentionScore: 90 },
-          '마곡발산점': { targetRevenue: 10500, targetAvgGrowth: 12, targetRevisitRate: 72, retentionScore: 90 }
+          '파주 운정점': { targetRevenue: 11000, targetAvgGrowth: 12, targetRevisitRate: 72, retentionScore: 90, targetUnitPrice: 100000, unitPriceRange: '80,000원 ~ 150,000원' },
+          '운정역점': { targetRevenue: 9500, targetAvgGrowth: 12, targetRevisitRate: 72, retentionScore: 90, targetUnitPrice: 100000, unitPriceRange: '80,000원 ~ 150,000원' },
+          '마곡발산점': { targetRevenue: 10500, targetAvgGrowth: 12, targetRevisitRate: 72, retentionScore: 90, targetUnitPrice: 100000, unitPriceRange: '80,000원 ~ 150,000원' }
         },
         defaultDesignerTarget: defaultTarget,
         memberTargets: initialMemberTargets,
+        monthlyTargets: {},
         visibility: {
           directorShowKpi: true,
           directorShowCharts: true,
@@ -2306,6 +2355,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         directorTargets: Object.assign({}, base.directorTargets, raw.directorTargets || {}),
         defaultDesignerTarget: Object.assign({}, base.defaultDesignerTarget, raw.defaultDesignerTarget || {}),
         memberTargets: Object.assign({}, base.memberTargets, raw.memberTargets || {}),
+        monthlyTargets: (raw.monthlyTargets && typeof raw.monthlyTargets === 'object') ? raw.monthlyTargets : {},
         visibility: Object.assign({}, base.visibility, raw.visibility || {})
       });
       if (!merged.memberTargets[CEO_MEMBER_ID]) {
@@ -2339,6 +2389,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     let currentPeriod = 'monthly';
     let selectedPeriodMonth = new Date().toISOString().slice(0, 7);
     let selectedPeriodYear = String(new Date().getFullYear());
+    let targetModalSelectedMonth = new Date().toISOString().slice(0, 7);
     let crmHistoryFilterMode = 'month';
     let indivGraphUnit = 'month';
     let pendingConfirmFn = null;
@@ -3017,18 +3068,83 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     /* =========================================================================
-       7. KPI & CRM 핵심 계산 로직
+       7. KPI & CRM 핵심 계산 로직 (월별 목표치 설정 + 월별 목표 기준 연간 통계)
        ========================================================================= */
-    function getMemberTarget(memberId) {
-      const def = appState.defaultDesignerTarget;
-      const custom = (memberId && appState.memberTargets[memberId]) ? appState.memberTargets[memberId] : {};
+    function resolveTargetMonthKey(explicitYm) {
+      if (explicitYm && typeof explicitYm === 'string' && explicitYm.indexOf('-') > 0) {
+        return explicitYm.slice(0, 7);
+      }
+      if (selectedPeriodMonth && selectedPeriodMonth.indexOf('-') > 0) {
+        return selectedPeriodMonth.slice(0, 7);
+      }
+      return new Date().toISOString().slice(0, 7);
+    }
+
+    function getDefaultDesignerTargetForMonth(ym) {
+      const monthKey = resolveTargetMonthKey(ym);
+      const baseDef = appState.defaultDesignerTarget || {};
+      const monthObj = (appState.monthlyTargets && appState.monthlyTargets[monthKey] && appState.monthlyTargets[monthKey].defaultDesignerTarget)
+        ? appState.monthlyTargets[monthKey].defaultDesignerTarget
+        : {};
       return {
-        targetRevenue: Number(custom.targetRevenue != null ? custom.targetRevenue : def.targetRevenue) || 1800,
-        targetRevisitRate: Number(custom.targetRevisitRate != null ? custom.targetRevisitRate : def.targetRevisitRate) || 72,
-        targetNewCustomers: Number(custom.targetNewCustomers != null ? custom.targetNewCustomers : def.targetNewCustomers) || 40,
-        presetUnitPrice: Number(custom.presetUnitPrice != null ? custom.presetUnitPrice : def.presetUnitPrice) || 0,
-        targetUnitPrice: Number(custom.targetUnitPrice != null ? custom.targetUnitPrice : def.targetUnitPrice) || 100000,
-        unitPriceRange: String(custom.unitPriceRange != null ? custom.unitPriceRange : (def.unitPriceRange || '')).trim()
+        targetRevenue: Number(monthObj.targetRevenue != null ? monthObj.targetRevenue : baseDef.targetRevenue) || 1800,
+        targetRevisitRate: Number(monthObj.targetRevisitRate != null ? monthObj.targetRevisitRate : baseDef.targetRevisitRate) || 72,
+        targetNewCustomers: Number(monthObj.targetNewCustomers != null ? monthObj.targetNewCustomers : baseDef.targetNewCustomers) || 40,
+        presetUnitPrice: Number(monthObj.presetUnitPrice != null ? monthObj.presetUnitPrice : baseDef.presetUnitPrice) || 0,
+        targetUnitPrice: Number(monthObj.targetUnitPrice != null ? monthObj.targetUnitPrice : baseDef.targetUnitPrice) || 100000,
+        unitPriceRange: String(monthObj.unitPriceRange != null ? monthObj.unitPriceRange : (baseDef.unitPriceRange || '80,000원 ~ 150,000원')).trim()
+      };
+    }
+
+    function getBranchTarget(branchName, ym) {
+      const monthKey = resolveTargetMonthKey(ym);
+      const baseBt = (appState.branchTargets && appState.branchTargets[branchName]) ? appState.branchTargets[branchName] : {};
+      const monthBt = (appState.monthlyTargets && appState.monthlyTargets[monthKey] && appState.monthlyTargets[monthKey].branchTargets && appState.monthlyTargets[monthKey].branchTargets[branchName])
+        ? appState.monthlyTargets[monthKey].branchTargets[branchName]
+        : {};
+      return {
+        targetRevenue: Number(monthBt.targetRevenue != null ? monthBt.targetRevenue : baseBt.targetRevenue) || 10000,
+        prevRevenue: Number(monthBt.prevRevenue != null ? monthBt.prevRevenue : baseBt.prevRevenue) || 0,
+        targetProfit: Number(monthBt.targetProfit != null ? monthBt.targetProfit : baseBt.targetProfit) || 2500,
+        actualProfit: Number(monthBt.actualProfit != null ? monthBt.actualProfit : baseBt.actualProfit) || 0
+      };
+    }
+
+    function getDirectorTarget(branchName, ym) {
+      const monthKey = resolveTargetMonthKey(ym);
+      const baseDt = (appState.directorTargets && appState.directorTargets[branchName]) ? appState.directorTargets[branchName] : {};
+      const monthDt = (appState.monthlyTargets && appState.monthlyTargets[monthKey] && appState.monthlyTargets[monthKey].directorTargets && appState.monthlyTargets[monthKey].directorTargets[branchName])
+        ? appState.monthlyTargets[monthKey].directorTargets[branchName]
+        : {};
+      return {
+        targetRevenue: Number(monthDt.targetRevenue != null ? monthDt.targetRevenue : baseDt.targetRevenue) || 10000,
+        targetAvgGrowth: Number(monthDt.targetAvgGrowth != null ? monthDt.targetAvgGrowth : baseDt.targetAvgGrowth) || 12,
+        targetRevisitRate: Number(monthDt.targetRevisitRate != null ? monthDt.targetRevisitRate : baseDt.targetRevisitRate) || 72,
+        retentionScore: Number(monthDt.retentionScore != null ? monthDt.retentionScore : baseDt.retentionScore) || 90,
+        targetUnitPrice: Number(monthDt.targetUnitPrice != null ? monthDt.targetUnitPrice : baseDt.targetUnitPrice) || 100000,
+        unitPriceRange: String(monthDt.unitPriceRange != null ? monthDt.unitPriceRange : (baseDt.unitPriceRange || '80,000원 ~ 150,000원')).trim()
+      };
+    }
+
+    function getMemberTarget(memberId, ym) {
+      const monthKey = resolveTargetMonthKey(ym);
+      const def = getDefaultDesignerTargetForMonth(monthKey);
+      const baseCustom = (memberId && appState.memberTargets && appState.memberTargets[memberId]) ? appState.memberTargets[memberId] : {};
+      const monthCustom = (memberId && appState.monthlyTargets && appState.monthlyTargets[monthKey] && appState.monthlyTargets[monthKey].memberTargets && appState.monthlyTargets[monthKey].memberTargets[memberId])
+        ? appState.monthlyTargets[monthKey].memberTargets[memberId]
+        : {};
+      const pick = function(key, fallback) {
+        if (monthCustom[key] != null && monthCustom[key] !== '') return monthCustom[key];
+        if (baseCustom[key] != null && baseCustom[key] !== '') return baseCustom[key];
+        return fallback;
+      };
+      return {
+        targetRevenue: Number(pick('targetRevenue', def.targetRevenue)) || 1800,
+        targetRevisitRate: Number(pick('targetRevisitRate', def.targetRevisitRate)) || 72,
+        targetNewCustomers: Number(pick('targetNewCustomers', def.targetNewCustomers)) || 40,
+        presetUnitPrice: Number(pick('presetUnitPrice', def.presetUnitPrice)) || 0,
+        targetUnitPrice: Number(pick('targetUnitPrice', def.targetUnitPrice)) || 100000,
+        unitPriceRange: String(pick('unitPriceRange', def.unitPriceRange || '')).trim()
       };
     }
 
@@ -3076,14 +3192,14 @@ create policy "Allow public read write" on public.yuroso_app_state
         return exact.length ? exact : records.filter(function(r) { return r.date && r.date.indexOf(targetMonth) === 0; });
       }
       if (currentPeriod === 'monthly') {
-        /* 달마다 독립적으로 매출 · KPI 점수를 집계 (타 월/연간 누적 데이터 합산 차단) */
         return records.filter(function(r) { return r.date && r.date.indexOf(targetMonth) === 0; });
       }
       return records.filter(function(r) { return r.date && r.date.indexOf(targetYear) === 0; });
     }
 
-    function aggregateMemberMetricsFromList(member, recList) {
-      const target = getMemberTarget(member.id);
+    function aggregateMemberMetricsFromList(member, recList, explicitYm, overrideTarget) {
+      const ymKey = resolveTargetMonthKey(explicitYm || (recList && recList[0] && recList[0].date ? recList[0].date.slice(0, 7) : selectedPeriodMonth));
+      const target = overrideTarget || getMemberTarget(member.id, ymKey);
       let revenue = 0;
       let totalCust = 0;
       let newCust = 0;
@@ -3141,22 +3257,16 @@ create policy "Allow public read write" on public.yuroso_app_state
       }, kpi);
     }
 
-    function aggregateMemberMetrics(member) {
-      const myRecs = getFilteredRecordsByPeriod(
-        appState.crmRecords.filter(function(r) { return r.memberId === member.id; })
-      );
-      return aggregateMemberMetricsFromList(member, myRecs);
-    }
-
     function getMemberMonthlySeries(member, yearStr) {
-      const target = getMemberTarget(member.id);
+      const y = String(yearStr || selectedPeriodYear || new Date().getFullYear());
       const months = [];
       for (let m = 1; m <= 12; m++) {
-        const ym = yearStr + '-' + String(m).padStart(2, '0');
+        const ym = y + '-' + String(m).padStart(2, '0');
+        const monthTarget = getMemberTarget(member.id, ym);
         const monthRecs = appState.crmRecords.filter(function(r) {
           return r.memberId === member.id && r.date && r.date.indexOf(ym) === 0;
         });
-        const stat = aggregateMemberMetricsFromList(member, monthRecs);
+        const stat = aggregateMemberMetricsFromList(member, monthRecs, ym, monthTarget);
         if (monthRecs.length === 0) {
           stat.unitPrice = 0;
           stat.totalScore = 0;
@@ -3166,37 +3276,124 @@ create policy "Allow public read write" on public.yuroso_app_state
           monthLabel: m + '월',
           ym: ym,
           hasData: monthRecs.length > 0,
+          recordCount: monthRecs.length,
           revenue: Number(stat.revenue.toFixed(1)),
           totalCust: stat.totalCust,
           newCust: stat.newCust,
           revisitCust: stat.revisitCust,
           revisitRate: Number(stat.revisitRate.toFixed(1)),
           unitPrice: stat.unitPrice,
+          scoreRev: Number(stat.scoreRev.toFixed(2)),
+          scoreRevRate: Number(stat.scoreRevRate.toFixed(2)),
+          scoreUnit: Number(stat.scoreUnit.toFixed(2)),
+          scoreNew: Number(stat.scoreNew.toFixed(2)),
           kpiScore: Number(stat.totalScore.toFixed(1)),
-          target: target
+          target: monthTarget
         });
       }
       return months;
     }
 
-    function aggregateBranchMetrics(branchName) {
+    /* 월별 등록된 목표치에 따른 점수로 연간 통계를 산출하는 핵심 함수 */
+    function aggregateMemberMetricsForYear(member, yearStr) {
+      const y = String(yearStr || selectedPeriodYear || new Date().getFullYear());
+      const monthlySeries = getMemberMonthlySeries(member, y);
+      const activeMonths = monthlySeries.filter(function(d) { return d.hasData; });
+
+      const sumTargetRevenue = monthlySeries.reduce(function(s, d) { return s + (Number(d.target.targetRevenue) || 0); }, 0);
+      const sumTargetNewCust = monthlySeries.reduce(function(s, d) { return s + (Number(d.target.targetNewCustomers) || 0); }, 0);
+      const avgTargetRevisitRate = monthlySeries.reduce(function(s, d) { return s + (Number(d.target.targetRevisitRate) || 0); }, 0) / 12;
+      const avgTargetUnitPrice = Math.round(monthlySeries.reduce(function(s, d) { return s + (Number(d.target.targetUnitPrice) || 0); }, 0) / 12);
+      const latestTarget = getMemberTarget(member.id, selectedPeriodMonth);
+
+      const annualTarget = {
+        targetRevenue: sumTargetRevenue,
+        targetRevisitRate: Number(avgTargetRevisitRate.toFixed(1)),
+        targetNewCustomers: sumTargetNewCust,
+        presetUnitPrice: latestTarget.presetUnitPrice,
+        targetUnitPrice: avgTargetUnitPrice,
+        unitPriceRange: latestTarget.unitPriceRange
+      };
+
+      const yearRecs = appState.crmRecords.filter(function(r) {
+        return r.memberId === member.id && r.date && r.date.indexOf(y) === 0;
+      });
+      const rawTotals = aggregateMemberMetricsFromList(member, yearRecs, y + '-12', annualTarget);
+
+      /* 각 달의 월별 목표치 대비 달성 점수들의 평균으로 연간 KPI 점수 산출 */
+      let scoreRev = 0;
+      let scoreRevRate = 0;
+      let scoreUnit = 0;
+      let scoreNew = 0;
+      let totalScore = 0;
+
+      if (activeMonths.length > 0) {
+        scoreRev = activeMonths.reduce(function(s, d) { return s + d.scoreRev; }, 0) / activeMonths.length;
+        scoreRevRate = activeMonths.reduce(function(s, d) { return s + d.scoreRevRate; }, 0) / activeMonths.length;
+        scoreUnit = activeMonths.reduce(function(s, d) { return s + d.scoreUnit; }, 0) / activeMonths.length;
+        scoreNew = activeMonths.reduce(function(s, d) { return s + d.scoreNew; }, 0) / activeMonths.length;
+        totalScore = scoreRev + scoreRevRate + scoreUnit + scoreNew;
+      }
+
+      return {
+        member: member,
+        target: annualTarget,
+        recordCount: yearRecs.length,
+        activeMonthCount: activeMonths.length,
+        monthlySeries: monthlySeries,
+        revenue: rawTotals.revenue,
+        totalCust: rawTotals.totalCust,
+        newCust: rawTotals.newCust,
+        revisitCust: rawTotals.revisitCust,
+        unitPrice: rawTotals.unitPrice,
+        revisitRate: rawTotals.revisitRate,
+        scoreRev: scoreRev,
+        scoreRevRate: scoreRevRate,
+        scoreUnit: scoreUnit,
+        scoreNew: scoreNew,
+        totalScore: totalScore
+      };
+    }
+
+    function aggregateMemberMetrics(member, explicitYm) {
+      if (!explicitYm && currentPeriod === 'yearly') {
+        const y = selectedPeriodYear || (selectedPeriodMonth ? selectedPeriodMonth.slice(0, 4) : String(new Date().getFullYear()));
+        return aggregateMemberMetricsForYear(member, y);
+      }
+      if (explicitYm) {
+        const ymKey = resolveTargetMonthKey(explicitYm);
+        const monthRecs = appState.crmRecords.filter(function(r) {
+          return r.memberId === member.id && r.date && r.date.indexOf(ymKey) === 0;
+        });
+        return aggregateMemberMetricsFromList(member, monthRecs, ymKey);
+      }
+      const myRecs = getFilteredRecordsByPeriod(
+        appState.crmRecords.filter(function(r) { return r.memberId === member.id; })
+      );
+      return aggregateMemberMetricsFromList(member, myRecs, selectedPeriodMonth);
+    }
+
+    function aggregateBranchMetricsForMonth(branchName, ymKey) {
+      const monthKey = resolveTargetMonthKey(ymKey);
       const branchMembers = appState.members.filter(function(m) {
         return !m.isSystemCeo && m.role !== 'ceo' && m.branch === branchName;
       });
       const director = branchMembers.find(function(m) { return m.role === 'director'; }) || null;
       const designers = branchMembers.filter(function(m) { return m.role === 'designer'; });
 
-      const memberSummaries = branchMembers.map(function(m) { return aggregateMemberMetrics(m); });
+      const memberSummaries = branchMembers.map(function(m) { return aggregateMemberMetrics(m, monthKey); });
       const totalRevenue = memberSummaries.reduce(function(s, x) { return s + x.revenue; }, 0);
       const totalCust = memberSummaries.reduce(function(s, x) { return s + x.totalCust; }, 0);
       const totalRevisit = memberSummaries.reduce(function(s, x) { return s + x.revisitCust; }, 0);
+      const hasData = memberSummaries.some(function(x) { return x.recordCount > 0; });
       const avgRevisitRate = totalCust > 0 ? (totalRevisit / totalCust) * 100 : 0;
-      const avgUnitPrice = memberSummaries.length > 0
-        ? Math.round(memberSummaries.reduce(function(s, x) { return s + x.unitPrice; }, 0) / memberSummaries.length)
+      const activeMemberSummaries = memberSummaries.filter(function(x) { return x.unitPrice > 0; });
+      const avgUnitPrice = activeMemberSummaries.length > 0
+        ? Math.round(activeMemberSummaries.reduce(function(s, x) { return s + x.unitPrice; }, 0) / activeMemberSummaries.length)
         : 0;
 
-      const bTarget = appState.branchTargets[branchName];
-      const dTarget = appState.directorTargets[branchName];
+      const bTarget = getBranchTarget(branchName, monthKey);
+      const dTarget = getDirectorTarget(branchName, monthKey);
 
       const tBranchRev = Math.max(1, Number(dTarget.targetRevenue || bTarget.targetRevenue) || 10000);
       const scoreBranchRev = Math.min(35, (totalRevenue / tBranchRev) * 35);
@@ -3212,16 +3409,18 @@ create policy "Allow public read write" on public.yuroso_app_state
       const tRevRate = Math.max(1, Number(dTarget.targetRevisitRate) || 72);
       const scoreRevisit = Math.min(20, (avgRevisitRate / tRevRate) * 20);
 
-      const retentionBase = branchMembers.length > 0 ? Number(dTarget.retentionScore || 90) : 0;
+      const retentionBase = (branchMembers.length > 0 && hasData) ? Number(dTarget.retentionScore || 90) : 0;
       const scoreRetention = Math.min(15, (retentionBase / 100) * 15);
 
-      const directorKpiScore = scoreBranchRev + scoreAvgGrowth + scoreRevisit + scoreRetention;
+      const directorKpiScore = hasData ? (scoreBranchRev + scoreAvgGrowth + scoreRevisit + scoreRetention) : 0;
       const actualProfit = Number(bTarget.actualProfit) > 0
         ? Number(bTarget.actualProfit)
         : Math.round(totalRevenue * 0.25);
 
       return {
         branchName: branchName,
+        ym: monthKey,
+        hasData: hasData,
         director: director,
         designers: designers,
         branchMembers: branchMembers,
@@ -3231,26 +3430,102 @@ create policy "Allow public read write" on public.yuroso_app_state
         prevRevenue: Number(bTarget.prevRevenue) || 0,
         actualProfit: actualProfit,
         targetProfit: Number(bTarget.targetProfit) || 2500,
+        directorTarget: dTarget,
         avgRevisitRate: avgRevisitRate,
         avgUnitPrice: avgUnitPrice,
         growthPct: growthPct,
-        scoreBranchRev: scoreBranchRev,
-        scoreAvgGrowth: scoreAvgGrowth,
-        scoreRevisit: scoreRevisit,
-        scoreRetention: scoreRetention,
+        scoreBranchRev: hasData ? scoreBranchRev : 0,
+        scoreAvgGrowth: hasData ? scoreAvgGrowth : 0,
+        scoreRevisit: hasData ? scoreRevisit : 0,
+        scoreRetention: hasData ? scoreRetention : 0,
         directorKpiScore: directorKpiScore
       };
     }
 
-    function aggregateCeoMetrics() {
-      const branchStats = BRANCHES.map(function(b) { return aggregateBranchMetrics(b); });
+    function aggregateBranchMetrics(branchName, explicitYm) {
+      if (!explicitYm && currentPeriod === 'yearly') {
+        const y = String(selectedPeriodYear || (selectedPeriodMonth ? selectedPeriodMonth.slice(0, 4) : new Date().getFullYear()));
+        const monthStats = [];
+        for (let m = 1; m <= 12; m++) {
+          const ym = y + '-' + String(m).padStart(2, '0');
+          monthStats.push(aggregateBranchMetricsForMonth(branchName, ym));
+        }
+        const activeMonths = monthStats.filter(function(ms) { return ms.hasData; });
+        const branchMembers = appState.members.filter(function(m) {
+          return !m.isSystemCeo && m.role !== 'ceo' && m.branch === branchName;
+        });
+        const director = branchMembers.find(function(m) { return m.role === 'director'; }) || null;
+        const designers = branchMembers.filter(function(m) { return m.role === 'designer'; });
+        const memberSummaries = branchMembers.map(function(m) { return aggregateMemberMetricsForYear(m, y); });
+
+        const totalRevenue = monthStats.reduce(function(s, x) { return s + x.totalRevenue; }, 0);
+        const targetRevenue = monthStats.reduce(function(s, x) { return s + x.targetRevenue; }, 0);
+        const prevRevenue = monthStats.reduce(function(s, x) { return s + x.prevRevenue; }, 0);
+        const actualProfit = monthStats.reduce(function(s, x) { return s + x.actualProfit; }, 0);
+        const targetProfit = monthStats.reduce(function(s, x) { return s + x.targetProfit; }, 0);
+
+        const scoreBranchRev = activeMonths.length > 0
+          ? activeMonths.reduce(function(s, x) { return s + x.scoreBranchRev; }, 0) / activeMonths.length
+          : 0;
+        const scoreAvgGrowth = activeMonths.length > 0
+          ? activeMonths.reduce(function(s, x) { return s + x.scoreAvgGrowth; }, 0) / activeMonths.length
+          : 0;
+        const scoreRevisit = activeMonths.length > 0
+          ? activeMonths.reduce(function(s, x) { return s + x.scoreRevisit; }, 0) / activeMonths.length
+          : 0;
+        const scoreRetention = activeMonths.length > 0
+          ? activeMonths.reduce(function(s, x) { return s + x.scoreRetention; }, 0) / activeMonths.length
+          : 0;
+        const directorKpiScore = scoreBranchRev + scoreAvgGrowth + scoreRevisit + scoreRetention;
+
+        const avgRevisitRate = activeMonths.length > 0
+          ? activeMonths.reduce(function(s, x) { return s + x.avgRevisitRate; }, 0) / activeMonths.length
+          : 0;
+        const avgUnitPrice = activeMonths.length > 0
+          ? Math.round(activeMonths.reduce(function(s, x) { return s + x.avgUnitPrice; }, 0) / activeMonths.length)
+          : 0;
+        const growthPct = activeMonths.length > 0
+          ? activeMonths.reduce(function(s, x) { return s + x.growthPct; }, 0) / activeMonths.length
+          : 0;
+
+        return {
+          branchName: branchName,
+          director: director,
+          designers: designers,
+          branchMembers: branchMembers,
+          memberSummaries: memberSummaries,
+          monthlyBranchSeries: monthStats,
+          activeMonthCount: activeMonths.length,
+          totalRevenue: totalRevenue,
+          targetRevenue: targetRevenue,
+          prevRevenue: prevRevenue,
+          actualProfit: actualProfit,
+          targetProfit: targetProfit,
+          directorTarget: getDirectorTarget(branchName, selectedPeriodMonth),
+          avgRevisitRate: avgRevisitRate,
+          avgUnitPrice: avgUnitPrice,
+          growthPct: growthPct,
+          scoreBranchRev: scoreBranchRev,
+          scoreAvgGrowth: scoreAvgGrowth,
+          scoreRevisit: scoreRevisit,
+          scoreRetention: scoreRetention,
+          directorKpiScore: directorKpiScore
+        };
+      }
+      return aggregateBranchMetricsForMonth(branchName, explicitYm || selectedPeriodMonth);
+    }
+
+    function aggregateCeoMetricsForMonth(ymKey) {
+      const monthKey = resolveTargetMonthKey(ymKey);
+      const branchStats = BRANCHES.map(function(b) { return aggregateBranchMetricsForMonth(b, monthKey); });
       const ceoMem = appState.members.find(function(m) { return m.id === CEO_MEMBER_ID || m.role === 'ceo'; });
-      const ceoSelfStat = ceoMem ? aggregateMemberMetrics(ceoMem) : { revenue: 0 };
+      const ceoSelfStat = ceoMem ? aggregateMemberMetrics(ceoMem, monthKey) : { revenue: 0, recordCount: 0 };
       const totalRevenue = branchStats.reduce(function(s, b) { return s + b.totalRevenue; }, 0) + (ceoSelfStat.revenue || 0);
       const totalTargetRev = branchStats.reduce(function(s, b) { return s + b.targetRevenue; }, 0);
       const totalPrevRev = branchStats.reduce(function(s, b) { return s + b.prevRevenue; }, 0);
       const totalProfit = branchStats.reduce(function(s, b) { return s + b.actualProfit; }, 0);
       const totalTargetProfit = branchStats.reduce(function(s, b) { return s + b.targetProfit; }, 0);
+      const hasData = totalRevenue > 0 || branchStats.some(function(b) { return b.hasData; }) || (ceoSelfStat.recordCount > 0);
 
       const revGrowthPct = (totalPrevRev > 0 && totalRevenue > 0)
         ? ((totalRevenue - totalPrevRev) / totalPrevRev) * 100
@@ -3258,19 +3533,22 @@ create policy "Allow public read write" on public.yuroso_app_state
       const scoreRevGrowth = totalRevenue > 0
         ? Math.min(30, Math.max(0, (totalRevenue / Math.max(1, totalTargetRev)) * 30))
         : 0;
-      const scoreProfit = totalTargetProfit > 0
+      const scoreProfit = (hasData && totalTargetProfit > 0)
         ? Math.min(30, (totalProfit / totalTargetProfit) * 30)
         : 0;
       const targetAchRate = totalTargetRev > 0 ? (totalRevenue / totalTargetRev) * 100 : 0;
       const scoreBranchAch = Math.min(20, (targetAchRate / 100) * 20);
 
-      const allMemberSummaries = appState.members.map(function(m) { return aggregateMemberMetrics(m); });
-      const avgTalentScore = allMemberSummaries.length > 0
-        ? allMemberSummaries.reduce(function(s, m) { return s + m.totalScore; }, 0) / allMemberSummaries.length
+      const allMemberSummaries = appState.members.map(function(m) { return aggregateMemberMetrics(m, monthKey); });
+      const activeMembers = allMemberSummaries.filter(function(m) { return m.recordCount > 0; });
+      const avgTalentScore = activeMembers.length > 0
+        ? activeMembers.reduce(function(s, m) { return s + m.totalScore; }, 0) / activeMembers.length
         : 0;
       const scoreTalent = Math.min(20, (avgTalentScore / 100) * 20);
 
       return {
+        ym: monthKey,
+        hasData: hasData,
         branchStats: branchStats,
         totalRevenue: totalRevenue,
         totalTargetRev: totalTargetRev,
@@ -3283,8 +3561,65 @@ create policy "Allow public read write" on public.yuroso_app_state
         scoreProfit: scoreProfit,
         scoreBranchAch: scoreBranchAch,
         scoreTalent: scoreTalent,
-        totalKpiScore: scoreRevGrowth + scoreProfit + scoreBranchAch + scoreTalent
+        totalKpiScore: hasData ? (scoreRevGrowth + scoreProfit + scoreBranchAch + scoreTalent) : 0
       };
+    }
+
+    function aggregateCeoMetrics() {
+      if (currentPeriod === 'yearly') {
+        const y = String(selectedPeriodYear || (selectedPeriodMonth ? selectedPeriodMonth.slice(0, 4) : new Date().getFullYear()));
+        const monthStats = [];
+        for (let m = 1; m <= 12; m++) {
+          const ym = y + '-' + String(m).padStart(2, '0');
+          monthStats.push(aggregateCeoMetricsForMonth(ym));
+        }
+        const activeMonths = monthStats.filter(function(ms) { return ms.hasData; });
+        const branchStats = BRANCHES.map(function(b) { return aggregateBranchMetrics(b); });
+
+        const totalRevenue = monthStats.reduce(function(s, x) { return s + x.totalRevenue; }, 0);
+        const totalTargetRev = monthStats.reduce(function(s, x) { return s + x.totalTargetRev; }, 0);
+        const totalProfit = monthStats.reduce(function(s, x) { return s + x.totalProfit; }, 0);
+        const totalTargetProfit = monthStats.reduce(function(s, x) { return s + x.totalTargetProfit; }, 0);
+        const targetAchRate = totalTargetRev > 0 ? (totalRevenue / totalTargetRev) * 100 : 0;
+
+        const scoreRevGrowth = activeMonths.length > 0
+          ? activeMonths.reduce(function(s, x) { return s + x.scoreRevGrowth; }, 0) / activeMonths.length
+          : 0;
+        const scoreProfit = activeMonths.length > 0
+          ? activeMonths.reduce(function(s, x) { return s + x.scoreProfit; }, 0) / activeMonths.length
+          : 0;
+        const scoreBranchAch = activeMonths.length > 0
+          ? activeMonths.reduce(function(s, x) { return s + x.scoreBranchAch; }, 0) / activeMonths.length
+          : 0;
+        const scoreTalent = activeMonths.length > 0
+          ? activeMonths.reduce(function(s, x) { return s + x.scoreTalent; }, 0) / activeMonths.length
+          : 0;
+        const avgTalentScore = activeMonths.length > 0
+          ? activeMonths.reduce(function(s, x) { return s + x.avgTalentScore; }, 0) / activeMonths.length
+          : 0;
+        const revGrowthPct = activeMonths.length > 0
+          ? activeMonths.reduce(function(s, x) { return s + x.revGrowthPct; }, 0) / activeMonths.length
+          : 0;
+
+        return {
+          branchStats: branchStats,
+          monthlyCeoSeries: monthStats,
+          activeMonthCount: activeMonths.length,
+          totalRevenue: totalRevenue,
+          totalTargetRev: totalTargetRev,
+          revGrowthPct: revGrowthPct,
+          totalProfit: totalProfit,
+          totalTargetProfit: totalTargetProfit,
+          targetAchRate: targetAchRate,
+          avgTalentScore: avgTalentScore,
+          scoreRevGrowth: scoreRevGrowth,
+          scoreProfit: scoreProfit,
+          scoreBranchAch: scoreBranchAch,
+          scoreTalent: scoreTalent,
+          totalKpiScore: scoreRevGrowth + scoreProfit + scoreBranchAch + scoreTalent
+        };
+      }
+      return aggregateCeoMetricsForMonth(selectedPeriodMonth);
     }
 
     /* =========================================================================
@@ -3469,12 +3804,12 @@ create policy "Allow public read write" on public.yuroso_app_state
       const normalizedYm = String(year) + '-' + String(month).padStart(2, '0');
       const daysInMonth = new Date(year, month, 0).getDate();
       const firstDayWeekday = new Date(year, month - 1, 1).getDay();
-      const target = getMemberTarget(member.id);
+      const target = getMemberTarget(member.id, normalizedYm);
 
       const monthRecs = appState.crmRecords.filter(function(r) {
         return r.memberId === member.id && r.date && r.date.indexOf(normalizedYm) === 0;
       });
-      const monthSummary = aggregateMemberMetricsFromList(member, monthRecs);
+      const monthSummary = aggregateMemberMetricsFromList(member, monthRecs, normalizedYm, target);
       if (monthRecs.length === 0) {
         monthSummary.unitPrice = 0;
         monthSummary.totalScore = 0;
@@ -3484,7 +3819,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = normalizedYm + '-' + String(d).padStart(2, '0');
         const dayRecs = monthRecs.filter(function(r) { return r.date === dateStr; });
-        const stat = aggregateMemberMetricsFromList(member, dayRecs);
+        const stat = aggregateMemberMetricsFromList(member, dayRecs, normalizedYm, target);
         if (dayRecs.length === 0) {
           stat.unitPrice = 0;
           stat.totalScore = 0;
@@ -3516,7 +3851,6 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function getMemberQuarterSeries(member, yearStr) {
-      const baseTarget = getMemberTarget(member.id);
       const quarterDefs = [
         { q: 1, label: '1분기 (1~3월)', months: ['01', '02', '03'] },
         { q: 2, label: '2분기 (4~6월)', months: ['04', '05', '06'] },
@@ -3524,15 +3858,16 @@ create policy "Allow public read write" on public.yuroso_app_state
         { q: 4, label: '4분기 (10~12월)', months: ['10', '11', '12'] }
       ];
 
-      const qTarget = {
-        targetRevenue: baseTarget.targetRevenue * 3,
-        targetRevisitRate: baseTarget.targetRevisitRate,
-        targetUnitPrice: baseTarget.targetUnitPrice,
-        targetNewCustomers: baseTarget.targetNewCustomers * 3
-      };
-
       return quarterDefs.map(function(qd) {
         const prefixes = qd.months.map(function(mm) { return yearStr + '-' + mm; });
+        const monthTargets = prefixes.map(function(ym) { return getMemberTarget(member.id, ym); });
+        const qTarget = {
+          targetRevenue: monthTargets.reduce(function(s, t) { return s + (Number(t.targetRevenue) || 0); }, 0),
+          targetRevisitRate: Number((monthTargets.reduce(function(s, t) { return s + (Number(t.targetRevisitRate) || 0); }, 0) / 3).toFixed(1)),
+          targetUnitPrice: Math.round(monthTargets.reduce(function(s, t) { return s + (Number(t.targetUnitPrice) || 0); }, 0) / 3),
+          targetNewCustomers: monthTargets.reduce(function(s, t) { return s + (Number(t.targetNewCustomers) || 0); }, 0)
+        };
+
         const qRecs = appState.crmRecords.filter(function(r) {
           if (r.memberId !== member.id || !r.date) return false;
           return prefixes.indexOf(r.date.slice(0, 7)) >= 0;
@@ -3558,6 +3893,16 @@ create policy "Allow public read write" on public.yuroso_app_state
         }, 0);
         const unitPrice = qRecs.length > 0 && denom > 0 ? Math.round(weightedUnitSum / denom) : 0;
 
+        /* 분기 내 각 달의 월별 목표치 대비 달성 점수 평균(또는 분기 합산 목표 대비 점수) 반영 */
+        const activeMonthScores = [];
+        prefixes.forEach(function(ym, idx) {
+          const mRecs = qRecs.filter(function(r) { return r.date && r.date.indexOf(ym) === 0; });
+          if (mRecs.length > 0) {
+            const mStat = aggregateMemberMetricsFromList(member, mRecs, ym, monthTargets[idx]);
+            activeMonthScores.push(mStat.totalScore);
+          }
+        });
+
         const kpi = qRecs.length > 0
           ? computeDesignerKpiFromMetrics({
               revenue: revenue,
@@ -3567,6 +3912,10 @@ create policy "Allow public read write" on public.yuroso_app_state
               unitPrice: unitPrice
             }, qTarget)
           : { revisitRate: 0, totalScore: 0 };
+
+        const avgMonthlyKpiScore = activeMonthScores.length > 0
+          ? (activeMonthScores.reduce(function(s, v) { return s + v; }, 0) / activeMonthScores.length)
+          : kpi.totalScore;
 
         return {
           q: qd.q,
@@ -3579,7 +3928,7 @@ create policy "Allow public read write" on public.yuroso_app_state
           revisitCust: revisitCust,
           revisitRate: Number(kpi.revisitRate.toFixed(1)),
           unitPrice: unitPrice,
-          kpiScore: Number(kpi.totalScore.toFixed(1)),
+          kpiScore: Number(avgMonthlyKpiScore.toFixed(1)),
           qTarget: qTarget
         };
       });
@@ -3604,7 +3953,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       document.getElementById('indivYearSelect').classList.toggle('hidden', indivGraphUnit === 'month');
 
       const yearStr = document.getElementById('indivYearSelect').value || String(new Date().getFullYear());
-      const calYm = document.getElementById('indivCalendarMonthInput').value || new Date().toISOString().slice(0, 7);
+      const calYm = document.getElementById('indivCalendarMonthInput').value || selectedPeriodMonth || new Date().toISOString().slice(0, 7);
       const memId = document.getElementById('indivMemberSelect').value;
       const metric = document.getElementById('indivMetricSelect').value || 'revenue';
       const stripEl = document.getElementById('indivMonthlyStrip');
@@ -3620,7 +3969,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         return;
       }
 
-      const target = getMemberTarget(member.id);
+      const target = getMemberTarget(member.id, calYm);
       const dispHeadingName = (member.role === 'ceo' || member.isSystemCeo)
         ? member.name
         : (member.name + ' ' + formatMemberRoleLabel(member));
@@ -3672,7 +4021,7 @@ create policy "Allow public read write" on public.yuroso_app_state
           } else if (metric === 'unitPrice') {
             barLabel = '객단가(원)';
             targetVal = target.targetUnitPrice;
-            targetLabel = '목표 ' + formatNumber(target.targetUnitPrice) + '원';
+            targetLabel = '목표 ' + formatNumber(target.targetUnitPrice) + '원' + (target.unitPriceRange ? (' (' + target.unitPriceRange + ')') : '');
             suffix = '';
             barColor = '#8E6A4B';
             values = calData.days.map(function(d) { return d.unitPrice; });
@@ -3709,11 +4058,11 @@ create policy "Allow public read write" on public.yuroso_app_state
         stripEl.className = '';
         stripEl.innerHTML =
           '<div class="cal-summary-bar">' +
-            '<strong>📅 ' + calData.year + '년 ' + calData.month + '월 누적 요약</strong>' +
+            '<strong>📅 ' + calData.year + '년 ' + calData.month + '월 누적 요약 (해당 월 목표치 기준)</strong>' +
             '<div style="display:flex; flex-wrap:wrap; gap:12px;">' +
-              '<span>매출: <strong>' + formatNumber(ms.revenue, 1) + '만원</strong> / 목표 ' + formatNumber(target.targetRevenue) + '만</span>' +
-              '<span>고객: <strong>' + formatNumber(ms.totalCust) + '명</strong> (신규 ' + ms.newCust + ' · 재방문 ' + ms.revisitRate.toFixed(1) + '%)</span>' +
-              '<span>객단가: <strong>' + formatNumber(ms.unitPrice) + '원</strong></span>' +
+              '<span>매출: <strong>' + formatNumber(ms.revenue, 1) + '만원</strong> / 월목표 ' + formatNumber(target.targetRevenue) + '만</span>' +
+              '<span>고객: <strong>' + formatNumber(ms.totalCust) + '명</strong> (신규 ' + ms.newCust + '/' + target.targetNewCustomers + ' · 재방문 ' + ms.revisitRate.toFixed(1) + '%/목표 ' + target.targetRevisitRate + '%)</span>' +
+              '<span>객단가: <strong>' + formatNumber(ms.unitPrice) + '원</strong> / 목표 ' + formatNumber(target.targetUnitPrice) + '원' + (target.unitPriceRange ? (' (' + escapeHtml(target.unitPriceRange) + ')') : '') + '</span>' +
               '<span>월간 KPI: <strong>' + ms.totalScore.toFixed(1) + '점</strong></span>' +
             '</div>' +
           '</div>' +
@@ -3740,15 +4089,16 @@ create policy "Allow public read write" on public.yuroso_app_state
             '명'
           );
         } else {
+          const avgQTargetRev = Math.round(qSeries.reduce(function(s, q) { return s + q.qTarget.targetRevenue; }, 0) / 4);
           let barLabel = '분기 매출(만원)';
-          let targetVal = target.targetRevenue * 3;
+          let targetVal = avgQTargetRev;
           let targetLabel = '분기 목표 ' + formatNumber(targetVal) + '만원';
           let suffix = '';
           let barColor = '#B08968';
           let values = qSeries.map(function(q) { return q.revenue; });
 
           if (metric === 'kpi') {
-            barLabel = '분기 KPI 점수';
+            barLabel = '분기 KPI 점수 (월별 목표 기준)';
             targetVal = 90;
             targetLabel = '우수 기준 90점';
             suffix = '점';
@@ -3781,19 +4131,24 @@ create policy "Allow public read write" on public.yuroso_app_state
               '<span class="badge badge-champagne-soft">' + q.kpiScore.toFixed(1) + '점</span>' +
             '</div>' +
             '<div style="font-size:12px; color:var(--espresso-light); display:flex; flex-direction:column; gap:2px;">' +
-              '<span>매출: <strong>' + formatNumber(q.revenue, 1) + '만원</strong></span>' +
+              '<span>매출: <strong>' + formatNumber(q.revenue, 1) + '</strong> / 목표 ' + formatNumber(q.qTarget.targetRevenue) + '만원</span>' +
               '<span>고객: ' + formatNumber(q.totalCust) + '명 (재방문 ' + q.revisitRate.toFixed(1) + '%)</span>' +
-              '<span>객단가: ' + formatNumber(q.unitPrice) + '원</span>' +
+              '<span>객단가: ' + formatNumber(q.unitPrice) + '원 (목표 ' + formatNumber(q.qTarget.targetUnitPrice) + '원)</span>' +
             '</div>' +
           '</div>';
         }).join('');
         return;
       }
 
-      /* 3) 1년 단위 */
+      /* 3) 1년 단위 (월별 등록한 목표치에 따른 점수로 연간 통계 산출) */
       const monthlyData = getMemberMonthlySeries(member, yearStr);
+      const sumAnnualTargetRev = monthlyData.reduce(function(s, d) { return s + (Number(d.target.targetRevenue) || 0); }, 0);
+      const avgMonthlyTargetRev = Math.round(sumAnnualTargetRev / 12);
+      const avgMonthlyTargetRate = Number((monthlyData.reduce(function(s, d) { return s + (Number(d.target.targetRevisitRate) || 0); }, 0) / 12).toFixed(1));
+      const avgMonthlyTargetUnit = Math.round(monthlyData.reduce(function(s, d) { return s + (Number(d.target.targetUnitPrice) || 0); }, 0) / 12);
+
       document.getElementById('indivMonthlyTitle').textContent =
-        '📈 월간 성과 그래프 — ' + dispHeadingName + ' (' + yearStr + '년 1년 단위)';
+        '📈 월간 성과 그래프 — ' + dispHeadingName + ' (' + yearStr + '년 1년 단위 · 월별 목표치 기준 연간 통계)';
 
       if (metric === 'customers') {
         drawGroupedBarChart(
@@ -3808,14 +4163,14 @@ create policy "Allow public read write" on public.yuroso_app_state
         );
       } else {
         let barLabel = '월별 매출(만원)';
-        let targetVal = target.targetRevenue;
-        let targetLabel = '월 목표 ' + formatNumber(target.targetRevenue) + '만원';
+        let targetVal = avgMonthlyTargetRev;
+        let targetLabel = '월평균 목표 ' + formatNumber(avgMonthlyTargetRev) + '만원 (연 ' + formatNumber(sumAnnualTargetRev) + '만)';
         let suffix = '';
         let barColor = '#B08968';
         let values = monthlyData.map(function(d) { return d.revenue; });
 
         if (metric === 'kpi') {
-          barLabel = 'KPI 종합점수';
+          barLabel = '월별 목표 대비 KPI 점수';
           targetVal = 90;
           targetLabel = '우수 기준 90점';
           suffix = '점';
@@ -3823,15 +4178,15 @@ create policy "Allow public read write" on public.yuroso_app_state
           values = monthlyData.map(function(d) { return d.kpiScore; });
         } else if (metric === 'revisitRate') {
           barLabel = '재방문 비율(%)';
-          targetVal = target.targetRevisitRate;
-          targetLabel = '목표 ' + target.targetRevisitRate + '%';
+          targetVal = avgMonthlyTargetRate;
+          targetLabel = '평균 목표 ' + avgMonthlyTargetRate + '%';
           suffix = '%';
           barColor = '#6B7F6E';
           values = monthlyData.map(function(d) { return d.revisitRate; });
         } else if (metric === 'unitPrice') {
           barLabel = '객단가(원)';
-          targetVal = target.targetUnitPrice;
-          targetLabel = '목표 ' + formatNumber(target.targetUnitPrice) + '원';
+          targetVal = avgMonthlyTargetUnit;
+          targetLabel = '평균 목표 ' + formatNumber(avgMonthlyTargetUnit) + '원';
           suffix = '';
           barColor = '#8E6A4B';
           values = monthlyData.map(function(d) { return d.unitPrice; });
@@ -3851,6 +4206,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       const yearAvgKpi = activeMonths.length > 0
         ? activeMonths.reduce(function(s, d) { return s + d.kpiScore; }, 0) / activeMonths.length
         : 0;
+      const yearAchRate = sumAnnualTargetRev > 0 ? (yearTotalRev / sumAnnualTargetRev) * 100 : 0;
 
       const cellsHtml = monthlyData.map(function(d) {
         let valText = '-';
@@ -3866,18 +4222,19 @@ create policy "Allow public read write" on public.yuroso_app_state
         return '<div class="month-cell' + (d.hasData ? ' has-data' : '') + '"' + activeBorder + ' title="클릭하여 ' + d.monthLabel + ' 매출·KPI 점수 확인" onclick="onGlobalPeriodMonthChange(\'' + d.ym + '\')">' +
           '<div style="font-size:11px; color:var(--espresso-muted); font-weight:600;">' + d.monthLabel + '</div>' +
           '<div style="font-size:12.5px; font-weight:700; color:var(--espresso); margin-top:2px;">' + valText + '</div>' +
-          '<div style="font-size:10.5px; color:var(--champagne-dark); font-weight:600; margin-top:2px;">' + (d.hasData ? (d.kpiScore.toFixed(1) + '점') : '0.0점') + '</div>' +
+          '<div style="font-size:10px; color:var(--espresso-muted); margin-top:1px;">목표 ' + formatNumber(d.target.targetRevenue) + '만</div>' +
+          '<div style="font-size:10.5px; color:var(--champagne-dark); font-weight:700; margin-top:1px;">' + (d.hasData ? (d.kpiScore.toFixed(1) + '점') : '0.0점') + '</div>' +
         '</div>';
       }).join('');
 
       stripEl.className = '';
       stripEl.innerHTML =
         '<div class="cal-summary-bar">' +
-          '<strong>🗓️ ' + yearStr + '년 1년 단위 누적 요약 (' + yearRecs.length + '건)</strong>' +
+          '<strong>🗓️ ' + yearStr + '년 월별 목표치 기준 연간 통계 (' + activeMonths.length + '개월 실적 / 총 ' + yearRecs.length + '건)</strong>' +
           '<div style="display:flex; flex-wrap:wrap; gap:12px;">' +
-            '<span>연간 누적 매출: <strong>' + formatNumber(yearTotalRev, 1) + '만원</strong> (연목표 ' + formatNumber(target.targetRevenue * 12) + '만)</span>' +
+            '<span>연간 누적 매출: <strong>' + formatNumber(yearTotalRev, 1) + '만원</strong> / 12개월 목표합계 ' + formatNumber(sumAnnualTargetRev) + '만 (' + yearAchRate.toFixed(1) + '%)</span>' +
             '<span>연간 총 고객: <strong>' + formatNumber(yearTotalCust) + '명</strong> (재방문율 ' + yearRevisitRate.toFixed(1) + '%)</span>' +
-            '<span>평균 KPI: <strong>' + yearAvgKpi.toFixed(1) + '점</strong></span>' +
+            '<span>월별 목표 기준 연간 KPI 점수: <strong style="color:var(--champagne-dark);">' + yearAvgKpi.toFixed(1) + '점 / 100점</strong></span>' +
           '</div>' +
         '</div>' +
         '<div class="month-strip">' + cellsHtml + '</div>';
@@ -3903,11 +4260,11 @@ create policy "Allow public read write" on public.yuroso_app_state
       const yearLabelKo = (selectedPeriodYear || (selectedPeriodMonth ? selectedPeriodMonth.slice(0, 4) : String(new Date().getFullYear()))) + '년';
       const periodNames = {
         daily: '일별 기준 (' + monthLabelKo + ')',
-        monthly: '월별 기준 · ' + monthLabelKo,
-        yearly: '연별 기준 · ' + yearLabelKo + ' 누적'
+        monthly: '월별 기준 · ' + monthLabelKo + ' 목표 적용',
+        yearly: '연별 기준 · ' + yearLabelKo + ' (월별 목표치 기준 연간 통계)'
       };
       document.getElementById('summaryPeriodLabel').textContent = periodNames[currentPeriod] || ('월별 기준 · ' + monthLabelKo);
-      const periodShortSuffix = currentPeriod === 'yearly' ? (' (' + yearLabelKo + ' 연간)') : (' (' + monthLabelKo + ')');
+      const periodShortSuffix = currentPeriod === 'yearly' ? (' (' + yearLabelKo + ' 월별목표 연간통계)') : (' (' + monthLabelKo + ')');
 
       const kpiContainer = document.getElementById('kpiCardsContainer');
       const chartsGrid = document.getElementById('dashboardChartsGrid');
@@ -3943,11 +4300,12 @@ create policy "Allow public read write" on public.yuroso_app_state
         document.getElementById('secondaryChartTitle').textContent = '전 지점 임직원 KPI 점수 비교' + periodShortSuffix;
 
         memberPerfCard.classList.remove('hidden');
-        document.getElementById('memberTableTitle').textContent = '전 지점 지점원장 · 디자이너 월별 KPI 현황' + periodShortSuffix;
+        document.getElementById('memberTableTitle').textContent = '전 지점 지점원장 · 디자이너 KPI 현황' + periodShortSuffix;
         renderMemberPerformanceTable(appState.members, true);
 
       } else if (viewRole === 'director') {
         const br = aggregateBranchMetrics(activeView.branch);
+        const curDirTarget = br.directorTarget || getDirectorTarget(activeView.branch, selectedPeriodMonth);
         document.getElementById('summaryBannerBadge').textContent = activeView.branch + ' 지점원장 KPI';
         document.getElementById('summaryBannerTitle').textContent =
           activeView.branch + ' 종합 KPI 달성 점수' + periodShortSuffix + ': ' + br.directorKpiScore.toFixed(1) + '점 / 100점';
@@ -3959,8 +4317,8 @@ create policy "Allow public read write" on public.yuroso_app_state
 
         kpiContainer.innerHTML = [
           buildKpiCardHtml('지점 매출 달성', '35%', formatNumber(br.totalRevenue, 1) + '만원', profitSub, br.scoreBranchRev.toFixed(1) + ' / 35점', false),
-          buildKpiCardHtml('디자이너 평균매출 성장', '30%', (br.growthPct >= 0 ? '+' : '') + br.growthPct.toFixed(1) + '%', '목표 성장률 ' + appState.directorTargets[activeView.branch].targetAvgGrowth + '%', br.scoreAvgGrowth.toFixed(1) + ' / 30점', true),
-          buildKpiCardHtml('재방문 고객 비율', '20%', br.avgRevisitRate.toFixed(1) + '%', '목표 재방문율 ' + appState.directorTargets[activeView.branch].targetRevisitRate + '%', br.scoreRevisit.toFixed(1) + ' / 20점', false),
+          buildKpiCardHtml('디자이너 평균매출 성장', '30%', (br.growthPct >= 0 ? '+' : '') + br.growthPct.toFixed(1) + '%', '목표 성장률 ' + curDirTarget.targetAvgGrowth + '%', br.scoreAvgGrowth.toFixed(1) + ' / 30점', true),
+          buildKpiCardHtml('재방문 고객 비율', '20%', br.avgRevisitRate.toFixed(1) + '%', '목표 재방문율 ' + curDirTarget.targetRevisitRate + '%', br.scoreRevisit.toFixed(1) + ' / 20점', false),
           buildKpiCardHtml('직원 성장 · 유지', '15%', br.branchMembers.length + '명', '소속 디자이너 ' + br.designers.length + '명', br.scoreRetention.toFixed(1) + ' / 15점', true)
         ].join('');
 
@@ -4077,30 +4435,58 @@ create policy "Allow public read write" on public.yuroso_app_state
       }).join('');
     }
 
+    function openMemberTargetEditorFromTable(memberId) {
+      if (!isTopAdminLogged()) return;
+      openTargetModal(selectedPeriodMonth);
+      switchTargetModalTab(3);
+      setTimeout(function() {
+        const el = document.getElementById('mt_range_' + memberId) || document.getElementById('mt_rev_' + memberId);
+        if (el) {
+          if (el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.focus();
+        }
+      }, 80);
+    }
+
     function renderAdminMemberWithdrawalTable() {
       const tbody = document.getElementById('adminMemberManageTbody');
       if (!tbody) return;
 
-      const staffList = getStaffMembersOnly();
-      if (staffList.length === 0) {
+      const allList = appState.members.slice();
+      if (allList.length === 0) {
         tbody.innerHTML =
           '<tr><td colspan="8" style="text-align:center; padding:26px; color:var(--espresso-muted);">' +
-          '현재 가입된 지점원장 · 디자이너가 없습니다.' +
+          '현재 등록된 임직원이 없습니다.' +
           '</td></tr>';
         return;
       }
 
-      tbody.innerHTML = staffList.map(function(m) {
-        const t = getMemberTarget(m.id);
+      tbody.innerHTML = allList.map(function(m) {
+        const isCeoMem = (m.role === 'ceo' || m.isSystemCeo);
+        const t = getMemberTarget(m.id, selectedPeriodMonth);
+        const roleBadgeCls = isCeoMem
+          ? 'badge-champagne'
+          : (m.role === 'director' ? 'badge-champagne-soft' : 'badge-sage');
         return '<tr>' +
-          '<td><strong>' + escapeHtml(m.name) + '</strong></td>' +
-          '<td><span class="badge ' + (m.role === 'director' ? 'badge-champagne-soft' : 'badge-sage') + '">' + (m.role === 'director' ? '지점원장' : '디자이너') + '</span></td>' +
+          '<td><strong>' + (isCeoMem ? '👑 ' : '') + escapeHtml(m.name) + '</strong></td>' +
+          '<td><span class="badge ' + roleBadgeCls + '">' + formatMemberRoleLabel(m) + '</span></td>' +
           '<td>' + escapeHtml(m.branch) + '</td>' +
-          '<td><code>' + escapeHtml(m.password) + '</code></td>' +
-          '<td>' + formatNumber(t.targetUnitPrice) + '원 ' + (t.unitPriceRange ? ('(' + escapeHtml(t.unitPriceRange) + ')') : '') + '</td>' +
-          '<td><button type="button" class="btn btn-sm ' + (m.approved !== false ? 'btn-sage' : 'btn-outline') + '" onclick="toggleMemberApproval(\'' + escapeHtml(m.id) + '\')">' + (m.approved !== false ? '승인됨' : '차단됨') + '</button></td>' +
+          '<td>' + (isCeoMem ? '<span style="font-size:12px; color:var(--espresso-muted);">마스터 패스워드</span>' : ('<code>' + escapeHtml(m.password) + '</code>')) + '</td>' +
+          '<td>' +
+            '<div style="display:flex; flex-wrap:wrap; align-items:center; gap:6px;">' +
+              '<span>목표매출 <strong>' + formatNumber(t.targetRevenue) + '만</strong> · 객단가 <strong>' + formatNumber(t.targetUnitPrice) + '원</strong> ' + (t.unitPriceRange ? ('(' + escapeHtml(t.unitPriceRange) + ')') : '') + '</span>' +
+              '<button type="button" class="btn btn-outline btn-sm" style="padding:3px 8px; font-size:11.5px;" onclick="openMemberTargetEditorFromTable(\'' + escapeHtml(m.id) + '\')">✏️ 개별 범위 수정</button>' +
+            '</div>' +
+          '</td>' +
+          '<td>' + (isCeoMem
+            ? '<span class="badge badge-champagne">최상위 권한</span>'
+            : ('<button type="button" class="btn btn-sm ' + (m.approved !== false ? 'btn-sage' : 'btn-outline') + '" onclick="toggleMemberApproval(\'' + escapeHtml(m.id) + '\')">' + (m.approved !== false ? '승인됨' : '차단됨') + '</button>')) +
+          '</td>' +
           '<td>' + escapeHtml(m.createdAt || '-') + '</td>' +
-          '<td><button type="button" class="btn btn-danger btn-sm" onclick="promptWithdrawMember(\'' + escapeHtml(m.id) + '\')">회원탈퇴</button></td>' +
+          '<td>' + (isCeoMem
+            ? '-'
+            : ('<button type="button" class="btn btn-danger btn-sm" onclick="promptWithdrawMember(\'' + escapeHtml(m.id) + '\')">회원탈퇴</button>')) +
+          '</td>' +
         '</tr>';
       }).join('');
     }
@@ -4663,7 +5049,7 @@ create policy "Allow public read write" on public.yuroso_app_state
             const vals = allBuckets.length
               ? allBuckets.map(function(bk) {
                   const recs = appState.crmRecords.filter(function(r) { return bMemIds.has(r.memberId) && getBucketKey(r.date) === bk; });
-                  return computeBucketMetric(recs, metric, appState.defaultDesignerTarget);
+                  return computeBucketMetric(recs, metric, getDefaultDesignerTargetForMonth(bk.length >= 7 ? bk.slice(0, 7) : selectedPeriodMonth));
                 })
               : [0];
             return { label: b, color: colors[idx], values: vals };
@@ -4701,7 +5087,10 @@ create policy "Allow public read write" on public.yuroso_app_state
               label: activeView.branch,
               color: '#2C221E',
               values: buckets.length
-                ? buckets.map(function(bk) { return computeBucketMetric(branchRecs.filter(function(r) { return getBucketKey(r.date) === bk; }), metric); })
+                ? buckets.map(function(bk) {
+                    const ym = bk.length >= 7 ? bk.slice(0, 7) : selectedPeriodMonth;
+                    return computeBucketMetric(branchRecs.filter(function(r) { return getBucketKey(r.date) === bk; }), metric, getDefaultDesignerTargetForMonth(ym));
+                  })
                 : [0]
             }]
           );
@@ -4724,7 +5113,6 @@ create policy "Allow public read write" on public.yuroso_app_state
             ? monthKeys12
             : Array.from(new Set(myRecs.map(function(r) { return getBucketKey(r.date); }))).sort().slice(-6);
           const labels = currentPeriod === 'monthly' ? MONTHS_KO : (buckets.length ? buckets : []);
-          const myTarget = me ? getMemberTarget(me.id) : appState.defaultDesignerTarget;
 
           drawLineTrendChart(
             'trendChartCanvas',
@@ -4733,7 +5121,9 @@ create policy "Allow public read write" on public.yuroso_app_state
               label: me ? me.name : '나의 성과',
               color: '#B08968',
               values: buckets.map(function(bk) {
-                return computeBucketMetric(myRecs.filter(function(r) { return getBucketKey(r.date) === bk; }), metric, myTarget);
+                const ym = bk.length >= 7 ? bk.slice(0, 7) : selectedPeriodMonth;
+                const monthTarget = me ? getMemberTarget(me.id, ym) : getDefaultDesignerTargetForMonth(ym);
+                return computeBucketMetric(myRecs.filter(function(r) { return getBucketKey(r.date) === bk; }), metric, monthTarget);
               })
             }] : []
           );
@@ -4757,8 +5147,15 @@ create policy "Allow public read write" on public.yuroso_app_state
     });
 
     /* =========================================================================
-       10. TAB 2: CRM 5대 지표 자동계산기 & 대표원장 뷰 전용 객단가 설정
+       10. TAB 2: CRM 5대 지표 자동계산기 & 임직원별 월별 객단가 범위 설정
        ========================================================================= */
+    function getCrmTargetMonthKey() {
+      const dateInput = document.getElementById('crmDateInput');
+      const val = dateInput ? dateInput.value : '';
+      if (val && val.length >= 7) return val.slice(0, 7);
+      return resolveTargetMonthKey(selectedPeriodMonth);
+    }
+
     function getPermittedMembersForCrm() {
       if (activeView.role === 'ceo' || activeView.role === 'admin') {
         return appState.members;
@@ -4772,9 +5169,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       return appState.members.filter(function(m) { return m.id === activeView.memberId; });
     }
 
-    function resolveEffectiveUnitPrice(memId, revenueManwon, totalCust) {
-      const target = getMemberTarget(memId);
-      if (isCeoViewVisible()) {
+    function resolveEffectiveUnitPrice(memId, revenueManwon, totalCust, ymKey) {
+      const target = getMemberTarget(memId, ymKey || getCrmTargetMonthKey());
+      if (isTopAdminLogged()) {
         const typed = Number(document.getElementById('crmUnitPriceInput').value) || 0;
         if (typed > 0) return Math.round(typed);
       }
@@ -4814,13 +5211,12 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       sel.disabled = activeView.role === 'designer';
 
-      /* 객단가 입력 및 설정 패널은 오직 대표원장 뷰에서만 노출 */
-      const showCeoUnitSettings = isCeoViewVisible();
+      const showTopAdminUnitSettings = isTopAdminLogged();
       const unitFieldWrap = document.getElementById('crmUnitPriceFieldWrap');
-      if (unitFieldWrap) unitFieldWrap.classList.toggle('hidden', !showCeoUnitSettings);
+      if (unitFieldWrap) unitFieldWrap.classList.toggle('hidden', !showTopAdminUnitSettings);
 
       const adminUnitPanel = document.getElementById('crmAdminUnitPricePanel');
-      if (adminUnitPanel) adminUnitPanel.classList.toggle('hidden', !showCeoUnitSettings);
+      if (adminUnitPanel) adminUnitPanel.classList.toggle('hidden', !showTopAdminUnitSettings);
 
       syncInlineUnitPriceInputs();
       recalcCrmLive();
@@ -4835,16 +5231,17 @@ create policy "Allow public read write" on public.yuroso_app_state
 
     function syncInlineUnitPriceInputs() {
       const memId = document.getElementById('crmMemberSelect').value;
-      const target = getMemberTarget(memId);
+      const crmYm = getCrmTargetMonthKey();
+      const target = getMemberTarget(memId, crmYm);
       const rangeBadge = document.getElementById('crmLiveTargetRangeBadge');
       rangeBadge.textContent = target.unitPriceRange
-        ? ('목표 객단가: ' + formatNumber(target.targetUnitPrice) + '원 (' + target.unitPriceRange + ')')
-        : ('목표 객단가: ' + formatNumber(target.targetUnitPrice) + '원');
+        ? ('[' + formatSelectedMonthLabel(crmYm) + '] 목표 객단가: ' + formatNumber(target.targetUnitPrice) + '원 (' + target.unitPriceRange + ')')
+        : ('[' + formatSelectedMonthLabel(crmYm) + '] 목표 객단가: ' + formatNumber(target.targetUnitPrice) + '원');
 
       document.getElementById('liveUnitPriceLabel').textContent =
-        '객단가 (20% · 목표 ' + formatNumber(target.targetUnitPrice) + '원)';
+        '객단가 (20% · 목표 ' + formatNumber(target.targetUnitPrice) + '원' + (target.unitPriceRange ? (' / ' + target.unitPriceRange) : '') + ')';
 
-      if (isCeoViewVisible()) {
+      if (isTopAdminLogged()) {
         document.getElementById('inlinePresetUnitPrice').value = target.presetUnitPrice || '';
         document.getElementById('inlineTargetUnitPrice').value = target.targetUnitPrice || '';
         document.getElementById('inlineUnitPriceRange').value = target.unitPriceRange || '';
@@ -4856,19 +5253,46 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
     }
 
+    function ensureMonthlyTargetBucket(ymKey) {
+      const monthKey = resolveTargetMonthKey(ymKey);
+      if (!appState.monthlyTargets || typeof appState.monthlyTargets !== 'object') {
+        appState.monthlyTargets = {};
+      }
+      if (!appState.monthlyTargets[monthKey]) {
+        appState.monthlyTargets[monthKey] = {
+          branchTargets: {},
+          directorTargets: {},
+          defaultDesignerTarget: null,
+          memberTargets: {}
+        };
+      }
+      if (!appState.monthlyTargets[monthKey].branchTargets) appState.monthlyTargets[monthKey].branchTargets = {};
+      if (!appState.monthlyTargets[monthKey].directorTargets) appState.monthlyTargets[monthKey].directorTargets = {};
+      if (!appState.monthlyTargets[monthKey].memberTargets) appState.monthlyTargets[monthKey].memberTargets = {};
+      return appState.monthlyTargets[monthKey];
+    }
+
     function saveInlineUnitPriceSettings() {
-      if (!isCeoViewVisible()) {
-        showToast('객단가 설정은 대표원장 뷰에서만 가능합니다.', 'error');
+      if (!isTopAdminLogged()) {
+        showToast('객단가 범위 설정은 대표원장 · 관리자만 가능합니다.', 'error');
         return;
       }
       const memId = document.getElementById('crmMemberSelect').value;
+      const crmYm = getCrmTargetMonthKey();
       const presetVal = Math.max(0, Number(document.getElementById('inlinePresetUnitPrice').value) || 0);
       const targetVal = Math.max(1, Number(document.getElementById('inlineTargetUnitPrice').value) || 100000);
       const rangeStr = document.getElementById('inlineUnitPriceRange').value.trim();
+      const bucket = ensureMonthlyTargetBucket(crmYm);
 
       if (memId) {
-        const existing = getMemberTarget(memId);
-        appState.memberTargets[memId] = Object.assign({}, existing, {
+        const existingMonth = getMemberTarget(memId, crmYm);
+        const updatedObj = Object.assign({}, existingMonth, {
+          presetUnitPrice: presetVal,
+          targetUnitPrice: targetVal,
+          unitPriceRange: rangeStr
+        });
+        bucket.memberTargets[memId] = updatedObj;
+        appState.memberTargets[memId] = Object.assign({}, appState.memberTargets[memId] || existingMonth, {
           presetUnitPrice: presetVal,
           targetUnitPrice: targetVal,
           unitPriceRange: rangeStr
@@ -4886,7 +5310,8 @@ create policy "Allow public read write" on public.yuroso_app_state
       saveStateEverywhere(true);
       syncInlineUnitPriceInputs();
       recalcCrmLive();
-      showToast('객단가 및 목표 객단가 범위가 즉시 반영되었습니다.', 'success');
+      renderWorkspaceAll();
+      showToast(formatSelectedMonthLabel(crmYm) + ' 개별 목표 객단가 및 객단가 범위가 즉시 반영되었습니다.', 'success');
     }
 
     function autoFillRevisitFromTotal() {
@@ -4897,7 +5322,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function autoFillUnitPriceFromRevenue() {
-      if (!isCeoViewVisible()) return;
+      if (!isTopAdminLogged()) return;
       const revManwon = Number(document.getElementById('crmRevenueInput').value) || 0;
       const totalCust = Number(document.getElementById('crmTotalCustInput').value) || 0;
       if (totalCust <= 0) {
@@ -4911,13 +5336,14 @@ create policy "Allow public read write" on public.yuroso_app_state
 
     function recalcCrmLive() {
       const memId = document.getElementById('crmMemberSelect').value;
-      const target = getMemberTarget(memId);
+      const crmYm = getCrmTargetMonthKey();
+      const target = getMemberTarget(memId, crmYm);
 
       const revenue = Number(document.getElementById('crmRevenueInput').value) || 0;
       const totalCust = Number(document.getElementById('crmTotalCustInput').value) || 0;
       const newCust = Number(document.getElementById('crmNewCustInput').value) || 0;
       const revisitCust = Number(document.getElementById('crmRevisitCustInput').value) || 0;
-      const unitPrice = resolveEffectiveUnitPrice(memId, revenue, totalCust);
+      const unitPrice = resolveEffectiveUnitPrice(memId, revenue, totalCust, crmYm);
 
       const kpi = computeDesignerKpiFromMetrics({
         revenue: revenue,
@@ -4962,11 +5388,12 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
 
       const date = document.getElementById('crmDateInput').value;
+      const recYm = (date && date.length >= 7) ? date.slice(0, 7) : getCrmTargetMonthKey();
       const revenue = Math.max(0, Number(document.getElementById('crmRevenueInput').value) || 0);
       const totalCust = Math.max(0, Math.round(Number(document.getElementById('crmTotalCustInput').value) || 0));
       const newCust = Math.max(0, Math.round(Number(document.getElementById('crmNewCustInput').value) || 0));
       const revisitCust = Math.max(0, Math.round(Number(document.getElementById('crmRevisitCustInput').value) || 0));
-      const unitPrice = resolveEffectiveUnitPrice(member.id, revenue, totalCust);
+      const unitPrice = resolveEffectiveUnitPrice(member.id, revenue, totalCust, recYm);
       const memo = document.getElementById('crmMemoInput').value.trim();
 
       if (revisitCust > totalCust && totalCust > 0) {
@@ -4974,7 +5401,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         return;
       }
 
-      const target = getMemberTarget(member.id);
+      const target = getMemberTarget(member.id, recYm);
       const kpi = computeDesignerKpiFromMetrics({
         revenue: revenue,
         totalCust: totalCust,
@@ -5246,18 +5673,21 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     /* =========================================================================
-       13. 대표원장 · 관리자 전용 모달 (목표치 설정 / 열람 데이터 설정 / 임직원 등록)
+       13. 대표원장 · 관리자 전용 모달 (월별 목표치 설정 / 임직원별 객단가 범위 / 열람 설정)
        ========================================================================= */
-    function openTargetModal() {
+    function openTargetModal(explicitYm) {
       if (!isTopAdminLogged()) return;
+      targetModalSelectedMonth = resolveTargetMonthKey(explicitYm || selectedPeriodMonth);
+      const monthInput = document.getElementById('targetModalMonthInput');
+      if (monthInput) monthInput.value = targetModalSelectedMonth;
+
       const ceoOnly = isCeoViewVisible();
       document.getElementById('targetModalBadge').textContent = ceoOnly ? '대표원장 전용' : '관리자 목표 관리';
-      document.getElementById('targetModalTitle').textContent = ceoOnly
-        ? '🎯 매장 · 지점원장 · 임직원 목표치 및 객단가 범위 설정'
-        : '🎯 매장 · 지점원장 · 임직원 목표치 설정';
-      document.getElementById('targetSubTab3').textContent = ceoOnly
-        ? '③ 각 임직원별 목표치 · 객단가 범위 설정'
-        : '③ 각 임직원별 목표치 설정';
+      document.getElementById('targetModalTitle').textContent =
+        '🎯 월별 매장 · 지점원장 · 임직원 목표치 및 객단가 범위 설정';
+      document.getElementById('targetSubTab3').textContent =
+        '③ 대표원장 · 지점원장 · 디자이너 개별 목표치 · 객단가 범위';
+
       renderTargetModalPanes();
       switchTargetModalTab(1);
       document.getElementById('targetModal').classList.remove('hidden');
@@ -5276,12 +5706,52 @@ create policy "Allow public read write" on public.yuroso_app_state
       });
     }
 
-    function renderTargetModalPanes() {
+    function shiftTargetModalMonth(delta) {
+      const safeYm = resolveTargetMonthKey(targetModalSelectedMonth);
+      const parts = safeYm.split('-');
+      let y = parseInt(parts[0], 10) || new Date().getFullYear();
+      let m = (parseInt(parts[1], 10) || (new Date().getMonth() + 1)) + delta;
+      if (m < 1) {
+        m = 12;
+        y -= 1;
+      } else if (m > 12) {
+        m = 1;
+        y += 1;
+      }
+      targetModalSelectedMonth = String(y) + '-' + String(m).padStart(2, '0');
+      const monthInput = document.getElementById('targetModalMonthInput');
+      if (monthInput) monthInput.value = targetModalSelectedMonth;
+      renderTargetModalPanes();
+    }
+
+    function onTargetModalMonthChange(val) {
+      if (!val || val.indexOf('-') < 0) return;
+      targetModalSelectedMonth = val.slice(0, 7);
+      renderTargetModalPanes();
+    }
+
+    function renderTargetModalPanes(sourceMonthOverride) {
+      const ym = resolveTargetMonthKey(sourceMonthOverride || targetModalSelectedMonth);
+      const dispMonth = formatSelectedMonthLabel(targetModalSelectedMonth);
+      const titleLbl = document.getElementById('targetModalMonthTitleLabel');
+      if (titleLbl) titleLbl.textContent = dispMonth + ' 목표치 · 객단가 범위';
+
+      const hasMonthCustom = Boolean(appState.monthlyTargets && appState.monthlyTargets[targetModalSelectedMonth]);
+      const customBadge = document.getElementById('targetModalMonthCustomBadge');
+      if (customBadge) {
+        customBadge.textContent = hasMonthCustom ? (dispMonth + ' 전용 목표 저장됨') : '기본 목표 적용 중 (수정 시 월별 저장)';
+        customBadge.className = hasMonthCustom ? 'badge badge-champagne' : 'badge badge-sage';
+      }
+
+      /* 탭 1: 3대 매장별 월별 목표치 */
       const pane1 = document.getElementById('targetModalPane1');
       pane1.innerHTML = BRANCHES.map(function(b, idx) {
-        const bt = appState.branchTargets[b];
+        const bt = getBranchTarget(b, ym);
         return '<div style="background:var(--ivory); border:1px solid var(--ivory-border); border-radius:12px; padding:14px;">' +
-          '<strong style="font-size:14.5px; display:block; margin-bottom:10px;">🏢 ' + escapeHtml(b) + ' 목표치</strong>' +
+          '<div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;">' +
+            '<strong style="font-size:14.5px;">🏢 ' + escapeHtml(b) + ' — ' + dispMonth + ' 매장 목표치</strong>' +
+            '<span class="badge badge-champagne-soft">' + dispMonth + ' 기준</span>' +
+          '</div>' +
           '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:10px;">' +
             '<div><label class="field-label">월 목표 매출 (만원)</label><input type="number" class="input" id="bt_rev_' + idx + '" value="' + bt.targetRevenue + '" /></div>' +
             '<div><label class="field-label">전월 기준 매출 (만원)</label><input type="number" class="input" id="bt_prev_' + idx + '" value="' + bt.prevRevenue + '" /></div>' +
@@ -5291,66 +5761,81 @@ create policy "Allow public read write" on public.yuroso_app_state
         '</div>';
       }).join('');
 
+      /* 탭 2: 지점원장 월별 목표치 + 지점원장 객단가 범위 설정 */
       const pane2 = document.getElementById('targetModalPane2');
       pane2.innerHTML = BRANCHES.map(function(b, idx) {
-        const dt = appState.directorTargets[b];
+        const dt = getDirectorTarget(b, ym);
         const dir = appState.members.find(function(m) { return m.branch === b && m.role === 'director'; });
+        const dirMt = dir ? getMemberTarget(dir.id, ym) : null;
+        const effTargetUnit = dirMt ? dirMt.targetUnitPrice : (dt.targetUnitPrice || 100000);
+        const effRange = dirMt ? dirMt.unitPriceRange : (dt.unitPriceRange || '80,000원 ~ 150,000원');
         return '<div style="background:var(--ivory); border:1px solid var(--ivory-border); border-radius:12px; padding:14px;">' +
-          '<strong style="font-size:14.5px; display:block; margin-bottom:10px;">👔 ' + escapeHtml(b) + ' 지점원장 목표치 (' + (dir ? (escapeHtml(dir.name) + ' 지점원장') : '지점원장 미등록') + ')</strong>' +
+          '<div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;">' +
+            '<strong style="font-size:14.5px;">👔 ' + escapeHtml(b) + ' 지점원장 월별 목표치 (' + (dir ? (escapeHtml(dir.name) + ' 지점원장') : '지점원장 미등록') + ')</strong>' +
+            '<span class="badge badge-champagne-soft">' + dispMonth + ' 기준</span>' +
+          '</div>' +
           '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:10px;">' +
             '<div><label class="field-label">지점 목표매출 (만원, 35%)</label><input type="number" class="input" id="dt_rev_' + idx + '" value="' + dt.targetRevenue + '" /></div>' +
             '<div><label class="field-label">디자이너 평균 목표성장률 (%, 30%)</label><input type="number" step="0.1" class="input" id="dt_grow_' + idx + '" value="' + dt.targetAvgGrowth + '" /></div>' +
             '<div><label class="field-label">지점 목표 재방문율 (%, 20%)</label><input type="number" step="0.1" class="input" id="dt_revrate_' + idx + '" value="' + dt.targetRevisitRate + '" /></div>' +
             '<div><label class="field-label">직원 성장·유지 평가점수 (0~100, 15%)</label><input type="number" min="0" max="100" class="input" id="dt_ret_' + idx + '" value="' + dt.retentionScore + '" /></div>' +
+            '<div><label class="field-label">지점원장 목표 객단가 (원)</label><input type="number" class="input" id="dt_up_' + idx + '" value="' + effTargetUnit + '" /></div>' +
+            '<div><label class="field-label">지점원장 목표 객단가 범위</label><input type="text" class="input" id="dt_range_' + idx + '" value="' + escapeHtml(effRange) + '" placeholder="예: 90,000원 ~ 160,000원" /></div>' +
           '</div>' +
         '</div>';
       }).join('');
 
-      const def = appState.defaultDesignerTarget;
+      /* 탭 3: 대표원장 · 지점원장 · 디자이너 등록 임직원마다 개별 목표치 및 객단가 범위 설정 */
+      const def = getDefaultDesignerTargetForMonth(ym);
       const pane3 = document.getElementById('targetModalPane3');
-      const ceoOnly = isCeoViewVisible();
-
-      const defaultUnitPriceFields = ceoOnly
-        ? (
-            '<div><label class="field-label">기본 지정 객단가 (원)</label><input type="number" class="input" id="def_t_preset_up" value="' + (def.presetUnitPrice || 0) + '" /></div>' +
-            '<div><label class="field-label">기본 목표 객단가 (원)</label><input type="number" class="input" id="def_t_up" value="' + def.targetUnitPrice + '" /></div>' +
-            '<div><label class="field-label">목표 객단가 값 범위 (자유 작성)</label><input type="text" class="input" id="def_t_range" value="' + escapeHtml(def.unitPriceRange || '') + '" placeholder="예: 80,000원 ~ 150,000원" /></div>'
-          )
-        : '';
 
       const defaultBox =
         '<div style="background:var(--champagne-bg); border:1px solid rgba(176,137,104,0.35); border-radius:12px; padding:14px;">' +
-          '<strong style="font-size:14px; display:block; margin-bottom:10px;">📌 신규 가입 디자이너 기본 목표치' + (ceoOnly ? ' · 객단가 범위' : '') + '</strong>' +
+          '<div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;">' +
+            '<strong style="font-size:14px;">📌 신규 가입 임직원 기본 목표치 · 기본 객단가 범위 (' + dispMonth + ')</strong>' +
+            '<span class="badge badge-champagne">기본 기준값</span>' +
+          '</div>' +
           '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(155px, 1fr)); gap:10px;">' +
             '<div><label class="field-label">기본 목표매출 (만원)</label><input type="number" class="input" id="def_t_rev" value="' + def.targetRevenue + '" /></div>' +
             '<div><label class="field-label">기본 목표 재방문율 (%)</label><input type="number" step="0.1" class="input" id="def_t_revrate" value="' + def.targetRevisitRate + '" /></div>' +
             '<div><label class="field-label">기본 목표 신규고객수 (명)</label><input type="number" class="input" id="def_t_new" value="' + def.targetNewCustomers + '" /></div>' +
-            defaultUnitPriceFields +
+            '<div><label class="field-label">기본 지정 객단가 (원)</label><input type="number" class="input" id="def_t_preset_up" value="' + (def.presetUnitPrice || 0) + '" /></div>' +
+            '<div><label class="field-label">기본 목표 객단가 (원)</label><input type="number" class="input" id="def_t_up" value="' + def.targetUnitPrice + '" /></div>' +
+            '<div><label class="field-label">기본 목표 객단가 범위 (자유 작성)</label><input type="text" class="input" id="def_t_range" value="' + escapeHtml(def.unitPriceRange || '') + '" placeholder="예: 80,000원 ~ 150,000원" /></div>' +
           '</div>' +
         '</div>';
 
-      const memberBoxes = appState.members.map(function(m) {
-        const mt = getMemberTarget(m.id);
-        const roleBadgeCls = (m.role === 'ceo' || m.isSystemCeo)
+      const roleOrder = { ceo: 0, director: 1, designer: 2 };
+      const sortedMembers = appState.members.slice().sort(function(a, b) {
+        const ra = (a.role === 'ceo' || a.isSystemCeo) ? 0 : (roleOrder[a.role] || 2);
+        const rb = (b.role === 'ceo' || b.isSystemCeo) ? 0 : (roleOrder[b.role] || 2);
+        if (ra !== rb) return ra - rb;
+        return String(a.branch || '').localeCompare(String(b.branch || ''));
+      });
+
+      const memberBoxes = sortedMembers.map(function(m) {
+        const mt = getMemberTarget(m.id, ym);
+        const isCeoMem = (m.role === 'ceo' || m.isSystemCeo);
+        const isDirMem = (m.role === 'director');
+        const roleBadgeCls = isCeoMem
           ? 'badge-champagne'
-          : (m.role === 'director' ? 'badge-champagne-soft' : 'badge-sage');
-        const memberUnitFields = ceoOnly
-          ? (
-              '<div><label class="field-label">객단가 직접 작성 (원)</label><input type="number" class="input" id="mt_preset_up_' + m.id + '" value="' + (mt.presetUnitPrice || 0) + '" /></div>' +
-              '<div><label class="field-label">개별 목표 객단가 (원)</label><input type="number" class="input" id="mt_up_' + m.id + '" value="' + mt.targetUnitPrice + '" /></div>' +
-              '<div><label class="field-label">목표 객단가 값 범위 (자유 작성)</label><input type="text" class="input" id="mt_range_' + m.id + '" value="' + escapeHtml(mt.unitPriceRange || '') + '" placeholder="예: 90,000원 ~ 140,000원" /></div>'
-            )
-          : '';
+          : (isDirMem ? 'badge-champagne-soft' : 'badge-sage');
+        const roleIcon = isCeoMem ? '👑 ' : (isDirMem ? '👔 ' : '✂️ ');
         return '<div style="background:var(--ivory); border:1px solid var(--ivory-border); border-radius:12px; padding:14px;">' +
-          '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">' +
-            '<strong>' + ((m.role === 'ceo' || m.isSystemCeo) ? '👑 ' : '✂️ ') + escapeHtml(m.name) + '</strong>' +
-            '<span class="badge ' + roleBadgeCls + '">' + escapeHtml(m.branch) + ' · ' + formatMemberRoleLabel(m) + '</span>' +
+          '<div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;">' +
+            '<div style="display:flex; align-items:center; gap:8px;">' +
+              '<strong>' + roleIcon + escapeHtml(m.name) + '</strong>' +
+              '<span class="badge ' + roleBadgeCls + '">' + escapeHtml(m.branch) + ' · ' + formatMemberRoleLabel(m) + '</span>' +
+            '</div>' +
+            '<span style="font-size:11.5px; color:var(--espresso-muted);">' + dispMonth + ' 개별 목표치 · 객단가 범위</span>' +
           '</div>' +
           '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(155px, 1fr)); gap:10px;">' +
-            '<div><label class="field-label">개별 목표매출 (만원)</label><input type="number" class="input" id="mt_rev_' + m.id + '" value="' + mt.targetRevenue + '" /></div>' +
+            '<div><label class="field-label">개별 월 목표매출 (만원)</label><input type="number" class="input" id="mt_rev_' + m.id + '" value="' + mt.targetRevenue + '" /></div>' +
             '<div><label class="field-label">개별 목표 재방문율 (%)</label><input type="number" step="0.1" class="input" id="mt_revrate_' + m.id + '" value="' + mt.targetRevisitRate + '" /></div>' +
             '<div><label class="field-label">개별 목표 신규고객수 (명)</label><input type="number" class="input" id="mt_new_' + m.id + '" value="' + mt.targetNewCustomers + '" /></div>' +
-            memberUnitFields +
+            '<div><label class="field-label">지정 객단가 직접 작성 (원)</label><input type="number" class="input" id="mt_preset_up_' + m.id + '" value="' + (mt.presetUnitPrice || 0) + '" /></div>' +
+            '<div><label class="field-label">개별 목표 객단가 (원)</label><input type="number" class="input" id="mt_up_' + m.id + '" value="' + mt.targetUnitPrice + '" /></div>' +
+            '<div><label class="field-label">개별 목표 객단가 값 범위 (자유 작성)</label><input type="text" class="input" id="mt_range_' + m.id + '" value="' + escapeHtml(mt.unitPriceRange || '') + '" placeholder="예: 90,000원 ~ 140,000원" /></div>' +
           '</div>' +
         '</div>';
       }).join('');
@@ -5358,53 +5843,132 @@ create policy "Allow public read write" on public.yuroso_app_state
       pane3.innerHTML = defaultBox + memberBoxes;
     }
 
-    function saveAllTargetsFromModal() {
-      if (!isTopAdminLogged()) return;
-      const ceoOnly = isCeoViewVisible();
-
+    function collectModalTargetsSnapshot() {
+      const branchTargetsSnap = {};
+      const directorTargetsSnap = {};
       BRANCHES.forEach(function(b, idx) {
-        appState.branchTargets[b] = {
+        branchTargetsSnap[b] = {
           targetRevenue: Math.max(0, Number(document.getElementById('bt_rev_' + idx).value) || 0),
           prevRevenue: Math.max(0, Number(document.getElementById('bt_prev_' + idx).value) || 0),
           targetProfit: Math.max(0, Number(document.getElementById('bt_tprof_' + idx).value) || 0),
           actualProfit: Math.max(0, Number(document.getElementById('bt_aprof_' + idx).value) || 0)
         };
-        appState.directorTargets[b] = {
+        const dtUpEl = document.getElementById('dt_up_' + idx);
+        const dtRangeEl = document.getElementById('dt_range_' + idx);
+        directorTargetsSnap[b] = {
           targetRevenue: Math.max(0, Number(document.getElementById('dt_rev_' + idx).value) || 0),
           targetAvgGrowth: Number(document.getElementById('dt_grow_' + idx).value) || 12,
           targetRevisitRate: Math.max(0, Number(document.getElementById('dt_revrate_' + idx).value) || 72),
-          retentionScore: Math.min(100, Math.max(0, Number(document.getElementById('dt_ret_' + idx).value) || 90))
+          retentionScore: Math.min(100, Math.max(0, Number(document.getElementById('dt_ret_' + idx).value) || 90)),
+          targetUnitPrice: dtUpEl ? Math.max(1, Number(dtUpEl.value) || 100000) : 100000,
+          unitPriceRange: dtRangeEl ? dtRangeEl.value.trim() : '80,000원 ~ 150,000원'
         };
       });
 
-      const prevDef = appState.defaultDesignerTarget;
-      appState.defaultDesignerTarget = {
+      const defaultDesignerTargetSnap = {
         targetRevenue: Math.max(1, Number(document.getElementById('def_t_rev').value) || 1800),
         targetRevisitRate: Math.max(1, Number(document.getElementById('def_t_revrate').value) || 72),
         targetNewCustomers: Math.max(1, Number(document.getElementById('def_t_new').value) || 40),
-        presetUnitPrice: ceoOnly ? Math.max(0, Number(document.getElementById('def_t_preset_up').value) || 0) : (prevDef.presetUnitPrice || 0),
-        targetUnitPrice: ceoOnly ? Math.max(1, Number(document.getElementById('def_t_up').value) || 100000) : (prevDef.targetUnitPrice || 100000),
-        unitPriceRange: ceoOnly ? document.getElementById('def_t_range').value.trim() : (prevDef.unitPriceRange || '')
+        presetUnitPrice: Math.max(0, Number(document.getElementById('def_t_preset_up').value) || 0),
+        targetUnitPrice: Math.max(1, Number(document.getElementById('def_t_up').value) || 100000),
+        unitPriceRange: document.getElementById('def_t_range').value.trim()
       };
 
+      const memberTargetsSnap = {};
       appState.members.forEach(function(m) {
         const revEl = document.getElementById('mt_rev_' + m.id);
         if (!revEl) return;
-        const prevMt = getMemberTarget(m.id);
-        appState.memberTargets[m.id] = {
+        const presetEl = document.getElementById('mt_preset_up_' + m.id);
+        const upEl = document.getElementById('mt_up_' + m.id);
+        const rangeEl = document.getElementById('mt_range_' + m.id);
+        memberTargetsSnap[m.id] = {
           targetRevenue: Math.max(1, Number(revEl.value) || 1800),
           targetRevisitRate: Math.max(1, Number(document.getElementById('mt_revrate_' + m.id).value) || 72),
           targetNewCustomers: Math.max(1, Number(document.getElementById('mt_new_' + m.id).value) || 40),
-          presetUnitPrice: ceoOnly ? Math.max(0, Number(document.getElementById('mt_preset_up_' + m.id).value) || 0) : prevMt.presetUnitPrice,
-          targetUnitPrice: ceoOnly ? Math.max(1, Number(document.getElementById('mt_up_' + m.id).value) || 100000) : prevMt.targetUnitPrice,
-          unitPriceRange: ceoOnly ? document.getElementById('mt_range_' + m.id).value.trim() : prevMt.unitPriceRange
+          presetUnitPrice: presetEl ? Math.max(0, Number(presetEl.value) || 0) : 0,
+          targetUnitPrice: upEl ? Math.max(1, Number(upEl.value) || 100000) : 100000,
+          unitPriceRange: rangeEl ? rangeEl.value.trim() : ''
         };
       });
+
+      return {
+        branchTargets: branchTargetsSnap,
+        directorTargets: directorTargetsSnap,
+        defaultDesignerTarget: defaultDesignerTargetSnap,
+        memberTargets: memberTargetsSnap
+      };
+    }
+
+    function applySnapshotToMonthBucket(ymKey, snap, updateGlobalFallback) {
+      const bucket = ensureMonthlyTargetBucket(ymKey);
+      BRANCHES.forEach(function(b) {
+        bucket.branchTargets[b] = Object.assign({}, snap.branchTargets[b]);
+        bucket.directorTargets[b] = Object.assign({}, snap.directorTargets[b]);
+        if (updateGlobalFallback) {
+          appState.branchTargets[b] = Object.assign({}, snap.branchTargets[b]);
+          appState.directorTargets[b] = Object.assign({}, snap.directorTargets[b]);
+        }
+      });
+      bucket.defaultDesignerTarget = Object.assign({}, snap.defaultDesignerTarget);
+      if (updateGlobalFallback) {
+        appState.defaultDesignerTarget = Object.assign({}, snap.defaultDesignerTarget);
+      }
+      Object.keys(snap.memberTargets).forEach(function(memId) {
+        bucket.memberTargets[memId] = Object.assign({}, snap.memberTargets[memId]);
+        if (updateGlobalFallback) {
+          appState.memberTargets[memId] = Object.assign({}, snap.memberTargets[memId]);
+        }
+      });
+    }
+
+    function copyPrevMonthTargetsToCurrentModal() {
+      if (!isTopAdminLogged()) return;
+      const safeYm = resolveTargetMonthKey(targetModalSelectedMonth);
+      const parts = safeYm.split('-');
+      let y = parseInt(parts[0], 10) || new Date().getFullYear();
+      let m = (parseInt(parts[1], 10) || (new Date().getMonth() + 1)) - 1;
+      if (m < 1) {
+        m = 12;
+        y -= 1;
+      }
+      const prevYm = String(y) + '-' + String(m).padStart(2, '0');
+      renderTargetModalPanes(prevYm);
+      showToast(formatSelectedMonthLabel(prevYm) + ' 목표치를 불러왔습니다. 확인 후 [저장]을 눌러주세요.', 'info');
+    }
+
+    function applyCurrentModalTargetsToAllYear() {
+      if (!isTopAdminLogged()) return;
+      const safeYm = resolveTargetMonthKey(targetModalSelectedMonth);
+      const yearStr = safeYm.slice(0, 4);
+      const snap = collectModalTargetsSnapshot();
+      for (let m = 1; m <= 12; m++) {
+        const ym = yearStr + '-' + String(m).padStart(2, '0');
+        applySnapshotToMonthBucket(ym, snap, m === 12);
+      }
+      saveStateEverywhere(true);
+      renderTargetModalPanes();
+      renderWorkspaceAll();
+      showToast(yearStr + '년 1월~12월 전체에 목표치 및 임직원별 객단가 범위가 일괄 적용되었습니다.', 'success');
+    }
+
+    function saveAllTargetsFromModal() {
+      if (!isTopAdminLogged()) return;
+      const ymKey = resolveTargetMonthKey(targetModalSelectedMonth);
+      const alsoDefaultEl = document.getElementById('targetModalAlsoSetDefaultChk');
+      const updateDefault = alsoDefaultEl ? Boolean(alsoDefaultEl.checked) : true;
+      const snap = collectModalTargetsSnapshot();
+
+      applySnapshotToMonthBucket(ymKey, snap, updateDefault);
+
+      selectedPeriodMonth = ymKey;
+      selectedPeriodYear = ymKey.slice(0, 4);
+      const indivCalInput = document.getElementById('indivCalendarMonthInput');
+      if (indivCalInput) indivCalInput.value = ymKey;
 
       saveStateEverywhere(true);
       closeTargetModal();
       renderWorkspaceAll();
-      showToast('목표치 설정이 저장되었습니다.', 'success');
+      showToast(formatSelectedMonthLabel(ymKey) + ' 매장 · 지점원장 · 임직원별 목표치 및 객단가 범위가 저장되었습니다.', 'success');
     }
 
     function openVisibilityModal() {
@@ -5461,8 +6025,15 @@ create policy "Allow public read write" on public.yuroso_app_state
 
     function openQuickMemberModal() {
       if (!isTopAdminLogged()) return;
+      const def = getDefaultDesignerTargetForMonth(selectedPeriodMonth);
       document.getElementById('quickRegName').value = '';
       document.getElementById('quickRegPassword').value = '';
+      const revEl = document.getElementById('quickRegTargetRev');
+      const upEl = document.getElementById('quickRegTargetUnitPrice');
+      const rangeEl = document.getElementById('quickRegUnitPriceRange');
+      if (revEl) revEl.value = def.targetRevenue || 1800;
+      if (upEl) upEl.value = def.targetUnitPrice || 100000;
+      if (rangeEl) rangeEl.value = def.unitPriceRange || '80,000원 ~ 150,000원';
       document.getElementById('quickMemberModal').classList.remove('hidden');
     }
 
@@ -5483,6 +6054,11 @@ create policy "Allow public read write" on public.yuroso_app_state
         return;
       }
 
+      const def = getDefaultDesignerTargetForMonth(selectedPeriodMonth);
+      const customRev = Math.max(1, Number((document.getElementById('quickRegTargetRev') || {}).value) || def.targetRevenue || 1800);
+      const customUp = Math.max(1, Number((document.getElementById('quickRegTargetUnitPrice') || {}).value) || def.targetUnitPrice || 100000);
+      const customRange = String(((document.getElementById('quickRegUnitPriceRange') || {}).value || def.unitPriceRange || '80,000원 ~ 150,000원')).trim();
+
       const mem = {
         id: 'mem_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
         name: name,
@@ -5492,12 +6068,20 @@ create policy "Allow public read write" on public.yuroso_app_state
         approved: true,
         createdAt: new Date().toISOString().slice(0, 10)
       };
+      const initTarget = Object.assign({}, def, {
+        targetRevenue: customRev,
+        targetUnitPrice: customUp,
+        unitPriceRange: customRange
+      });
       appState.members.push(mem);
-      appState.memberTargets[mem.id] = Object.assign({}, appState.defaultDesignerTarget);
+      appState.memberTargets[mem.id] = Object.assign({}, initTarget);
+      const curBucket = ensureMonthlyTargetBucket(selectedPeriodMonth);
+      curBucket.memberTargets[mem.id] = Object.assign({}, initTarget);
+
       saveStateEverywhere(true);
       closeQuickMemberModal();
       renderWorkspaceAll();
-      showToast(branch + ' ' + name + ' (' + (role === 'director' ? '지점원장' : '디자이너') + ') 등록 완료!', 'success');
+      showToast(branch + ' ' + name + ' (' + (role === 'director' ? '지점원장' : '디자이너') + ') 등록 및 개별 객단가 범위 설정 완료!', 'success');
     }
 
     /* =========================================================================
