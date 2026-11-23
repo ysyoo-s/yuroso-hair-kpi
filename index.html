@@ -2403,15 +2403,27 @@ create policy "Allow public read write" on public.yuroso_app_state
       return createDefaultState();
     }
 
+    function getLocalDateParts(dObj) {
+      const d = dObj || new Date();
+      const year = String(d.getFullYear());
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return {
+        year: year,
+        ym: year + '-' + month,
+        ymd: year + '-' + month + '-' + day
+      };
+    }
+
     let appState = loadLocalState();
     let loggedInSession = null;
     let activeView = { role: 'ceo', branch: '파주 운정점', memberId: '' };
     let selectedAdminLoginRole = 'ceo';
     let currentTab = 'dashboard';
     let currentPeriod = 'monthly';
-    let selectedPeriodMonth = new Date().toISOString().slice(0, 7);
-    let selectedPeriodYear = String(new Date().getFullYear());
-    let targetModalSelectedMonth = new Date().toISOString().slice(0, 7);
+    let selectedPeriodMonth = getLocalDateParts().ym;
+    let selectedPeriodYear = getLocalDateParts().year;
+    let targetModalSelectedMonth = getLocalDateParts().ym;
     let crmHistoryFilterMode = 'month';
     let indivGraphUnit = 'month';
     let pendingConfirmFn = null;
@@ -2793,7 +2805,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         branch: branch,
         role: role,
         approved: true,
-        createdAt: new Date().toISOString().slice(0, 10)
+        createdAt: getLocalDateParts().ymd
       };
 
       appState.members.push(newMember);
@@ -2978,7 +2990,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function formatSelectedMonthLabel(ymStr) {
-      const safeYm = (ymStr && ymStr.indexOf('-') > 0) ? ymStr : new Date().toISOString().slice(0, 7);
+      const safeYm = (ymStr && ymStr.indexOf('-') > 0) ? ymStr : getLocalDateParts().ym;
       const parts = safeYm.split('-');
       const y = parseInt(parts[0], 10) || new Date().getFullYear();
       const m = parseInt(parts[1], 10) || (new Date().getMonth() + 1);
@@ -3036,7 +3048,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     function shiftGlobalPeriodMonth(delta) {
       const safeYm = (selectedPeriodMonth && selectedPeriodMonth.indexOf('-') > 0)
         ? selectedPeriodMonth
-        : new Date().toISOString().slice(0, 7);
+        : getLocalDateParts().ym;
       const parts = safeYm.split('-');
       let y = parseInt(parts[0], 10) || new Date().getFullYear();
       let m = (parseInt(parts[1], 10) || (new Date().getMonth() + 1)) + delta;
@@ -3099,7 +3111,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       if (selectedPeriodMonth && selectedPeriodMonth.indexOf('-') > 0) {
         return selectedPeriodMonth.slice(0, 7);
       }
-      return new Date().toISOString().slice(0, 7);
+      return getLocalDateParts().ym;
     }
 
     function getDefaultDesignerTargetForMonth(ym) {
@@ -3733,7 +3745,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     function shiftIndivCalendarMonth(delta) {
       const calInput = document.getElementById('indivCalendarMonthInput');
       if (!calInput) return;
-      const curVal = calInput.value || selectedPeriodMonth || new Date().toISOString().slice(0, 7);
+      const curVal = calInput.value || selectedPeriodMonth || getLocalDateParts().ym;
       const parts = curVal.split('-');
       let y = parseInt(parts[0], 10) || new Date().getFullYear();
       let m = (parseInt(parts[1], 10) || (new Date().getMonth() + 1)) + delta;
@@ -3819,7 +3831,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function getMemberCalendarMonthDays(member, ym) {
-      const safeYm = (ym && ym.indexOf('-') > 0) ? ym : new Date().toISOString().slice(0, 7);
+      const safeYm = (ym && ym.indexOf('-') > 0) ? ym : getLocalDateParts().ym;
       const parts = safeYm.split('-');
       const year = parseInt(parts[0], 10) || new Date().getFullYear();
       const month = parseInt(parts[1], 10) || (new Date().getMonth() + 1);
@@ -3975,7 +3987,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       document.getElementById('indivYearSelect').classList.toggle('hidden', indivGraphUnit === 'month');
 
       const yearStr = document.getElementById('indivYearSelect').value || String(new Date().getFullYear());
-      const calYm = document.getElementById('indivCalendarMonthInput').value || selectedPeriodMonth || new Date().toISOString().slice(0, 7);
+      const calYm = document.getElementById('indivCalendarMonthInput').value || selectedPeriodMonth || getLocalDateParts().ym;
       const memId = document.getElementById('indivMemberSelect').value;
       const metric = document.getElementById('indivMetricSelect').value || 'revenue';
       const stripEl = document.getElementById('indivMonthlyStrip');
@@ -4535,6 +4547,14 @@ create policy "Allow public read write" on public.yuroso_app_state
           appState.crmRecords = appState.crmRecords.filter(function(r) { return r.memberId !== memberId; });
           appState.coachingNotes = appState.coachingNotes.filter(function(c) { return c.memberId !== memberId; });
           delete appState.memberTargets[memberId];
+          if (appState.monthlyTargets && typeof appState.monthlyTargets === 'object') {
+            Object.keys(appState.monthlyTargets).forEach(function(ymKey) {
+              const bucket = appState.monthlyTargets[ymKey];
+              if (bucket && bucket.memberTargets) {
+                delete bucket.memberTargets[memberId];
+              }
+            });
+          }
           if (activeView.memberId === memberId) {
             activeView.memberId = appState.members[0] ? appState.members[0].id : '';
           }
@@ -5209,7 +5229,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     function renderCrmPanel() {
       const dateInput = document.getElementById('crmDateInput');
       if (!dateInput.value) {
-        dateInput.value = new Date().toISOString().slice(0, 10);
+        dateInput.value = getLocalDateParts().ymd;
       }
 
       const permitted = getPermittedMembersForCrm();
@@ -5675,7 +5695,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         memberName: member.name,
         branch: member.branch,
         author: loggedInSession ? loggedInSession.name : '관리자',
-        date: new Date().toISOString().slice(0, 10),
+        date: getLocalDateParts().ymd,
         title: title,
         content: content
       });
@@ -5791,6 +5811,8 @@ create policy "Allow public read write" on public.yuroso_app_state
         const dirMt = dir ? getMemberTarget(dir.id, ym) : null;
         const effTargetUnit = dirMt ? dirMt.targetUnitPrice : (dt.targetUnitPrice || 100000);
         const effRange = dirMt ? dirMt.unitPriceRange : (dt.unitPriceRange || '80,000원 ~ 150,000원');
+        const syncUpAttr = dir ? (' oninput="syncDirectorModalFieldToMember(\'' + escapeHtml(dir.id) + '\', \'up\', this.value)"') : '';
+        const syncRangeAttr = dir ? (' oninput="syncDirectorModalFieldToMember(\'' + escapeHtml(dir.id) + '\', \'range\', this.value)"') : '';
         return '<div style="background:var(--ivory); border:1px solid var(--ivory-border); border-radius:12px; padding:16px;">' +
           '<div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px;">' +
             '<strong style="font-size:14.5px;">👔 ' + escapeHtml(b) + ' 지점원장 월별 목표치 (' + (dir ? (escapeHtml(dir.name) + ' 지점원장') : '지점원장 미등록') + ')</strong>' +
@@ -5801,8 +5823,8 @@ create policy "Allow public read write" on public.yuroso_app_state
             '<div><label class="field-label">디자이너 평균 목표성장률 (%, 30%)</label><input type="number" step="0.1" class="input" id="dt_grow_' + idx + '" value="' + dt.targetAvgGrowth + '" /></div>' +
             '<div><label class="field-label">지점 목표 재방문율 (%, 20%)</label><input type="number" step="0.1" class="input" id="dt_revrate_' + idx + '" value="' + dt.targetRevisitRate + '" /></div>' +
             '<div><label class="field-label">직원 성장·유지 평가점수 (0~100, 15%)</label><input type="number" min="0" max="100" class="input" id="dt_ret_' + idx + '" value="' + dt.retentionScore + '" /></div>' +
-            '<div><label class="field-label">지점원장 목표 객단가 (원)</label><input type="number" class="input" id="dt_up_' + idx + '" value="' + effTargetUnit + '" /></div>' +
-            '<div><label class="field-label">지점원장 목표 객단가 범위</label><input type="text" class="input" id="dt_range_' + idx + '" value="' + escapeHtml(effRange) + '" placeholder="예: 90,000원 ~ 160,000원" /></div>' +
+            '<div><label class="field-label">지점원장 목표 객단가 (원)</label><input type="number" class="input" id="dt_up_' + idx + '" value="' + effTargetUnit + '"' + syncUpAttr + ' /></div>' +
+            '<div><label class="field-label">지점원장 목표 객단가 범위</label><input type="text" class="input" id="dt_range_' + idx + '" value="' + escapeHtml(effRange) + '" placeholder="예: 90,000원 ~ 160,000원"' + syncRangeAttr + ' /></div>' +
           '</div>' +
         '</div>';
       }).join('');
@@ -5839,6 +5861,9 @@ create policy "Allow public read write" on public.yuroso_app_state
         const mt = getMemberTarget(m.id, ym);
         const isCeoMem = (m.role === 'ceo' || m.isSystemCeo);
         const isDirMem = (m.role === 'director');
+        const dirBranchIdx = isDirMem ? BRANCHES.indexOf(m.branch) : -1;
+        const syncToDirUpAttr = dirBranchIdx >= 0 ? (' oninput="syncMemberModalFieldToDirector(' + dirBranchIdx + ', \'up\', this.value)"') : '';
+        const syncToDirRangeAttr = dirBranchIdx >= 0 ? (' oninput="syncMemberModalFieldToDirector(' + dirBranchIdx + ', \'range\', this.value)"') : '';
         const roleBadgeCls = isCeoMem
           ? 'badge-champagne'
           : (isDirMem ? 'badge-champagne-soft' : 'badge-sage');
@@ -5856,13 +5881,23 @@ create policy "Allow public read write" on public.yuroso_app_state
             '<div><label class="field-label">개별 목표 재방문율 (%)</label><input type="number" step="0.1" class="input" id="mt_revrate_' + m.id + '" value="' + mt.targetRevisitRate + '" /></div>' +
             '<div><label class="field-label">개별 목표 신규고객수 (명)</label><input type="number" class="input" id="mt_new_' + m.id + '" value="' + mt.targetNewCustomers + '" /></div>' +
             '<div><label class="field-label">지정 객단가 직접 작성 (원)</label><input type="number" class="input" id="mt_preset_up_' + m.id + '" value="' + (mt.presetUnitPrice || 0) + '" /></div>' +
-            '<div><label class="field-label">개별 목표 객단가 (원)</label><input type="number" class="input" id="mt_up_' + m.id + '" value="' + mt.targetUnitPrice + '" /></div>' +
-            '<div><label class="field-label">개별 목표 객단가 값 범위 (자유 작성)</label><input type="text" class="input" id="mt_range_' + m.id + '" value="' + escapeHtml(mt.unitPriceRange || '') + '" placeholder="예: 90,000원 ~ 140,000원" /></div>' +
+            '<div><label class="field-label">개별 목표 객단가 (원)</label><input type="number" class="input" id="mt_up_' + m.id + '" value="' + mt.targetUnitPrice + '"' + syncToDirUpAttr + ' /></div>' +
+            '<div><label class="field-label">개별 목표 객단가 값 범위 (자유 작성)</label><input type="text" class="input" id="mt_range_' + m.id + '" value="' + escapeHtml(mt.unitPriceRange || '') + '" placeholder="예: 90,000원 ~ 140,000원"' + syncToDirRangeAttr + ' /></div>' +
           '</div>' +
         '</div>';
       }).join('');
 
       pane3.innerHTML = defaultBox + memberBoxes;
+    }
+
+    function syncDirectorModalFieldToMember(memberId, fieldKey, val) {
+      const targetEl = document.getElementById('mt_' + fieldKey + '_' + memberId);
+      if (targetEl) targetEl.value = val;
+    }
+
+    function syncMemberModalFieldToDirector(branchIdx, fieldKey, val) {
+      const targetEl = document.getElementById('dt_' + fieldKey + '_' + branchIdx);
+      if (targetEl) targetEl.value = val;
     }
 
     function collectModalTargetsSnapshot() {
@@ -6088,7 +6123,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         branch: branch,
         role: role,
         approved: true,
-        createdAt: new Date().toISOString().slice(0, 10)
+        createdAt: getLocalDateParts().ymd
       };
       const initTarget = Object.assign({}, def, {
         targetRevenue: customRev,
@@ -6143,7 +6178,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'YUROSO_HAIR_KPI_CRM_' + new Date().toISOString().slice(0, 10) + '.csv';
+      a.download = 'YUROSO_HAIR_KPI_CRM_' + getLocalDateParts().ymd + '.csv';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
