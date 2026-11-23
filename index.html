@@ -1778,7 +1778,7 @@
               </div>
             </div>
 
-            <!-- 🎛️ 3. "내가 이번 달 몇 점 받을까?" 가상 목표 시뮬레이터 -->
+            <!-- 🎛️ 3. "내가 이번 달 몇 점 받을까?" 가상 목표 시뮬레이터 (직접 타이핑 & 버튼 지원) -->
             <div class="card" style="background:var(--ivory); border:1.5px solid rgba(176,137,104,0.45); display:flex; flex-direction:column; gap:12px;">
               <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px;">
                 <div>
@@ -1788,52 +1788,59 @@
                 <button type="button" class="btn btn-outline btn-sm" style="padding:4px 9px; font-size:11.5px;" onclick="resetKpiSimulator()">초기화</button>
               </div>
               <div style="font-size:12px; color:var(--espresso-muted); line-height:1.4;">
-                현재 입력된 실적에서 <strong>남은 기간 동안 추가로 달성할 예상 매출·재방문·신규 고객수</strong>를 더해보세요!
+                현재 입력된 실적에서 <strong>추가로 달성할 예상 매출·재방문·신규 고객수를 직접 타이핑</strong>하거나 빠른 버튼으로 입력해 보세요!
               </div>
 
-              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(145px, 1fr)); gap:8px;">
-                <div style="background:var(--white); border:1px solid var(--ivory-border); border-radius:10px; padding:9px;">
-                  <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:600; margin-bottom:6px;">
-                    <span>추가 매출</span>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:8px;">
+                <div style="background:var(--white); border:1px solid var(--ivory-border); border-radius:10px; padding:10px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; font-size:11.5px; font-weight:600; margin-bottom:6px;">
+                    <span>추가 매출 (만원)</span>
                     <strong id="simDeltaRevLabel" style="color:var(--champagne-dark);">+0만원</strong>
                   </div>
+                  <input type="number" step="0.1" id="simDeltaRevInput" class="input" style="padding:7px 9px; font-size:13px; font-weight:700; margin-bottom:6px;" placeholder="직접 입력 (예: 250)" oninput="onKpiSimulatorDirectInput()" />
                   <div style="display:flex; flex-wrap:wrap; gap:4px;">
-                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('rev', 100)">+100만</button>
-                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('rev', 300)">+300만</button>
-                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px;" onclick="adjustKpiSimulator('rev', -100)">-100</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 6px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('rev', 100)">+100만</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 6px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('rev', 300)">+300만</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 6px; font-size:11px;" onclick="adjustKpiSimulator('rev', -100)">-100</button>
                   </div>
                 </div>
 
-                <div style="background:var(--white); border:1px solid var(--ivory-border); border-radius:10px; padding:9px;">
-                  <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:600; margin-bottom:6px;">
-                    <span>추가 재방문 고객</span>
+                <div style="background:var(--white); border:1px solid var(--ivory-border); border-radius:10px; padding:10px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; font-size:11.5px; font-weight:600; margin-bottom:6px;">
+                    <span>추가 재방문 (명)</span>
                     <strong id="simDeltaRevisitLabel" style="color:var(--sage-dark);">+0명</strong>
                   </div>
+                  <input type="number" step="1" id="simDeltaRevisitInput" class="input" style="padding:7px 9px; font-size:13px; font-weight:700; margin-bottom:6px;" placeholder="직접 입력 (예: 12)" oninput="onKpiSimulatorDirectInput()" />
                   <div style="display:flex; flex-wrap:wrap; gap:4px;">
-                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('revisit', 5)">+5명</button>
-                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('revisit', 10)">+10명</button>
-                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px;" onclick="adjustKpiSimulator('revisit', -5)">-5</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 6px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('revisit', 5)">+5명</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 6px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('revisit', 10)">+10명</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 6px; font-size:11px;" onclick="adjustKpiSimulator('revisit', -5)">-5</button>
                   </div>
                 </div>
 
-                <div style="background:var(--white); border:1px solid var(--ivory-border); border-radius:10px; padding:9px;">
-                  <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:600; margin-bottom:6px;">
-                    <span>추가 신규 고객</span>
+                <div style="background:var(--white); border:1px solid var(--ivory-border); border-radius:10px; padding:10px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; font-size:11.5px; font-weight:600; margin-bottom:6px;">
+                    <span>추가 신규 (명)</span>
                     <strong id="simDeltaNewLabel" style="color:var(--champagne-dark);">+0명</strong>
                   </div>
+                  <input type="number" step="1" id="simDeltaNewInput" class="input" style="padding:7px 9px; font-size:13px; font-weight:700; margin-bottom:6px;" placeholder="직접 입력 (예: 8)" oninput="onKpiSimulatorDirectInput()" />
                   <div style="display:flex; flex-wrap:wrap; gap:4px;">
-                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('new', 5)">+5명</button>
-                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('new', 10)">+10명</button>
-                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px;" onclick="adjustKpiSimulator('new', -5)">-5</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 6px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('new', 5)">+5명</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 6px; font-size:11px; flex:1;" onclick="adjustKpiSimulator('new', 10)">+10명</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="padding:3px 6px; font-size:11px;" onclick="adjustKpiSimulator('new', -5)">-5</button>
                   </div>
                 </div>
               </div>
 
-              <div id="simResultSummaryBox" style="background:var(--espresso); color:var(--ivory); border-radius:11px; padding:11px 13px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; font-size:12.5px;">
-                <div id="simResultText" style="line-height:1.45;">
-                  ✨ 위 버튼(+100만, +5명)을 눌러 예상 KPI 점수를 시뮬레이션해 보세요.
+              <div id="simResultSummaryBox" style="background:var(--espresso); color:var(--ivory); border-radius:11px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; font-size:12.5px;">
+                <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px;">
+                  <div id="simResultText" style="line-height:1.45;">
+                    ✨ 위 입력칸에 숫자를 직접 타이핑하거나 버튼을 눌러 예상 KPI 점수를 확인해 보세요.
+                  </div>
+                  <span id="simResultScoreBadge" class="badge badge-champagne" style="font-size:13px;">예상 0.0점</span>
                 </div>
-                <span id="simResultScoreBadge" class="badge badge-champagne" style="font-size:13px;">예상 0.0점</span>
+                <div id="simResultBreakdownBar" class="hidden" style="padding-top:8px; border-top:1px solid rgba(255,255,255,0.14); font-size:11.5px; color:rgba(250,247,242,0.85); display:flex; flex-wrap:wrap; gap:10px;">
+                </div>
               </div>
             </div>
           </div>
@@ -5642,33 +5649,60 @@ create policy "Allow public read write" on public.yuroso_app_state
     let simDeltaRevisit = 0;
     let simDeltaNew = 0;
 
+    function onKpiSimulatorDirectInput() {
+      const revIn = document.getElementById('simDeltaRevInput');
+      const revisitIn = document.getElementById('simDeltaRevisitInput');
+      const newIn = document.getElementById('simDeltaNewInput');
+
+      simDeltaRevenue = revIn && revIn.value !== '' ? Number(revIn.value) || 0 : 0;
+      simDeltaRevisit = revisitIn && revisitIn.value !== '' ? Math.round(Number(revisitIn.value) || 0) : 0;
+      simDeltaNew = newIn && newIn.value !== '' ? Math.round(Number(newIn.value) || 0) : 0;
+      updateKpiSimulatorUi(false);
+    }
+
     function adjustKpiSimulator(field, delta) {
       if (field === 'rev') {
-        simDeltaRevenue = Math.max(-5000, simDeltaRevenue + delta);
+        simDeltaRevenue = Math.max(-5000, Number((simDeltaRevenue + delta).toFixed(1)));
       } else if (field === 'revisit') {
-        simDeltaRevisit = Math.max(-500, simDeltaRevisit + delta);
+        simDeltaRevisit = Math.max(-500, Math.round(simDeltaRevisit + delta));
       } else if (field === 'new') {
-        simDeltaNew = Math.max(-500, simDeltaNew + delta);
+        simDeltaNew = Math.max(-500, Math.round(simDeltaNew + delta));
       }
-      updateKpiSimulatorUi();
+      updateKpiSimulatorUi(true);
     }
 
     function resetKpiSimulator() {
       simDeltaRevenue = 0;
       simDeltaRevisit = 0;
       simDeltaNew = 0;
-      updateKpiSimulatorUi();
+      const revIn = document.getElementById('simDeltaRevInput');
+      const revisitIn = document.getElementById('simDeltaRevisitInput');
+      const newIn = document.getElementById('simDeltaNewInput');
+      if (revIn) revIn.value = '';
+      if (revisitIn) revisitIn.value = '';
+      if (newIn) newIn.value = '';
+      updateKpiSimulatorUi(false);
     }
 
-    function updateKpiSimulatorUi() {
+    function updateKpiSimulatorUi(syncInputBoxes) {
       const revLbl = document.getElementById('simDeltaRevLabel');
       const revisitLbl = document.getElementById('simDeltaRevisitLabel');
       const newLbl = document.getElementById('simDeltaNewLabel');
+      const revIn = document.getElementById('simDeltaRevInput');
+      const revisitIn = document.getElementById('simDeltaRevisitInput');
+      const newIn = document.getElementById('simDeltaNewInput');
       const resTextEl = document.getElementById('simResultText');
       const resBadgeEl = document.getElementById('simResultScoreBadge');
+      const breakdownEl = document.getElementById('simResultBreakdownBar');
       if (!resTextEl || !resBadgeEl) return;
 
-      if (revLbl) revLbl.textContent = (simDeltaRevenue >= 0 ? '+' : '') + formatNumber(simDeltaRevenue) + '만원';
+      if (syncInputBoxes) {
+        if (revIn) revIn.value = simDeltaRevenue !== 0 ? simDeltaRevenue : '';
+        if (revisitIn) revisitIn.value = simDeltaRevisit !== 0 ? simDeltaRevisit : '';
+        if (newIn) newIn.value = simDeltaNew !== 0 ? simDeltaNew : '';
+      }
+
+      if (revLbl) revLbl.textContent = (simDeltaRevenue >= 0 ? '+' : '') + formatNumber(simDeltaRevenue, simDeltaRevenue % 1 === 0 ? 0 : 1) + '만원';
       if (revisitLbl) revisitLbl.textContent = (simDeltaRevisit >= 0 ? '+' : '') + formatNumber(simDeltaRevisit) + '명';
       if (newLbl) newLbl.textContent = (simDeltaNew >= 0 ? '+' : '') + formatNumber(simDeltaNew) + '명';
 
@@ -5707,15 +5741,24 @@ create policy "Allow public read write" on public.yuroso_app_state
       resBadgeEl.textContent = '예상 ' + simKpi.totalScore.toFixed(1) + '점 (' + (scoreDiff >= 0 ? '+' : '') + scoreDiff.toFixed(1) + '점)';
 
       if (simDeltaRevenue === 0 && simDeltaRevisit === 0 && simDeltaNew === 0) {
+        if (breakdownEl) breakdownEl.classList.add('hidden');
         const needFor90 = Math.max(0, 90 - baseKpi.totalScore);
         if (needFor90 <= 0) {
           resTextEl.innerHTML = '🎉 현재 입력 실적으로 이미 <strong>90점 이상(' + baseKpi.totalScore.toFixed(1) + '점 · S등급)</strong>을 달성했습니다!';
         } else {
-          resTextEl.innerHTML = '💡 현재 <strong>' + baseKpi.totalScore.toFixed(1) + '점</strong>입니다. 위 버튼(<code>+100만</code>, <code>+5명</code>)을 눌러 <strong>90점(우수 기준)</strong> 달성 조건을 시뮬레이션해 보세요!';
+          resTextEl.innerHTML = '💡 현재 <strong>' + baseKpi.totalScore.toFixed(1) + '점</strong>입니다. 위 입력칸에 숫자를 직접 타이핑하거나 버튼(<code>+100만</code>, <code>+5명</code>)을 눌러 예상 점수를 확인해 보세요!';
         }
       } else {
         resTextEl.innerHTML =
-          '🎯 시뮬레이션 결과: 예상 매출 <strong>' + formatNumber(simRev, 1) + '만원</strong> · 총고객 <strong>' + simTotal + '명</strong>(재방문율 ' + simKpi.revisitRate.toFixed(1) + '%) → <strong>종합 ' + simKpi.totalScore.toFixed(1) + '점 (' + gradeLabel + ')</strong>';
+          '🎯 시뮬레이션 결과: 예상 매출 <strong>' + formatNumber(simRev, 1) + '만원</strong> · 총고객 <strong>' + simTotal + '명</strong>(재방문 ' + simRevisit + '+신규 ' + simNew + ' · 재방문율 ' + simKpi.revisitRate.toFixed(1) + '%) · 객단가 <strong>' + formatNumber(simUnit) + '원</strong> → <strong>종합 ' + simKpi.totalScore.toFixed(1) + '점 (' + gradeLabel + ')</strong>';
+        if (breakdownEl) {
+          breakdownEl.classList.remove('hidden');
+          breakdownEl.innerHTML =
+            '<span>• 매출점수: <strong>' + simKpi.scoreRev.toFixed(1) + '</strong>/40점</span>' +
+            '<span>• 재방문율점수: <strong>' + simKpi.scoreRevRate.toFixed(1) + '</strong>/30점</span>' +
+            '<span>• 객단가점수: <strong>' + simKpi.scoreUnit.toFixed(1) + '</strong>/20점</span>' +
+            '<span>• 신규고객점수: <strong>' + simKpi.scoreNew.toFixed(1) + '</strong>/10점</span>';
+        }
       }
     }
 
