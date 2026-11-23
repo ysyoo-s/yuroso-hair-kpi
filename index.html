@@ -1347,6 +1347,14 @@
             <button type="button" id="periodBtnMonthly" class="period-btn active" onclick="setPeriodFilter('monthly')">월별</button>
             <button type="button" id="periodBtnYearly" class="period-btn" onclick="setPeriodFilter('yearly')">연별</button>
           </div>
+          <!-- 달마다 매출·KPI 점수를 바로 확인할 수 있는 글로벌 기준월 선택기 -->
+          <div id="globalMonthPickerWrap" style="display:inline-flex; align-items:center; gap:4px; background:var(--white); border:1px solid var(--ivory-border); border-radius:9px; padding:2px 4px;">
+            <button type="button" class="btn btn-sm" style="padding:4px 8px; font-weight:700; color:var(--espresso);" onclick="shiftGlobalPeriodMonth(-1)" title="이전 달">&lsaquo;</button>
+            <input type="month" id="globalPeriodMonthInput" style="border:none; outline:none; background:transparent; font-size:12.5px; font-weight:700; color:var(--espresso); padding:3px 4px; cursor:pointer;" onchange="onGlobalPeriodMonthChange(this.value)" />
+            <button type="button" class="btn btn-sm" style="padding:4px 8px; font-weight:700; color:var(--espresso);" onclick="shiftGlobalPeriodMonth(1)" title="다음 달">&rsaquo;</button>
+          </div>
+          <select id="globalPeriodYearSelect" class="select hidden" style="width:auto; padding:5px 10px; font-size:12.5px; font-weight:700;" onchange="onGlobalPeriodYearChange(this.value)">
+          </select>
           <button type="button" class="btn btn-outline btn-sm" onclick="exportPermittedCsv()">📥 CSV 내보내기</button>
           <button type="button" class="btn btn-outline btn-sm" onclick="window.print()">🖨️ 인쇄</button>
         </div>
@@ -1402,7 +1410,7 @@
               <!-- 달력 월 선택기 (달력 월 단위 모드) -->
               <div id="indivCalendarMonthWrap" style="display:inline-flex; align-items:center; gap:4px;">
                 <button type="button" class="btn btn-outline btn-sm" style="padding:6px 9px;" onclick="shiftIndivCalendarMonth(-1)" title="이전 달">&lsaquo;</button>
-                <input type="month" id="indivCalendarMonthInput" class="input" style="width:auto; padding:5px 10px; font-size:12.5px;" onchange="renderIndividualMonthlySection()" />
+                <input type="month" id="indivCalendarMonthInput" class="input" style="width:auto; padding:5px 10px; font-size:12.5px;" onchange="onIndivCalendarMonthInputChange(this.value)" />
                 <button type="button" class="btn btn-outline btn-sm" style="padding:6px 9px;" onclick="shiftIndivCalendarMonth(1)" title="다음 달">&rsaquo;</button>
               </div>
 
@@ -1656,8 +1664,14 @@
         <!-- CRM 입력 이력 목록 -->
         <div id="crmHistoryCard" class="card">
           <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;">
-            <h3 style="font-size:16px; font-weight:700;">📋 CRM 입력 이력</h3>
-            <span id="crmHistoryCountBadge" class="badge badge-sage">0건</span>
+            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
+              <h3 id="crmHistoryTitle" style="font-size:16px; font-weight:700;">📋 CRM 입력 이력</h3>
+              <span id="crmHistoryCountBadge" class="badge badge-sage">0건</span>
+            </div>
+            <div class="unit-toggle-group">
+              <button type="button" id="crmHistFilterMonthBtn" class="unit-toggle-btn active" onclick="setCrmHistoryFilterMode('month')">선택 월별 보기</button>
+              <button type="button" id="crmHistFilterAllBtn" class="unit-toggle-btn" onclick="setCrmHistoryFilterMode('all')">전체 연도·월 보기</button>
+            </div>
           </div>
           <div class="table-wrap">
             <table>
@@ -2323,6 +2337,9 @@ create policy "Allow public read write" on public.yuroso_app_state
     let selectedAdminLoginRole = 'ceo';
     let currentTab = 'dashboard';
     let currentPeriod = 'monthly';
+    let selectedPeriodMonth = new Date().toISOString().slice(0, 7);
+    let selectedPeriodYear = String(new Date().getFullYear());
+    let crmHistoryFilterMode = 'month';
     let indivGraphUnit = 'month';
     let pendingConfirmFn = null;
     let lastRemoteUpdatedAt = null;
@@ -2887,11 +2904,115 @@ create policy "Allow public read write" on public.yuroso_app_state
       renderWorkspaceAll();
     }
 
+    function formatSelectedMonthLabel(ymStr) {
+      const safeYm = (ymStr && ymStr.indexOf('-') > 0) ? ymStr : new Date().toISOString().slice(0, 7);
+      const parts = safeYm.split('-');
+      const y = parseInt(parts[0], 10) || new Date().getFullYear();
+      const m = parseInt(parts[1], 10) || (new Date().getMonth() + 1);
+      return y + '년 ' + m + '월';
+    }
+
+    function syncGlobalPeriodPickerUi() {
+      const monthWrap = document.getElementById('globalMonthPickerWrap');
+      const monthInput = document.getElementById('globalPeriodMonthInput');
+      const yearSelect = document.getElementById('globalPeriodYearSelect');
+
+      const now = new Date();
+      const curYear = String(now.getFullYear());
+      const defaultYm = curYear + '-' + String(now.getMonth() + 1).padStart(2, '0');
+      if (!selectedPeriodMonth) {
+        selectedPeriodMonth = defaultYm;
+      }
+      if (!selectedPeriodYear) {
+        selectedPeriodYear = selectedPeriodMonth.slice(0, 4) || curYear;
+      }
+
+      if (monthInput) {
+        monthInput.value = selectedPeriodMonth;
+      }
+
+      if (yearSelect) {
+        const yearsSet = new Set([curYear, String(Number(curYear) - 1), selectedPeriodYear, selectedPeriodMonth.slice(0, 4)]);
+        appState.crmRecords.forEach(function(r) {
+          if (r.date && r.date.length >= 4) yearsSet.add(r.date.slice(0, 4));
+        });
+        const years = Array.from(yearsSet).filter(Boolean).sort().reverse();
+        yearSelect.innerHTML = years.map(function(y) {
+          return '<option value="' + y + '">' + y + '년 전체</option>';
+        }).join('');
+        yearSelect.value = years.indexOf(selectedPeriodYear) >= 0 ? selectedPeriodYear : curYear;
+      }
+
+      if (monthWrap) {
+        monthWrap.classList.toggle('hidden', currentPeriod === 'yearly');
+      }
+      if (yearSelect) {
+        yearSelect.classList.toggle('hidden', currentPeriod !== 'yearly');
+      }
+    }
+
     function setPeriodFilter(period) {
       currentPeriod = period;
       document.getElementById('periodBtnDaily').classList.toggle('active', period === 'daily');
       document.getElementById('periodBtnMonthly').classList.toggle('active', period === 'monthly');
       document.getElementById('periodBtnYearly').classList.toggle('active', period === 'yearly');
+      syncGlobalPeriodPickerUi();
+      renderWorkspaceAll();
+    }
+
+    function shiftGlobalPeriodMonth(delta) {
+      const safeYm = (selectedPeriodMonth && selectedPeriodMonth.indexOf('-') > 0)
+        ? selectedPeriodMonth
+        : new Date().toISOString().slice(0, 7);
+      const parts = safeYm.split('-');
+      let y = parseInt(parts[0], 10) || new Date().getFullYear();
+      let m = (parseInt(parts[1], 10) || (new Date().getMonth() + 1)) + delta;
+      if (m < 1) {
+        m = 12;
+        y -= 1;
+      } else if (m > 12) {
+        m = 1;
+        y += 1;
+      }
+      selectedPeriodMonth = String(y) + '-' + String(m).padStart(2, '0');
+      selectedPeriodYear = String(y);
+      const indivCalInput = document.getElementById('indivCalendarMonthInput');
+      if (indivCalInput) {
+        indivCalInput.value = selectedPeriodMonth;
+      }
+      if (currentPeriod === 'yearly') {
+        currentPeriod = 'monthly';
+        document.getElementById('periodBtnDaily').classList.remove('active');
+        document.getElementById('periodBtnMonthly').classList.add('active');
+        document.getElementById('periodBtnYearly').classList.remove('active');
+      }
+      syncGlobalPeriodPickerUi();
+      renderWorkspaceAll();
+    }
+
+    function onGlobalPeriodMonthChange(val) {
+      if (!val || val.indexOf('-') < 0) return;
+      selectedPeriodMonth = val.slice(0, 7);
+      selectedPeriodYear = val.slice(0, 4);
+      const indivCalInput = document.getElementById('indivCalendarMonthInput');
+      if (indivCalInput) {
+        indivCalInput.value = selectedPeriodMonth;
+      }
+      syncGlobalPeriodPickerUi();
+      renderWorkspaceAll();
+    }
+
+    function onGlobalPeriodYearChange(val) {
+      if (!val) return;
+      selectedPeriodYear = String(val);
+      if (selectedPeriodMonth && selectedPeriodMonth.length >= 7) {
+        selectedPeriodMonth = selectedPeriodYear + selectedPeriodMonth.slice(4, 7);
+      }
+      const indivYearSel = document.getElementById('indivYearSelect');
+      if (indivYearSel) {
+        indivYearSel.value = selectedPeriodYear;
+      }
+      syncGlobalPeriodPickerUi();
       renderWorkspaceAll();
     }
 
@@ -2947,16 +3068,18 @@ create policy "Allow public read write" on public.yuroso_app_state
       const curMonth = curYear + '-' + String(now.getMonth() + 1).padStart(2, '0');
       const curDay = curMonth + '-' + String(now.getDate()).padStart(2, '0');
 
+      const targetMonth = (selectedPeriodMonth && selectedPeriodMonth.indexOf('-') > 0) ? selectedPeriodMonth : curMonth;
+      const targetYear = selectedPeriodYear || targetMonth.slice(0, 4) || curYear;
+
       if (currentPeriod === 'daily') {
         const exact = records.filter(function(r) { return r.date === curDay; });
-        return exact.length ? exact : records.filter(function(r) { return r.date && r.date.indexOf(curMonth) === 0; });
+        return exact.length ? exact : records.filter(function(r) { return r.date && r.date.indexOf(targetMonth) === 0; });
       }
       if (currentPeriod === 'monthly') {
-        const monthRecs = records.filter(function(r) { return r.date && r.date.indexOf(curMonth) === 0; });
-        return monthRecs.length ? monthRecs : records;
+        /* 달마다 독립적으로 매출 · KPI 점수를 집계 (타 월/연간 누적 데이터 합산 차단) */
+        return records.filter(function(r) { return r.date && r.date.indexOf(targetMonth) === 0; });
       }
-      const yearRecs = records.filter(function(r) { return r.date && r.date.indexOf(curYear) === 0; });
-      return yearRecs.length ? yearRecs : records;
+      return records.filter(function(r) { return r.date && r.date.indexOf(targetYear) === 0; });
     }
 
     function aggregateMemberMetricsFromList(member, recList) {
@@ -2987,17 +3110,24 @@ create policy "Allow public read write" on public.yuroso_app_state
           return acc + (tc > 0 ? tc : 1);
         }, 0);
         unitPrice = denom > 0 ? Math.round(weightedUnitSum / denom) : 0;
-      } else if (target.presetUnitPrice > 0) {
-        unitPrice = target.presetUnitPrice;
       }
 
-      const kpi = computeDesignerKpiFromMetrics({
-        revenue: revenue,
-        totalCust: totalCust,
-        newCust: newCust,
-        revisitCust: revisitCust,
-        unitPrice: unitPrice
-      }, target);
+      const kpi = recList.length > 0
+        ? computeDesignerKpiFromMetrics({
+            revenue: revenue,
+            totalCust: totalCust,
+            newCust: newCust,
+            revisitCust: revisitCust,
+            unitPrice: unitPrice
+          }, target)
+        : {
+            revisitRate: 0,
+            scoreRev: 0,
+            scoreRevRate: 0,
+            scoreUnit: 0,
+            scoreNew: 0,
+            totalScore: 0
+          };
 
       return Object.assign({
         member: member,
@@ -3222,6 +3352,7 @@ create policy "Allow public read write" on public.yuroso_app_state
       renderCrmPanel();
       if (showBranchTab) renderBranchComparePanel();
       renderCoachingPanel();
+      syncGlobalPeriodPickerUi();
     }
 
     function setIndivGraphUnit(unit) {
@@ -3245,7 +3376,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     function shiftIndivCalendarMonth(delta) {
       const calInput = document.getElementById('indivCalendarMonthInput');
       if (!calInput) return;
-      const curVal = calInput.value || new Date().toISOString().slice(0, 7);
+      const curVal = calInput.value || selectedPeriodMonth || new Date().toISOString().slice(0, 7);
       const parts = curVal.split('-');
       let y = parseInt(parts[0], 10) || new Date().getFullYear();
       let m = (parseInt(parts[1], 10) || (new Date().getMonth() + 1)) + delta;
@@ -3256,8 +3387,20 @@ create policy "Allow public read write" on public.yuroso_app_state
         m = 1;
         y += 1;
       }
-      calInput.value = String(y) + '-' + String(m).padStart(2, '0');
-      renderIndividualMonthlySection();
+      const nextYm = String(y) + '-' + String(m).padStart(2, '0');
+      calInput.value = nextYm;
+      selectedPeriodMonth = nextYm;
+      selectedPeriodYear = String(y);
+      syncGlobalPeriodPickerUi();
+      renderWorkspaceAll();
+    }
+
+    function onIndivCalendarMonthInputChange(val) {
+      if (!val || val.indexOf('-') < 0) return;
+      selectedPeriodMonth = val.slice(0, 7);
+      selectedPeriodYear = val.slice(0, 4);
+      syncGlobalPeriodPickerUi();
+      renderWorkspaceAll();
     }
 
     function populateIndividualMonthlySelectors() {
@@ -3269,8 +3412,11 @@ create policy "Allow public read write" on public.yuroso_app_state
       const now = new Date();
       const curYear = now.getFullYear();
       const defaultYm = String(curYear) + '-' + String(now.getMonth() + 1).padStart(2, '0');
-      if (calInput && !calInput.value) {
-        calInput.value = defaultYm;
+      if (!selectedPeriodMonth) {
+        selectedPeriodMonth = defaultYm;
+      }
+      if (calInput) {
+        calInput.value = selectedPeriodMonth;
       }
 
       const yearsSet = new Set([String(curYear), String(curYear - 1)]);
@@ -3715,9 +3861,12 @@ create policy "Allow public read write" on public.yuroso_app_state
           else if (metric === 'unitPrice') valText = formatNumber(Math.round(d.unitPrice / 1000)) + '천원';
           else valText = d.totalCust + '명';
         }
-        return '<div class="month-cell' + (d.hasData ? ' has-data' : '') + '">' +
+        const isSelectedYm = d.ym === selectedPeriodMonth;
+        const activeBorder = isSelectedYm ? ' style="border:2px solid var(--espresso); cursor:pointer;"' : ' style="cursor:pointer;"';
+        return '<div class="month-cell' + (d.hasData ? ' has-data' : '') + '"' + activeBorder + ' title="클릭하여 ' + d.monthLabel + ' 매출·KPI 점수 확인" onclick="onGlobalPeriodMonthChange(\'' + d.ym + '\')">' +
           '<div style="font-size:11px; color:var(--espresso-muted); font-weight:600;">' + d.monthLabel + '</div>' +
           '<div style="font-size:12.5px; font-weight:700; color:var(--espresso); margin-top:2px;">' + valText + '</div>' +
+          '<div style="font-size:10.5px; color:var(--champagne-dark); font-weight:600; margin-top:2px;">' + (d.hasData ? (d.kpiScore.toFixed(1) + '점') : '0.0점') + '</div>' +
         '</div>';
       }).join('');
 
@@ -3750,8 +3899,15 @@ create policy "Allow public read write" on public.yuroso_app_state
       const viewRole = activeView.role;
       const topAdmin = isTopAdminLogged();
       const vis = appState.visibility;
-      const periodNames = { daily: '일별 기준', monthly: '월별 기준', yearly: '연별 기준' };
-      document.getElementById('summaryPeriodLabel').textContent = periodNames[currentPeriod] || '월별 기준';
+      const monthLabelKo = formatSelectedMonthLabel(selectedPeriodMonth);
+      const yearLabelKo = (selectedPeriodYear || (selectedPeriodMonth ? selectedPeriodMonth.slice(0, 4) : String(new Date().getFullYear()))) + '년';
+      const periodNames = {
+        daily: '일별 기준 (' + monthLabelKo + ')',
+        monthly: '월별 기준 · ' + monthLabelKo,
+        yearly: '연별 기준 · ' + yearLabelKo + ' 누적'
+      };
+      document.getElementById('summaryPeriodLabel').textContent = periodNames[currentPeriod] || ('월별 기준 · ' + monthLabelKo);
+      const periodShortSuffix = currentPeriod === 'yearly' ? (' (' + yearLabelKo + ' 연간)') : (' (' + monthLabelKo + ')');
 
       const kpiContainer = document.getElementById('kpiCardsContainer');
       const chartsGrid = document.getElementById('dashboardChartsGrid');
@@ -3771,7 +3927,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         const ceo = aggregateCeoMetrics();
         document.getElementById('summaryBannerBadge').textContent = viewRole === 'ceo' ? '대표원장 종합 KPI' : '관리자 종합 KPI';
         document.getElementById('summaryBannerTitle').textContent =
-          '전 지점 종합 KPI 달성 점수: ' + ceo.totalKpiScore.toFixed(1) + '점 / 100점';
+          '전 지점 종합 KPI 달성 점수' + periodShortSuffix + ': ' + ceo.totalKpiScore.toFixed(1) + '점 / 100점';
 
         kpiContainer.classList.remove('hidden');
         kpiContainer.innerHTML = [
@@ -3784,17 +3940,17 @@ create policy "Allow public read write" on public.yuroso_app_state
         chartsGrid.classList.remove('hidden');
         secondaryChartCard.classList.remove('hidden');
         document.getElementById('primaryChartTitle').textContent = '3대 지점 기간별 성과 추이';
-        document.getElementById('secondaryChartTitle').textContent = '전 지점 임직원 KPI 점수 비교';
+        document.getElementById('secondaryChartTitle').textContent = '전 지점 임직원 KPI 점수 비교' + periodShortSuffix;
 
         memberPerfCard.classList.remove('hidden');
-        document.getElementById('memberTableTitle').textContent = '전 지점 지점원장 · 디자이너 KPI 현황';
+        document.getElementById('memberTableTitle').textContent = '전 지점 지점원장 · 디자이너 월별 KPI 현황' + periodShortSuffix;
         renderMemberPerformanceTable(appState.members, true);
 
       } else if (viewRole === 'director') {
         const br = aggregateBranchMetrics(activeView.branch);
         document.getElementById('summaryBannerBadge').textContent = activeView.branch + ' 지점원장 KPI';
         document.getElementById('summaryBannerTitle').textContent =
-          activeView.branch + ' 종합 KPI 달성 점수: ' + br.directorKpiScore.toFixed(1) + '점 / 100점';
+          activeView.branch + ' 종합 KPI 달성 점수' + periodShortSuffix + ': ' + br.directorKpiScore.toFixed(1) + '점 / 100점';
 
         kpiContainer.classList.toggle('hidden', !vis.directorShowKpi && !topAdmin);
         const profitSub = (vis.directorShowProfit || topAdmin)
@@ -3811,10 +3967,10 @@ create policy "Allow public read write" on public.yuroso_app_state
         chartsGrid.classList.toggle('hidden', !vis.directorShowCharts && !topAdmin);
         secondaryChartCard.classList.remove('hidden');
         document.getElementById('primaryChartTitle').textContent = activeView.branch + ' 기간별 성과 추이';
-        document.getElementById('secondaryChartTitle').textContent = activeView.branch + ' 소속 인원 KPI 비교';
+        document.getElementById('secondaryChartTitle').textContent = activeView.branch + ' 소속 인원 KPI 비교' + periodShortSuffix;
 
         memberPerfCard.classList.remove('hidden');
-        document.getElementById('memberTableTitle').textContent = activeView.branch + ' 소속 인원 KPI 현황';
+        document.getElementById('memberTableTitle').textContent = activeView.branch + ' 소속 인원 KPI 현황' + periodShortSuffix;
         renderMemberPerformanceTable(br.branchMembers, topAdmin);
 
       } else {
@@ -3831,7 +3987,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         const myStat = aggregateMemberMetrics(me);
         document.getElementById('summaryBannerBadge').textContent = me.branch + ' · ' + me.name;
         document.getElementById('summaryBannerTitle').textContent =
-          me.name + '님 종합 KPI 달성 점수: ' + myStat.totalScore.toFixed(1) + '점 / 100점';
+          me.name + '님 종합 KPI 달성 점수' + periodShortSuffix + ': ' + myStat.totalScore.toFixed(1) + '점 / 100점';
 
         kpiContainer.classList.toggle('hidden', !vis.designerShowKpi && !topAdmin);
         const unitSub = myStat.target.unitPriceRange
@@ -3850,7 +4006,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         document.getElementById('primaryChartTitle').textContent = me.name + '님 기간별 성과 추이';
 
         memberPerfCard.classList.remove('hidden');
-        document.getElementById('memberTableTitle').textContent = me.name + '님 KPI 요약';
+        document.getElementById('memberTableTitle').textContent = me.name + '님 KPI 요약' + periodShortSuffix;
         renderMemberPerformanceTable([me], topAdmin);
       }
 
@@ -4475,16 +4631,31 @@ create policy "Allow public read write" on public.yuroso_app_state
       return Number(kpi.totalScore.toFixed(1));
     }
 
+    function getMonthlyBucketKeysForYear(yearStr) {
+      const y = yearStr || (selectedPeriodMonth ? selectedPeriodMonth.slice(0, 4) : String(new Date().getFullYear()));
+      const list = [];
+      for (let m = 1; m <= 12; m++) {
+        list.push(y + '-' + String(m).padStart(2, '0'));
+      }
+      return list;
+    }
+
     function renderAllCharts() {
       if (currentTab === 'dashboard') {
         renderIndividualMonthlySection();
 
         const metric = document.getElementById('chartMetricSelect').value || 'revenue';
         const viewRole = activeView.role;
+        const activeYearStr = selectedPeriodYear || (selectedPeriodMonth ? selectedPeriodMonth.slice(0, 4) : String(new Date().getFullYear()));
+        const monthKeys12 = getMonthlyBucketKeysForYear(activeYearStr);
 
         if (viewRole === 'ceo' || viewRole === 'admin') {
-          const allBuckets = Array.from(new Set(appState.crmRecords.map(function(r) { return getBucketKey(r.date); }))).sort().slice(-6);
-          const labels = allBuckets.length ? allBuckets : ['현재 기간'];
+          const allBuckets = currentPeriod === 'monthly'
+            ? monthKeys12
+            : Array.from(new Set(appState.crmRecords.map(function(r) { return getBucketKey(r.date); }))).sort().slice(-6);
+          const labels = currentPeriod === 'monthly'
+            ? MONTHS_KO
+            : (allBuckets.length ? allBuckets : ['현재 기간']);
           const colors = ['#2C221E', '#B08968', '#6B7F6E'];
 
           const series = BRANCHES.map(function(b, idx) {
@@ -4516,11 +4687,16 @@ create policy "Allow public read write" on public.yuroso_app_state
           const branchMembers = appState.members.filter(function(m) { return m.branch === activeView.branch; });
           const bMemIds = new Set(branchMembers.map(function(m) { return m.id; }));
           const branchRecs = appState.crmRecords.filter(function(r) { return bMemIds.has(r.memberId); });
-          const buckets = Array.from(new Set(branchRecs.map(function(r) { return getBucketKey(r.date); }))).sort().slice(-6);
+          const buckets = currentPeriod === 'monthly'
+            ? monthKeys12
+            : Array.from(new Set(branchRecs.map(function(r) { return getBucketKey(r.date); }))).sort().slice(-6);
+          const labels = currentPeriod === 'monthly'
+            ? MONTHS_KO
+            : (buckets.length ? buckets : ['현재 기간']);
 
           drawLineTrendChart(
             'trendChartCanvas',
-            buckets.length ? buckets : ['현재 기간'],
+            labels,
             [{
               label: activeView.branch,
               color: '#2C221E',
@@ -4544,12 +4720,15 @@ create policy "Allow public read write" on public.yuroso_app_state
         } else {
           const me = appState.members.find(function(m) { return m.id === activeView.memberId; });
           const myRecs = me ? appState.crmRecords.filter(function(r) { return r.memberId === me.id; }) : [];
-          const buckets = Array.from(new Set(myRecs.map(function(r) { return getBucketKey(r.date); }))).sort().slice(-6);
+          const buckets = currentPeriod === 'monthly'
+            ? monthKeys12
+            : Array.from(new Set(myRecs.map(function(r) { return getBucketKey(r.date); }))).sort().slice(-6);
+          const labels = currentPeriod === 'monthly' ? MONTHS_KO : (buckets.length ? buckets : []);
           const myTarget = me ? getMemberTarget(me.id) : appState.defaultDesignerTarget;
 
           drawLineTrendChart(
             'trendChartCanvas',
-            buckets.length ? buckets : [],
+            labels,
             buckets.length ? [{
               label: me ? me.name : '나의 성과',
               color: '#B08968',
@@ -4822,13 +5001,24 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       appState.crmRecords.unshift(rec);
       if (date && date.length >= 7) {
+        selectedPeriodMonth = date.slice(0, 7);
+        selectedPeriodYear = date.slice(0, 4);
         const calInput = document.getElementById('indivCalendarMonthInput');
-        if (calInput) calInput.value = date.slice(0, 7);
+        if (calInput) calInput.value = selectedPeriodMonth;
       }
       saveStateEverywhere(true);
       resetCrmForm();
       renderWorkspaceAll();
-      showToast(member.name + '님의 CRM 5대 지표가 저장되어 월간 성과 그래프에 반영되었습니다.', 'success');
+      showToast(member.name + '님의 CRM 5대 지표가 ' + formatSelectedMonthLabel(selectedPeriodMonth) + ' 실적 및 점수에 반영되었습니다.', 'success');
+    }
+
+    function setCrmHistoryFilterMode(mode) {
+      crmHistoryFilterMode = mode === 'all' ? 'all' : 'month';
+      const btnMonth = document.getElementById('crmHistFilterMonthBtn');
+      const btnAll = document.getElementById('crmHistFilterAllBtn');
+      if (btnMonth) btnMonth.classList.toggle('active', crmHistoryFilterMode === 'month');
+      if (btnAll) btnAll.classList.toggle('active', crmHistoryFilterMode === 'all');
+      renderCrmHistoryTable();
     }
 
     function renderCrmHistoryTable() {
@@ -4850,6 +5040,15 @@ create policy "Allow public read write" on public.yuroso_app_state
         list = appState.crmRecords.filter(function(r) { return r.memberId === activeView.memberId; });
       }
 
+      const monthLabelKo = formatSelectedMonthLabel(selectedPeriodMonth);
+      const histTitle = document.getElementById('crmHistoryTitle');
+      if (crmHistoryFilterMode === 'month' && selectedPeriodMonth) {
+        list = list.filter(function(r) { return r.date && r.date.indexOf(selectedPeriodMonth) === 0; });
+        if (histTitle) histTitle.textContent = '📋 CRM 입력 이력 (' + monthLabelKo + ')';
+      } else {
+        if (histTitle) histTitle.textContent = '📋 CRM 입력 이력 (전체 연도·월)';
+      }
+
       document.getElementById('crmHistoryCountBadge').textContent = list.length + '건';
       const thead = document.getElementById('crmHistoryThead');
       const tbody = document.getElementById('crmHistoryTbody');
@@ -4864,7 +5063,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       if (list.length === 0) {
         tbody.innerHTML =
           '<tr><td colspan="11" style="text-align:center; padding:26px; color:var(--espresso-muted);">' +
-          '저장된 CRM 5대 지표 내역이 없습니다.' +
+          (crmHistoryFilterMode === 'month'
+            ? (monthLabelKo + '에 저장된 CRM 5대 지표 내역이 없습니다. (상단 월 선택기를 변경하거나 [전체 연도·월 보기]를 눌러 확인하세요)')
+            : '저장된 CRM 5대 지표 내역이 없습니다.') +
           '</td></tr>';
         return;
       }
