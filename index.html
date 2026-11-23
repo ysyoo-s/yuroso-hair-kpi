@@ -1390,23 +1390,33 @@
       <div id="tabPanelDashboard" style="display:flex; flex-direction:column; gap:20px;">
 
         <!-- 종합 점수 배너 -->
-        <div class="card-espresso" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px;">
-          <div>
-            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:6px;">
-              <span id="summaryBannerBadge" class="badge badge-champagne">KPI 종합 평가</span>
-              <span id="summaryPeriodLabel" style="font-size:12.5px; color:rgba(250,247,242,0.8);">월별 기준</span>
+        <div class="card-espresso" style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px;">
+            <div>
+              <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:6px;">
+                <span id="summaryBannerBadge" class="badge badge-champagne">KPI 종합 평가</span>
+                <span id="summaryPeriodLabel" style="font-size:12.5px; color:rgba(250,247,242,0.8);">월별 기준</span>
+              </div>
+              <h2 id="summaryBannerTitle" style="font-size:22px; font-weight:700;">
+                종합 KPI 달성 점수: 0.0점 / 100점
+              </h2>
             </div>
-            <h2 id="summaryBannerTitle" style="font-size:22px; font-weight:700;">
-              종합 KPI 달성 점수: 0.0점 / 100점
-            </h2>
+            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;" class="no-print">
+              <button type="button" id="bannerTargetBtn" class="btn btn-champagne btn-sm hidden" onclick="openTargetModal()">
+                🎯 목표치 설정
+              </button>
+              <button type="button" class="btn btn-dark-outline btn-sm" onclick="switchMainTab('crm')">
+                🧮 CRM 5대 지표 입력 &rarr;
+              </button>
+            </div>
           </div>
-          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;" class="no-print">
-            <button type="button" id="bannerTargetBtn" class="btn btn-champagne btn-sm hidden" onclick="openTargetModal()">
-              🎯 목표치 설정
-            </button>
-            <button type="button" class="btn btn-dark-outline btn-sm" onclick="switchMainTab('crm')">
-              🧮 CRM 5대 지표 입력 &rarr;
-            </button>
+
+          <!-- ④ 쉬운 한 줄 목표 달성 가이드 배너 (목표까지 남은 매출·고객수 직관 안내) -->
+          <div id="summaryCoachGuideBar" style="background:rgba(255,255,255,0.09); border:1px solid rgba(176,137,104,0.42); border-radius:12px; padding:11px 15px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; font-size:13px; color:var(--ivory);">
+            <div id="summaryCoachGuideText" style="line-height:1.5;">
+              ✨ 이번 달 목표 달성 현황을 집계하고 있습니다.
+            </div>
+            <span id="summaryCoachGuideChip" class="badge badge-champagne">목표 가이드</span>
           </div>
         </div>
 
@@ -1539,10 +1549,18 @@
       <div id="tabPanelCrm" class="hidden" style="display:flex; flex-direction:column; gap:20px;">
         <div class="two-col-grid">
           <!-- 좌측: 5대 지표 입력 폼 -->
-          <div class="card">
-            <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px;">
-              <h3 style="font-size:17px; font-weight:700;">🧮 고객관리(CRM) 5대 지표 입력</h3>
-              <span class="badge badge-champagne-soft">실시간 자동계산 · 월간 성과 그래프 연동</span>
+          <div id="crmFormCard" class="card">
+            <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;">
+              <h3 id="crmFormHeaderTitle" style="font-size:17px; font-weight:700;">🧮 고객관리(CRM) 5대 지표 입력</h3>
+              <span class="badge badge-champagne-soft">총고객·신규 입력 시 재방문 자동계산</span>
+            </div>
+
+            <!-- ③ 수정 모드 안내 배너 (표에서 [수정] 클릭 시 활성화) -->
+            <div id="crmEditModeBanner" class="hidden" style="background:var(--champagne-bg); border:1px solid var(--champagne); border-radius:12px; padding:11px 14px; margin-bottom:14px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px;">
+              <div style="font-size:13px; color:var(--espresso);">
+                ✏️ <strong id="crmEditModeLabel">기존 입력 내역 수정 중</strong> — 숫자를 고친 뒤 하단 <strong>[수정 내용 저장]</strong>을 눌러주세요.
+              </div>
+              <button type="button" class="btn btn-outline btn-sm" onclick="resetCrmForm()">수정 취소</button>
             </div>
 
             <form onsubmit="handleSaveCrmRecord(event)" style="display:flex; flex-direction:column; gap:16px;">
@@ -1564,23 +1582,23 @@
                 </div>
                 <div>
                   <label class="field-label">② 총 고객수 (명)</label>
-                  <input type="number" step="1" min="0" id="crmTotalCustInput" class="input" placeholder="예: 180" oninput="recalcCrmLive()" required />
+                  <input type="number" step="1" min="0" id="crmTotalCustInput" class="input" placeholder="예: 180" oninput="onCrmCustomerCountInput()" required />
                 </div>
                 <div>
                   <label class="field-label">③ 신규 고객수 (명)</label>
-                  <input type="number" step="1" min="0" id="crmNewCustInput" class="input" placeholder="예: 42" oninput="recalcCrmLive()" required />
+                  <input type="number" step="1" min="0" id="crmNewCustInput" class="input" placeholder="예: 42" oninput="onCrmCustomerCountInput()" required />
                 </div>
                 <div>
-                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:5px;">
+                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
                     <label class="field-label" style="margin-bottom:0;">④ 재방문 고객수 (명)</label>
                     <button type="button" style="font-size:11.5px; color:var(--champagne-dark); font-weight:600;" onclick="autoFillRevisitFromTotal()">
-                      총고객-신규 자동적용
+                      ✨ 자동계산됨 (총-신규)
                     </button>
                   </div>
-                  <input type="number" step="1" min="0" id="crmRevisitCustInput" class="input" placeholder="예: 138" oninput="recalcCrmLive()" required />
+                  <input type="number" step="1" min="0" id="crmRevisitCustInput" class="input" placeholder="총고객·신규 입력 시 자동입력" oninput="onCrmRevisitManualInput()" required />
                 </div>
                 <div id="crmUnitPriceFieldWrap" class="hidden">
-                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:5px;">
+                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
                     <label class="field-label" style="margin-bottom:0;">⑤ 객단가 (원)</label>
                     <button type="button" style="font-size:11.5px; color:var(--champagne-dark); font-weight:600;" onclick="autoFillUnitPriceFromRevenue()">
                       매출÷고객수 자동계산
@@ -1620,8 +1638,8 @@
               </div>
 
               <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:8px;">
-                <button type="button" class="btn btn-outline" onclick="resetCrmForm()">초기화</button>
-                <button type="submit" class="btn btn-espresso btn-lg">CRM 지표 저장 및 성과 그래프 반영</button>
+                <button type="button" id="crmCancelEditBtn" class="btn btn-outline" onclick="resetCrmForm()">초기화</button>
+                <button type="submit" id="crmSubmitBtn" class="btn btn-espresso btn-lg">CRM 지표 저장 및 성과 그래프 반영</button>
               </div>
             </form>
           </div>
@@ -4314,11 +4332,28 @@ create policy "Allow public read write" on public.yuroso_app_state
       populateIndividualMonthlySelectors();
       renderIndividualMonthlySection();
 
+      const guideTextEl = document.getElementById('summaryCoachGuideText');
+      const guideChipEl = document.getElementById('summaryCoachGuideChip');
+      const periodWord = currentPeriod === 'yearly' ? (yearLabelKo + ' 연간') : monthLabelKo;
+
       if (viewRole === 'ceo' || viewRole === 'admin') {
         const ceo = aggregateCeoMetrics();
         document.getElementById('summaryBannerBadge').textContent = viewRole === 'ceo' ? '대표원장 종합 KPI' : '관리자 종합 KPI';
         document.getElementById('summaryBannerTitle').textContent =
           '전 지점 종합 KPI 달성 점수' + periodShortSuffix + ': ' + ceo.totalKpiScore.toFixed(1) + '점 / 100점';
+
+        if (guideTextEl && guideChipEl) {
+          const remainRev = Math.max(0, ceo.totalTargetRev - ceo.totalRevenue);
+          if (remainRev <= 0 && ceo.totalTargetRev > 0) {
+            guideTextEl.innerHTML = '🎉 <strong>' + periodWord + ' 전 지점 목표 매출(' + formatNumber(ceo.totalTargetRev) + '만원)을 100% 초과 달성</strong>했습니다! (현재 ' + formatNumber(ceo.totalRevenue, 1) + '만원)';
+            guideChipEl.textContent = '목표 달성 완료';
+            guideChipEl.className = 'badge badge-sage';
+          } else {
+            guideTextEl.innerHTML = '💡 <strong>' + periodWord + ' 전 지점 목표 매출까지 ' + formatNumber(remainRev, 1) + '만원</strong> 남았습니다. (현재 달성률 <strong>' + ceo.targetAchRate.toFixed(1) + '%</strong> · 임직원 평균 KPI <strong>' + ceo.avgTalentScore.toFixed(1) + '점</strong>)';
+            guideChipEl.textContent = '달성률 ' + ceo.targetAchRate.toFixed(1) + '%';
+            guideChipEl.className = 'badge badge-champagne';
+          }
+        }
 
         kpiContainer.classList.remove('hidden');
         kpiContainer.innerHTML = [
@@ -4343,6 +4378,20 @@ create policy "Allow public read write" on public.yuroso_app_state
         document.getElementById('summaryBannerBadge').textContent = activeView.branch + ' 지점원장 KPI';
         document.getElementById('summaryBannerTitle').textContent =
           activeView.branch + ' 종합 KPI 달성 점수' + periodShortSuffix + ': ' + br.directorKpiScore.toFixed(1) + '점 / 100점';
+
+        if (guideTextEl && guideChipEl) {
+          const remainBrRev = Math.max(0, br.targetRevenue - br.totalRevenue);
+          const brAchPct = br.targetRevenue > 0 ? (br.totalRevenue / br.targetRevenue) * 100 : 0;
+          if (remainBrRev <= 0 && br.targetRevenue > 0) {
+            guideTextEl.innerHTML = '🎉 <strong>' + periodWord + ' ' + escapeHtml(activeView.branch) + ' 목표 매출(' + formatNumber(br.targetRevenue) + '만원) 달성 완료!</strong> (현재 ' + formatNumber(br.totalRevenue, 1) + '만원 · 재방문율 ' + br.avgRevisitRate.toFixed(1) + '%)';
+            guideChipEl.textContent = '지점 목표 달성';
+            guideChipEl.className = 'badge badge-sage';
+          } else {
+            guideTextEl.innerHTML = '💡 <strong>' + periodWord + ' ' + escapeHtml(activeView.branch) + ' 목표 매출까지 ' + formatNumber(remainBrRev, 1) + '만원</strong> 남았습니다! (현재 달성률 <strong>' + brAchPct.toFixed(1) + '%</strong> · 평균 재방문율 <strong>' + br.avgRevisitRate.toFixed(1) + '%</strong>)';
+            guideChipEl.textContent = '달성률 ' + brAchPct.toFixed(1) + '%';
+            guideChipEl.className = 'badge badge-champagne';
+          }
+        }
 
         kpiContainer.classList.toggle('hidden', !vis.directorShowKpi && !topAdmin);
         const profitSub = (vis.directorShowProfit || topAdmin)
@@ -4370,6 +4419,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         if (!me) {
           document.getElementById('summaryBannerBadge').textContent = '디자이너 KPI';
           document.getElementById('summaryBannerTitle').textContent = '등록된 디자이너 계정이 없습니다.';
+          if (guideTextEl) guideTextEl.textContent = '등록된 디자이너 계정이 없습니다.';
           kpiContainer.innerHTML = '';
           chartsGrid.classList.add('hidden');
           memberPerfCard.classList.add('hidden');
@@ -4380,6 +4430,27 @@ create policy "Allow public read write" on public.yuroso_app_state
         document.getElementById('summaryBannerBadge').textContent = me.branch + ' · ' + me.name;
         document.getElementById('summaryBannerTitle').textContent =
           me.name + '님 종합 KPI 달성 점수' + periodShortSuffix + ': ' + myStat.totalScore.toFixed(1) + '점 / 100점';
+
+        if (guideTextEl && guideChipEl) {
+          const remainMyRev = Math.max(0, myStat.target.targetRevenue - myStat.revenue);
+          const remainMyNew = Math.max(0, myStat.target.targetNewCustomers - myStat.newCust);
+          const myRevPct = myStat.target.targetRevenue > 0 ? (myStat.revenue / myStat.target.targetRevenue) * 100 : 0;
+          if (remainMyRev <= 0 && remainMyNew <= 0 && myStat.recordCount > 0) {
+            guideTextEl.innerHTML = '🎉 <strong>' + escapeHtml(me.name) + '님, ' + periodWord + ' 목표 매출(' + formatNumber(myStat.target.targetRevenue) + '만원)과 신규 고객 목표(' + formatNumber(myStat.target.targetNewCustomers) + '명)를 모두 달성</strong>하셨어요! 최고예요 ✨';
+            guideChipEl.textContent = '목표 100% 달성';
+            guideChipEl.className = 'badge badge-sage';
+          } else {
+            const revMsg = remainMyRev > 0
+              ? ('목표 매출까지 <strong>' + formatNumber(remainMyRev, 1) + '만원</strong>')
+              : '<strong>목표 매출 달성 완료!</strong>';
+            const newMsg = remainMyNew > 0
+              ? ('신규 고객 목표까지 <strong>' + formatNumber(remainMyNew) + '명</strong> 남았어요')
+              : '<strong>신규 고객 목표 달성 완료!</strong>';
+            guideTextEl.innerHTML = '✨ <strong>' + periodWord + ' 목표 가이드:</strong> ' + revMsg + ' · ' + newMsg + '! (현재 재방문율 <strong>' + myStat.revisitRate.toFixed(1) + '%</strong> / 목표 ' + myStat.target.targetRevisitRate + '%) 화이팅!';
+            guideChipEl.textContent = '매출 달성률 ' + myRevPct.toFixed(1) + '%';
+            guideChipEl.className = 'badge badge-champagne';
+          }
+        }
 
         kpiContainer.classList.toggle('hidden', !vis.designerShowKpi && !topAdmin);
         const unitSub = myStat.target.unitPriceRange
@@ -5356,7 +5427,32 @@ create policy "Allow public read write" on public.yuroso_app_state
       showToast(formatSelectedMonthLabel(crmYm) + ' 개별 목표 객단가 및 객단가 범위가 즉시 반영되었습니다.', 'success');
     }
 
+    let editingCrmRecordId = null;
+    let isRevisitManuallyOverridden = false;
+
+    function onCrmCustomerCountInput() {
+      const totalRaw = document.getElementById('crmTotalCustInput').value;
+      const newRaw = document.getElementById('crmNewCustInput').value;
+      const totalCust = Math.max(0, Number(totalRaw) || 0);
+      const newCust = Math.max(0, Number(newRaw) || 0);
+
+      if (!isRevisitManuallyOverridden || totalRaw !== '' || newRaw !== '') {
+        if (totalRaw === '' && newRaw === '') {
+          document.getElementById('crmRevisitCustInput').value = '';
+        } else {
+          document.getElementById('crmRevisitCustInput').value = Math.max(0, totalCust - newCust);
+        }
+      }
+      recalcCrmLive();
+    }
+
+    function onCrmRevisitManualInput() {
+      isRevisitManuallyOverridden = true;
+      recalcCrmLive();
+    }
+
     function autoFillRevisitFromTotal() {
+      isRevisitManuallyOverridden = false;
       const totalCust = Math.max(0, Number(document.getElementById('crmTotalCustInput').value) || 0);
       const newCust = Math.max(0, Number(document.getElementById('crmNewCustInput').value) || 0);
       document.getElementById('crmRevisitCustInput').value = Math.max(0, totalCust - newCust);
@@ -5409,15 +5505,78 @@ create policy "Allow public read write" on public.yuroso_app_state
       document.getElementById('liveBarNew').style.width = ((kpi.scoreNew / 10) * 100) + '%';
     }
 
+    function updateCrmEditModeUi() {
+      const editBanner = document.getElementById('crmEditModeBanner');
+      const submitBtn = document.getElementById('crmSubmitBtn');
+      const cancelBtn = document.getElementById('crmCancelEditBtn');
+      if (editingCrmRecordId) {
+        if (editBanner) editBanner.classList.remove('hidden');
+        if (submitBtn) {
+          submitBtn.textContent = '✏️ 수정 내용 저장 및 성과 그래프 반영';
+          submitBtn.className = 'btn btn-champagne btn-lg';
+        }
+        if (cancelBtn) cancelBtn.textContent = '수정 취소';
+      } else {
+        if (editBanner) editBanner.classList.add('hidden');
+        if (submitBtn) {
+          submitBtn.textContent = 'CRM 지표 저장 및 성과 그래프 반영';
+          submitBtn.className = 'btn btn-espresso btn-lg';
+        }
+        if (cancelBtn) cancelBtn.textContent = '초기화';
+      }
+    }
+
     function resetCrmForm() {
+      editingCrmRecordId = null;
+      isRevisitManuallyOverridden = false;
       document.getElementById('crmRevenueInput').value = '';
       document.getElementById('crmTotalCustInput').value = '';
       document.getElementById('crmNewCustInput').value = '';
       document.getElementById('crmRevisitCustInput').value = '';
       document.getElementById('crmUnitPriceInput').value = '';
       document.getElementById('crmMemoInput').value = '';
+      updateCrmEditModeUi();
       syncInlineUnitPriceInputs();
       recalcCrmLive();
+      renderCrmHistoryTable();
+    }
+
+    function startEditCrmRecord(recId) {
+      const rec = appState.crmRecords.find(function(r) { return r.id === recId; });
+      if (!rec) return;
+
+      editingCrmRecordId = rec.id;
+      isRevisitManuallyOverridden = false;
+
+      const memSel = document.getElementById('crmMemberSelect');
+      if (memSel && Array.from(memSel.options).some(function(opt) { return opt.value === rec.memberId; })) {
+        memSel.value = rec.memberId;
+      }
+
+      document.getElementById('crmDateInput').value = rec.date || getLocalDateParts().ymd;
+      document.getElementById('crmRevenueInput').value = rec.revenue;
+      document.getElementById('crmTotalCustInput').value = rec.totalCust;
+      document.getElementById('crmNewCustInput').value = rec.newCust;
+      document.getElementById('crmRevisitCustInput').value = rec.revisitCust;
+      document.getElementById('crmUnitPriceInput').value = rec.unitPrice || '';
+      document.getElementById('crmMemoInput').value = rec.memo || '';
+
+      const editLbl = document.getElementById('crmEditModeLabel');
+      if (editLbl) {
+        editLbl.textContent = '[' + (rec.date || '') + ' · ' + (rec.memberName || '') + '] 입력 내역 수정 중';
+      }
+
+      updateCrmEditModeUi();
+      syncInlineUnitPriceInputs();
+      recalcCrmLive();
+      renderCrmHistoryTable();
+
+      const formCard = document.getElementById('crmFormCard');
+      if (formCard && formCard.scrollIntoView) {
+        formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      const revInput = document.getElementById('crmRevenueInput');
+      if (revInput) revInput.focus();
     }
 
     function handleSaveCrmRecord(e) {
@@ -5434,7 +5593,10 @@ create policy "Allow public read write" on public.yuroso_app_state
       const revenue = Math.max(0, Number(document.getElementById('crmRevenueInput').value) || 0);
       const totalCust = Math.max(0, Math.round(Number(document.getElementById('crmTotalCustInput').value) || 0));
       const newCust = Math.max(0, Math.round(Number(document.getElementById('crmNewCustInput').value) || 0));
-      const revisitCust = Math.max(0, Math.round(Number(document.getElementById('crmRevisitCustInput').value) || 0));
+      const revisitInputVal = document.getElementById('crmRevisitCustInput').value;
+      const revisitCust = revisitInputVal === ''
+        ? Math.max(0, totalCust - newCust)
+        : Math.max(0, Math.round(Number(revisitInputVal) || 0));
       const unitPrice = resolveEffectiveUnitPrice(member.id, revenue, totalCust, recYm);
       const memo = document.getElementById('crmMemoInput').value.trim();
 
@@ -5452,8 +5614,13 @@ create policy "Allow public read write" on public.yuroso_app_state
         unitPrice: unitPrice
       }, target);
 
+      const wasEditingId = editingCrmRecordId;
+      const existingIdx = wasEditingId
+        ? appState.crmRecords.findIndex(function(r) { return r.id === wasEditingId; })
+        : -1;
+
       const rec = {
-        id: 'crm_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        id: existingIdx >= 0 ? wasEditingId : ('crm_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6)),
         memberId: member.id,
         memberName: member.name,
         branch: member.branch,
@@ -5468,7 +5635,12 @@ create policy "Allow public read write" on public.yuroso_app_state
         memo: memo
       };
 
-      appState.crmRecords.unshift(rec);
+      if (existingIdx >= 0) {
+        appState.crmRecords[existingIdx] = rec;
+      } else {
+        appState.crmRecords.unshift(rec);
+      }
+
       if (date && date.length >= 7) {
         selectedPeriodMonth = date.slice(0, 7);
         selectedPeriodYear = date.slice(0, 4);
@@ -5478,7 +5650,12 @@ create policy "Allow public read write" on public.yuroso_app_state
       saveStateEverywhere(true);
       resetCrmForm();
       renderWorkspaceAll();
-      showToast(member.name + '님의 CRM 5대 지표가 ' + formatSelectedMonthLabel(selectedPeriodMonth) + ' 실적 및 점수에 반영되었습니다.', 'success');
+      showToast(
+        existingIdx >= 0
+          ? (member.name + '님의 CRM 입력 내역이 수정되어 ' + formatSelectedMonthLabel(selectedPeriodMonth) + ' 점수에 즉시 반영되었습니다.')
+          : (member.name + '님의 CRM 5대 지표가 ' + formatSelectedMonthLabel(selectedPeriodMonth) + ' 실적 및 점수에 반영되었습니다.'),
+        'success'
+      );
     }
 
     function setCrmHistoryFilterMode(mode) {
@@ -5526,7 +5703,7 @@ create policy "Allow public read write" on public.yuroso_app_state
         '<tr>' +
           '<th>기준 일자</th><th>이름</th><th>지점</th><th>개인매출</th>' +
           '<th>총 고객수</th><th>신규</th><th>재방문 (비율)</th>' +
-          '<th>객단가</th><th>KPI 점수</th><th>메모</th><th>관리</th>' +
+          '<th>객단가</th><th>KPI 점수</th><th>메모</th><th>수정 · 삭제</th>' +
         '</tr>';
 
       if (list.length === 0) {
@@ -5540,7 +5717,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
 
       tbody.innerHTML = list.map(function(r) {
-        return '<tr>' +
+        const isEditingRow = editingCrmRecordId === r.id;
+        const rowStyle = isEditingRow ? ' style="background:var(--champagne-bg);"' : '';
+        return '<tr' + rowStyle + '>' +
           '<td>' + escapeHtml(r.date) + '</td>' +
           '<td><strong>' + escapeHtml(r.memberName) + '</strong></td>' +
           '<td>' + escapeHtml(r.branch) + '</td>' +
@@ -5551,13 +5730,21 @@ create policy "Allow public read write" on public.yuroso_app_state
           '<td>' + formatNumber(r.unitPrice) + '원</td>' +
           '<td><span class="badge badge-champagne">' + Number(r.kpiScore || 0).toFixed(1) + '점</span></td>' +
           '<td>' + escapeHtml(r.memo || '-') + '</td>' +
-          '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteCrmRecord(\'' + escapeHtml(r.id) + '\')">삭제</button></td>' +
+          '<td>' +
+            '<div style="display:inline-flex; align-items:center; gap:5px;">' +
+              '<button type="button" class="btn btn-outline btn-sm" onclick="startEditCrmRecord(\'' + escapeHtml(r.id) + '\')">✏️ 수정</button>' +
+              '<button type="button" class="btn btn-danger btn-sm" onclick="deleteCrmRecord(\'' + escapeHtml(r.id) + '\')">삭제</button>' +
+            '</div>' +
+          '</td>' +
         '</tr>';
       }).join('');
     }
 
     function deleteCrmRecord(recId) {
       openConfirmModal('CRM 기록 삭제', '선택한 CRM 입력 기록을 삭제하시겠습니까?', function() {
+        if (editingCrmRecordId === recId) {
+          resetCrmForm();
+        }
         appState.crmRecords = appState.crmRecords.filter(function(r) { return r.id !== recId; });
         saveStateEverywhere(true);
         renderWorkspaceAll();
