@@ -1172,6 +1172,52 @@
         break-inside: avoid;
       }
     }
+
+    /* 🧾 POS 캡처 · 정산 엑셀 3초 자동입력 & 인센티브 정산기 스타일 */
+    .pos-dropzone {
+      border: 2px dashed rgba(176, 137, 104, 0.65);
+      background: var(--ivory);
+      border-radius: 14px;
+      padding: 18px 16px;
+      text-align: center;
+      transition: all 0.18s ease;
+      cursor: pointer;
+    }
+
+    .pos-dropzone:hover,
+    .pos-dropzone.dragover {
+      background: var(--champagne-bg);
+      border-color: var(--espresso);
+    }
+
+    .rate-chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .rate-chip {
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--espresso-muted);
+      background: var(--ivory);
+      border: 1px solid var(--ivory-border);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .rate-chip:hover {
+      border-color: var(--champagne);
+      color: var(--espresso);
+    }
+
+    .rate-chip.active {
+      background: var(--espresso);
+      color: var(--champagne-light);
+      border-color: var(--espresso);
+    }
   </style>
 </head>
 <body>
@@ -1407,7 +1453,10 @@
           <button type="button" id="btnOpenQuickSignup" class="btn btn-dark-outline btn-sm hidden" onclick="openQuickMemberModal()">
             + 디자이너 등록
           </button>
-          <!-- DB 연동 버튼은 '관리자(admin)' 모드에서만 노출 -->
+          <!-- DB 연동 및 AI API 키 버튼은 오직 '관리자(admin)' 모드에서만 노출 -->
+          <button type="button" id="btnOpenAiKeyHeader" class="btn btn-dark-outline btn-sm hidden" onclick="openAiKeyModal()">
+            🔑 AI API 키
+          </button>
           <button type="button" id="btnOpenDbHeader" class="btn btn-dark-outline btn-sm hidden" onclick="openDbModal()">
             ☁️ DB 연동
           </button>
@@ -1426,7 +1475,7 @@
             📊 KPI 대시보드
           </button>
           <button type="button" id="tabBtnCrm" class="nav-tab" onclick="switchMainTab('crm')">
-            🧮 고객관리(CRM) 5대 지표 입력·자동계산
+            🧮 CRM 5대 지표 · 🧾 POS 자동정산
           </button>
           <button type="button" id="tabBtnBranchCompare" class="nav-tab hidden" onclick="switchMainTab('branches')">
             🏆 3대 지점원장 &amp; 총 결과 KPI 비교 분석
@@ -1483,7 +1532,7 @@
                 🎯 목표치 설정
               </button>
               <button type="button" class="btn btn-dark-outline btn-sm" onclick="switchMainTab('crm')">
-                🧮 CRM 5대 지표 입력 &rarr;
+                🧾 POS·엑셀 3초 자동입력 &rarr;
               </button>
             </div>
           </div>
@@ -1621,8 +1670,171 @@
 
       </div>
 
-      <!-- ==================== TAB 2: CRM 5대 지표 입력·자동계산 ==================== -->
+      <!-- ==================== TAB 2: CRM 5대 지표 입력·자동계산 & POS 3초 자동정산 ==================== -->
       <div id="tabPanelCrm" class="hidden" style="display:flex; flex-direction:column; gap:20px;">
+
+        <!-- 🧾 신규 핵심 기능: POS 화면 캡처 / 정산 엑셀 → 매출·인센티브 3초 자동 입력·정산기 -->
+        <div class="two-col-grid two-col-equal no-print">
+
+          <!-- [좌측] POS 화면 캡처 · 정산 엑셀 3초 자동 인식기 -->
+          <div id="posAutoImportCard" class="card" style="border-top:3px solid var(--champagne); display:flex; flex-direction:column; gap:13px;">
+            <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px;">
+              <div>
+                <span class="badge badge-champagne-soft" style="margin-bottom:3px;">핸드SOS · 뷰티짱 · 헤어짱 · 네이버페이 호환</span>
+                <h3 style="font-size:16.5px; font-weight:700;">🧾 POS 캡처 · 정산 엑셀 3초 자동입력기</h3>
+              </div>
+              <button type="button" class="btn btn-outline btn-sm" style="padding:4px 10px; font-size:11.5px;" onclick="loadSamplePosDemoData()">
+                🧪 샘플 정산표 1초 체험
+              </button>
+            </div>
+
+            <input type="file" id="posFileInput" class="hidden" accept="image/*,.xlsx,.xls,.csv,.tsv,.txt" onchange="handlePosFileChange(event)" />
+            <input type="file" id="posCameraInput" class="hidden" accept="image/*" capture="environment" onchange="handlePosFileChange(event)" />
+
+            <div id="posDropzone" class="pos-dropzone" onclick="document.getElementById('posFileInput').click()" ondragover="onPosDragOver(event)" ondragleave="onPosDragLeave(event)" ondrop="onPosDrop(event)">
+              <div style="font-size:24px; margin-bottom:4px;">📸 📊</div>
+              <div style="font-size:13.5px; font-weight:700; color:var(--espresso); margin-bottom:3px;">
+                POS 정산 화면 캡처 사진 또는 엑셀(.xlsx · .xls · .csv) 업로드
+              </div>
+              <div style="font-size:11.5px; color:var(--espresso-muted); line-height:1.45; margin-bottom:10px;">
+                파일을 선택하거나 끌어다 놓으면 <strong>매출 · 재방문 · 신규 · 총고객 · 객단가 · 인센티브</strong>가 3초 만에 자동 입력됩니다!
+              </div>
+              <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:6px;" onclick="event.stopPropagation()">
+                <button type="button" class="btn btn-espresso btn-sm" onclick="document.getElementById('posFileInput').click()">
+                  🖼️ 캡처 사진 · 엑셀 선택
+                </button>
+                <button type="button" class="btn btn-champagne btn-sm" onclick="document.getElementById('posCameraInput').click()">
+                  📷 POS 화면 바로 촬영
+                </button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="togglePosTextPasteBox()">
+                  📋 정산 텍스트 붙여넣기
+                </button>
+              </div>
+            </div>
+
+            <!-- 텍스트 붙여넣기 입력창 (토글) -->
+            <div id="posTextPasteWrap" class="hidden" style="background:var(--ivory); border:1px solid var(--ivory-border); border-radius:12px; padding:11px; display:flex; flex-direction:column; gap:8px;">
+              <textarea id="posTextPasteInput" rows="3" class="textarea" style="font-size:12.5px;" placeholder="POS 화면이나 카톡 정산 내역을 복사해 붙여넣으세요.&#10;예: 총매출 18,500,000원 / 점판 650,000원 / 재방문 138명 / 신규 42명"></textarea>
+              <div style="display:flex; justify-content:flex-end; gap:6px;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="togglePosTextPasteBox()">닫기</button>
+                <button type="button" class="btn btn-espresso btn-sm" onclick="parsePastedPosText()">⚡ 숫자 자동 추출 및 입력</button>
+              </div>
+            </div>
+
+            <!-- 분석 진행 상태 & 자동입력 완료 요약 박스 -->
+            <div id="posParseStatusBox" class="hidden" style="background:var(--champagne-bg); border:1px solid rgba(176,137,104,0.45); border-radius:12px; padding:12px 14px; font-size:12.5px; color:var(--espresso); display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <img id="posPreviewThumb" src="" alt="미리보기" class="hidden" style="width:46px; height:46px; object-fit:cover; border-radius:8px; border:1px solid var(--ivory-border);" />
+                  <div id="posParseStatusText" style="line-height:1.45; font-weight:600;">분석 대기 중...</div>
+                </div>
+                <button type="button" id="posQuickSaveCrmBtn" class="btn btn-espresso btn-sm hidden" onclick="quickSaveAutoFilledCrm()">
+                  💾 바로 CRM 실적 저장
+                </button>
+              </div>
+            </div>
+
+            <!-- 다중 디자이너 정산표 인식 시 일괄 반영 테이블 -->
+            <div id="posMultiResultWrap" class="hidden" style="background:var(--ivory); border:1px solid var(--ivory-border); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px;">
+                <strong id="posMultiResultTitle" style="font-size:13px; color:var(--espresso);">📋 다중 디자이너 정산표 인식 결과</strong>
+                <button type="button" class="btn btn-champagne btn-sm" onclick="applyAllMatchedPosRecordsToCrm()">
+                  ⚡ 매칭된 디자이너 전원 CRM 일괄 저장
+                </button>
+              </div>
+              <div class="table-wrap" style="max-height:220px; overflow-y:auto;">
+                <table style="font-size:12px;">
+                  <thead>
+                    <tr>
+                      <th>인식 이름</th>
+                      <th>매칭 디자이너</th>
+                      <th>매출(만원)</th>
+                      <th>재방문/신규</th>
+                      <th>예상 실수령 정산액</th>
+                      <th>선택</th>
+                    </tr>
+                  </thead>
+                  <tbody id="posMultiResultTbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- [우측] 💰 실시간 매출 · 인센티브(정산금) 3초 자동 정산기 -->
+          <div id="incentiveCalcCard" class="card" style="border-top:3px solid var(--sage); display:flex; flex-direction:column; gap:13px;">
+            <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px;">
+              <div>
+                <span class="badge badge-sage" style="margin-bottom:3px;">CRM 매출 실시간 연동 · 저장 불필요</span>
+                <h3 style="font-size:16.5px; font-weight:700;">💰 매출 · 인센티브 3초 자동 정산기</h3>
+              </div>
+              <button type="button" class="btn btn-champagne btn-sm" style="padding:4px 10px; font-size:11.5px;" onclick="copyIncentiveStatementKakao()">
+                💬 정산 명세서 카톡 복사
+              </button>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div>
+                <label class="field-label" style="margin-bottom:4px;">시술 매출 (만원 · CRM 자동연동)</label>
+                <input type="number" step="0.1" min="0" id="incServiceRevInput" class="input" style="padding:8px 10px; font-weight:700;" placeholder="예: 1850" oninput="onIncentiveRevenueDirectInput(this.value)" />
+              </div>
+              <div>
+                <label class="field-label" style="margin-bottom:4px;">점판(제품) 매출 (만원 · 선택)</label>
+                <input type="number" step="0.1" min="0" id="incRetailRevInput" class="input" style="padding:8px 10px;" placeholder="예: 65 (없으면 0)" oninput="recalcIncentiveSettlement()" />
+              </div>
+            </div>
+
+            <div>
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+                <label class="field-label" style="margin-bottom:0;">시술 인센티브 요율 (%)</label>
+                <div id="incRateChipGroup" class="rate-chip-group">
+                  <button type="button" class="rate-chip" onclick="setIncentiveRatePreset(35)">35%</button>
+                  <button type="button" class="rate-chip active" onclick="setIncentiveRatePreset(40)">40%</button>
+                  <button type="button" class="rate-chip" onclick="setIncentiveRatePreset(45)">45%</button>
+                  <button type="button" class="rate-chip" onclick="setIncentiveRatePreset(48)">48%</button>
+                  <button type="button" class="rate-chip" onclick="setIncentiveRatePreset(50)">50%</button>
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+                <div>
+                  <input type="number" step="0.5" min="0" max="100" id="incRateInput" class="input" style="padding:7px 10px; font-weight:700;" value="40" oninput="onIncentiveRateManualInput()" />
+                  <div style="font-size:11px; color:var(--espresso-muted); margin-top:3px;">시술 정산율(%)</div>
+                </div>
+                <div>
+                  <input type="number" step="1" min="0" max="100" id="incRetailRateInput" class="input" style="padding:7px 10px;" value="10" oninput="recalcIncentiveSettlement()" />
+                  <div style="font-size:11px; color:var(--espresso-muted); margin-top:3px;">점판 수당율(%)</div>
+                </div>
+                <div>
+                  <input type="number" step="0.5" min="0" max="50" id="incMatDeductInput" class="input" style="padding:7px 10px;" value="0" oninput="recalcIncentiveSettlement()" />
+                  <div style="font-size:11px; color:var(--espresso-muted); margin-top:3px;">재료·수수료 공제(%)</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--ivory); border:1px solid var(--ivory-border); border-radius:10px; padding:8px 12px; font-size:12.5px;">
+              <span style="font-weight:600; color:var(--espresso);">세금 공제 방식</span>
+              <select id="incTaxModeSelect" class="select" style="width:auto; padding:5px 10px; font-size:12px; font-weight:700;" onchange="recalcIncentiveSettlement()">
+                <option value="tax33" selected>프리랜서 원천징수 3.3% 공제</option>
+                <option value="none">세금 공제 전 (세전 총액)</option>
+              </select>
+            </div>
+
+            <!-- 최종 실수령 정산 요약 배너 -->
+            <div class="card-espresso" style="padding:14px 16px; display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px;">
+                <span style="font-size:12px; color:rgba(250,247,242,0.8);" id="incTargetMemberLabel">예상 실수령 정산액</span>
+                <span id="incGrossSummaryBadge" class="badge badge-dark">세전 0원</span>
+              </div>
+              <div id="incFinalPayoutText" style="font-size:26px; font-weight:700; color:var(--champagne-light); letter-spacing:-0.02em;">
+                0원
+              </div>
+              <div id="incBreakdownDetailText" style="font-size:11.5px; color:rgba(250,247,242,0.82); line-height:1.45; border-top:1px solid rgba(255,255,255,0.14); padding-top:7px;">
+                시술 정산 0원 + 점판 수당 0원 - 원천징수(3.3%) 0원
+              </div>
+            </div>
+          </div>
+
+        </div>
+
         <div class="two-col-grid">
           <!-- 좌측: 5대 지표 입력 폼 -->
           <div id="crmFormCard" class="card">
@@ -1974,6 +2186,59 @@
 
     </main>
   </section>
+
+  <!-- =========================================================================
+       모달 0: 관리자 전용 [🔑 AI POS 비전 API 키 설정] 모달 (타 직급 열람·노출 완전 차단)
+       ========================================================================= -->
+  <div id="aiKeyConfigModal" class="modal-backdrop hidden no-print">
+    <div class="modal-panel modal-sm" style="max-width:540px;">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="badge badge-champagne">관리자 전용 · 보안</span>
+          <h3 style="font-size:16px; font-weight:700;">🔑 POS 캡처 인식용 AI API 키 설정</h3>
+        </div>
+        <button type="button" style="color:var(--ivory); font-size:20px; padding:2px 6px;" onclick="closeAiKeyModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:14px;">
+        <div style="background:var(--champagne-bg); border:1px solid rgba(176,137,104,0.4); border-radius:12px; padding:12px 14px; font-size:12.5px; color:var(--espresso); line-height:1.55;">
+          🔐 <strong>이 화면과 API 키는 오직 [관리자] 화면에서만 보이고 설정할 수 있습니다.</strong><br />
+          • 엑셀(<code>.xlsx</code> · <code>.xls</code> · <code>.csv</code>) 및 텍스트 정산표는 API 키 없이도 즉시 작동합니다.<br />
+          • <strong>POS 화면 캡처 사진 자동 판독(AI Vision)</strong>을 위해 OpenAI(<code>sk-...</code>) 또는 Gemini(<code>AQ....</code> / <code>AIza...</code>) 키를 등록하면 전 지점 앱 백그라운드에 키 노출 없이 적용됩니다.
+        </div>
+
+        <div>
+          <label class="field-label">API 키 입력 (OpenAI <code>sk-...</code> 또는 Gemini <code>AQ....</code> / <code>AIza...</code>)</label>
+          <input type="password" id="aiApiKeyInput" class="input" placeholder="관리자 전용 API 키 입력" autocomplete="off" />
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+            <label style="font-size:12px; color:var(--espresso-muted); display:inline-flex; align-items:center; gap:5px; cursor:pointer;">
+              <input type="checkbox" id="aiShowKeyTextChk" onchange="document.getElementById('aiApiKeyInput').type = this.checked ? 'text' : 'password'" />
+              입력한 키 글자 보기 (관리자 확인용)
+            </label>
+            <button type="button" class="btn btn-outline btn-sm" style="padding:3px 9px; font-size:11.5px;" onclick="testAiApiKeyConnection()">⚡ 연결 테스트</button>
+          </div>
+        </div>
+
+        <div style="background:var(--ivory); border:1px solid var(--ivory-border); border-radius:11px; padding:11px 13px;">
+          <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-size:12.5px; color:var(--espresso);">
+            <input type="checkbox" id="aiSyncToAllStaffChk" checked style="margin-top:3px;" />
+            <span>
+              <strong>☁️ 전 지점 POS 사진 인식 백그라운드 공유</strong><br />
+              <span style="font-size:11.5px; color:var(--espresso-muted);">체크 시 대표원장 · 지점원장 · 디자이너 화면에서는 API 키가 절대 보이지 않으면서 POS 캡처 사진 자동 인식만 활성화됩니다.</span>
+            </span>
+          </label>
+        </div>
+
+        <div id="aiKeyTestResultBar" class="hidden" style="font-size:12.5px; padding:10px 12px; border-radius:10px; background:var(--ivory); border:1px solid var(--ivory-border);"></div>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="clearSavedAiApiKey()">키 초기화</button>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn btn-outline" onclick="closeAiKeyModal()">닫기</button>
+          <button type="button" class="btn btn-espresso" onclick="saveAiApiKeyConfig()">관리자 키 저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- =========================================================================
        모달 1: 대표원장 · 관리자 전용 [🎯 월별 목표치 & 디자이너별 객단가 범위 설정] 모달
@@ -2543,6 +2808,11 @@ create policy "Allow public read write" on public.yuroso_app_state
           colRevisitRate: true,
           colUnitPrice: true,
           colKpiScore: true
+        },
+        aiSettings: {
+          sharedApiKey: '',
+          provider: 'auto',
+          updatedAt: ''
         }
       };
     }
@@ -2559,7 +2829,8 @@ create policy "Allow public read write" on public.yuroso_app_state
         defaultDesignerTarget: Object.assign({}, base.defaultDesignerTarget, raw.defaultDesignerTarget || {}),
         memberTargets: Object.assign({}, base.memberTargets, raw.memberTargets || {}),
         monthlyTargets: (raw.monthlyTargets && typeof raw.monthlyTargets === 'object') ? raw.monthlyTargets : {},
-        visibility: Object.assign({}, base.visibility, raw.visibility || {})
+        visibility: Object.assign({}, base.visibility, raw.visibility || {}),
+        aiSettings: Object.assign({}, base.aiSettings, raw.aiSettings || {})
       });
       if (!merged.memberTargets[CEO_MEMBER_ID]) {
         merged.memberTargets[CEO_MEMBER_ID] = Object.assign({}, merged.defaultDesignerTarget);
@@ -3099,6 +3370,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     function handleLogout() {
       loggedInSession = null;
       safeStorage.removeItem(STORAGE_SESSION_KEY);
+      if (typeof closeAiKeyModal === 'function') closeAiKeyModal();
       document.getElementById('appWorkspaceView').classList.add('hidden');
       document.getElementById('authGateView').classList.remove('hidden');
       updateLoginMemberCount();
@@ -3886,6 +4158,14 @@ create policy "Allow public read write" on public.yuroso_app_state
       document.getElementById('btnOpenVisibility').classList.toggle('hidden', !topAdmin);
       document.getElementById('btnOpenQuickSignup').classList.toggle('hidden', !topAdmin);
       document.getElementById('btnOpenDbHeader').classList.toggle('hidden', !showAdminDbUi);
+      const aiKeyHdrBtn = document.getElementById('btnOpenAiKeyHeader');
+      if (aiKeyHdrBtn) {
+        aiKeyHdrBtn.classList.toggle('hidden', !showAdminDbUi);
+        if (showAdminDbUi && typeof updateAdminAiKeyHeaderLabel === 'function') {
+          updateAdminAiKeyHeaderLabel();
+        }
+      }
+      if (!showAdminDbUi && typeof closeAiKeyModal === 'function') closeAiKeyModal();
       document.getElementById('bannerTargetBtn').classList.toggle('hidden', !topAdmin);
       document.getElementById('branchTabTargetBtn').classList.toggle('hidden', !topAdmin);
 
@@ -5795,6 +6075,9 @@ create policy "Allow public read write" on public.yuroso_app_state
       document.getElementById('liveBarNew').style.width = ((kpi.scoreNew / 10) * 100) + '%';
 
       updateKpiSimulatorUi();
+      if (typeof syncIncentiveFromCrmForm === 'function') {
+        syncIncentiveFromCrmForm(revenue, memId);
+      }
     }
 
     function updateCrmEditModeUi() {
@@ -6982,6 +7265,1203 @@ create policy "Allow public read write" on public.yuroso_app_state
           }
         }
       } catch (e) {}
+    }
+
+    /* =========================================================================
+       15-B. 🧾 POS 캡처 · 정산 엑셀 3초 자동입력기 & 💰 실시간 인센티브 정산기
+             (API 키 설정·열람은 오직 '관리자(admin)' 화면에서만 허용)
+       ========================================================================= */
+    const LOCAL_AI_KEY_STORAGE = 'yuroso_ai_api_key_v1';
+    const INC_RATE_MAP_STORAGE = 'yuroso_inc_rate_map_v1';
+    const GEMINI_VISION_MODELS = [
+      'gemini-3-flash-preview',
+      'gemini-3.1-flash-lite',
+      'gemini-3.5-flash-lite',
+      'gemini-3.8-flash'
+    ];
+
+    let detectedMultiPosRecords = [];
+    let isSyncingIncInput = false;
+
+    function resolveActiveAiApiKey() {
+      const localKey = String(safeStorage.getItem(LOCAL_AI_KEY_STORAGE) || '').trim();
+      if (localKey) return { key: localKey, source: 'local' };
+      const sharedKey = (appState.aiSettings && appState.aiSettings.sharedApiKey)
+        ? String(appState.aiSettings.sharedApiKey).trim()
+        : '';
+      if (sharedKey) return { key: sharedKey, source: 'shared' };
+      return { key: '', source: 'none' };
+    }
+
+    function updateAdminAiKeyHeaderLabel() {
+      const hdrBtn = document.getElementById('btnOpenAiKeyHeader');
+      if (!hdrBtn) return;
+      if (!isAdminViewVisible()) {
+        hdrBtn.classList.add('hidden');
+        return;
+      }
+      const resolved = resolveActiveAiApiKey();
+      hdrBtn.textContent = resolved.key ? '🔑 AI 키 연동됨' : '🔑 AI API 키';
+    }
+
+    /* ---------- 관리자 전용 AI API 키 모달 제어 ---------- */
+    function openAiKeyModal() {
+      if (!isAdminViewVisible()) {
+        showToast('AI API 키 설정 및 열람은 관리자 화면에서만 가능합니다.', 'error');
+        return;
+      }
+      const resolved = resolveActiveAiApiKey();
+      const inputEl = document.getElementById('aiApiKeyInput');
+      const showChk = document.getElementById('aiShowKeyTextChk');
+      if (showChk) showChk.checked = false;
+      if (inputEl) {
+        inputEl.type = 'password';
+        inputEl.value = resolved.key || '';
+      }
+      const resBar = document.getElementById('aiKeyTestResultBar');
+      if (resBar) resBar.classList.add('hidden');
+      document.getElementById('aiKeyConfigModal').classList.remove('hidden');
+    }
+
+    function closeAiKeyModal() {
+      const modal = document.getElementById('aiKeyConfigModal');
+      if (modal) modal.classList.add('hidden');
+      const inputEl = document.getElementById('aiApiKeyInput');
+      const showChk = document.getElementById('aiShowKeyTextChk');
+      if (showChk) showChk.checked = false;
+      if (inputEl) {
+        inputEl.type = 'password';
+        inputEl.value = '';
+      }
+    }
+
+    async function callAiJsonPrompt(promptText, base64Jpeg, overrideKey) {
+      const apiKey = overrideKey != null ? String(overrideKey).trim() : resolveActiveAiApiKey().key;
+      if (!apiKey) return { ok: false, reason: 'no_key' };
+
+      if (apiKey.indexOf('sk-') === 0) {
+        const ctrl = new AbortController();
+        const timer = setTimeout(function() { ctrl.abort(); }, 25000);
+        try {
+          const userContent = [{ type: 'text', text: promptText }];
+          if (base64Jpeg) {
+            userContent.push({
+              type: 'image_url',
+              image_url: { url: 'data:image/jpeg;base64,' + base64Jpeg }
+            });
+          }
+          const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + apiKey
+            },
+            body: JSON.stringify({
+              model: 'gpt-4o-mini',
+              temperature: 0.1,
+              messages: [{ role: 'user', content: userContent }]
+            }),
+            signal: ctrl.signal
+          });
+          clearTimeout(timer);
+          if (resp.ok) {
+            const data = await resp.json();
+            const text = (((data.choices || [])[0] || {}).message || {}).content || '';
+            if (text.trim()) return { ok: true, text: text.trim(), model: 'gpt-4o-mini' };
+          }
+          return { ok: false, reason: 'HTTP ' + resp.status };
+        } catch (err) {
+          clearTimeout(timer);
+          return { ok: false, reason: String(err) };
+        }
+      }
+
+      for (let i = 0; i < GEMINI_VISION_MODELS.length; i++) {
+        const modelName = GEMINI_VISION_MODELS[i];
+        const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent?key=' + encodeURIComponent(apiKey);
+        const parts = [{ text: promptText }];
+        if (base64Jpeg) {
+          parts.push({ inlineData: { mimeType: 'image/jpeg', data: base64Jpeg } });
+        }
+        const ctrl = new AbortController();
+        const timer = setTimeout(function() { ctrl.abort(); }, 22000);
+        try {
+          const resp = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ role: 'user', parts: parts }] }),
+            signal: ctrl.signal
+          });
+          clearTimeout(timer);
+          if (resp.ok) {
+            const data = await resp.json();
+            const outParts = ((((data.candidates || [])[0] || {}).content || {}).parts) || [];
+            const text = outParts.map(function(p) { return p.text || ''; }).join('').trim();
+            if (text) return { ok: true, text: text, model: modelName };
+          }
+        } catch (err) {
+          clearTimeout(timer);
+        }
+      }
+      return { ok: false, reason: 'AI 서버 응답 지연' };
+    }
+
+    async function testAiApiKeyConnection() {
+      if (!isAdminViewVisible()) {
+        showToast('AI API 키 테스트는 관리자 화면에서만 가능합니다.', 'error');
+        return;
+      }
+      const rawKey = String((document.getElementById('aiApiKeyInput') || {}).value || '').trim();
+      const resBar = document.getElementById('aiKeyTestResultBar');
+      if (!resBar) return;
+      resBar.classList.remove('hidden');
+      if (!rawKey) {
+        resBar.innerHTML = '⚠️ 테스트할 API 키를 입력해 주세요.';
+        return;
+      }
+      resBar.innerHTML = '⏳ POS 캡처 인식 AI 서버 연결을 테스트 중입니다...';
+      const res = await callAiJsonPrompt('연결 확인입니다. OK 두 글자만 답하세요.', null, rawKey);
+      if (res.ok) {
+        resBar.innerHTML = '✅ <strong>연결 성공!</strong> (' + escapeHtml(res.model) + ') — 우측 하단 <strong>[관리자 키 저장]</strong>을 눌러주세요.';
+      } else {
+        resBar.innerHTML = '⚠️ 연결 확인 필요 (' + escapeHtml(res.reason) + '). 키 형식을 다시 확인해 주세요.';
+      }
+    }
+
+    function saveAiApiKeyConfig() {
+      if (!isAdminViewVisible()) {
+        showToast('AI API 키 저장은 관리자 화면에서만 가능합니다.', 'error');
+        return;
+      }
+      const rawKey = String((document.getElementById('aiApiKeyInput') || {}).value || '').trim();
+      if (!rawKey) {
+        clearSavedAiApiKey();
+        return;
+      }
+      safeStorage.setItem(LOCAL_AI_KEY_STORAGE, rawKey);
+      const syncChk = document.getElementById('aiSyncToAllStaffChk');
+      if (syncChk && syncChk.checked) {
+        if (!appState.aiSettings) appState.aiSettings = {};
+        appState.aiSettings.sharedApiKey = rawKey;
+        appState.aiSettings.provider = rawKey.indexOf('sk-') === 0 ? 'openai' : 'gemini';
+        appState.aiSettings.updatedAt = getLocalDateParts().ymd;
+        saveStateEverywhere(true);
+        showToast('🔑 관리자 API 키가 저장되어 전 지점 POS 사진 인식에 적용되었습니다.', 'success');
+      } else {
+        showToast('🔑 현재 관리자 기기에 API 키가 저장되었습니다.', 'success');
+      }
+      closeAiKeyModal();
+      updateAdminAiKeyHeaderLabel();
+    }
+
+    function clearSavedAiApiKey() {
+      if (!isAdminViewVisible()) {
+        showToast('AI API 키 초기화는 관리자 화면에서만 가능합니다.', 'error');
+        return;
+      }
+      safeStorage.removeItem(LOCAL_AI_KEY_STORAGE);
+      if (appState.aiSettings) {
+        appState.aiSettings.sharedApiKey = '';
+        saveStateEverywhere(true);
+      }
+      closeAiKeyModal();
+      updateAdminAiKeyHeaderLabel();
+      showToast('API 키가 초기화되었습니다.', 'info');
+    }
+
+    /* ---------- 💰 실시간 인센티브(정산금) 3초 자동 계산기 ---------- */
+    function loadSavedIncentiveRateMap() {
+      try {
+        const raw = safeStorage.getItem(INC_RATE_MAP_STORAGE);
+        if (raw && raw.startsWith('{')) return JSON.parse(raw);
+      } catch (e) {}
+      return {};
+    }
+
+    function saveMemberIncentiveRate(memId, rateVal) {
+      if (!memId) return;
+      const map = loadSavedIncentiveRateMap();
+      map[memId] = rateVal;
+      safeStorage.setItem(INC_RATE_MAP_STORAGE, JSON.stringify(map));
+    }
+
+    let lastSyncedIncMemId = '';
+
+    function syncIncentiveFromCrmForm(crmRevManwon, memId) {
+      if (isSyncingIncInput) return;
+      const srvIn = document.getElementById('incServiceRevInput');
+      if (!srvIn) return;
+
+      if (memId && memId !== lastSyncedIncMemId) {
+        lastSyncedIncMemId = memId;
+        const rateMap = loadSavedIncentiveRateMap();
+        if (rateMap[memId] != null) {
+          document.getElementById('incRateInput').value = rateMap[memId];
+          highlightRateChip(Number(rateMap[memId]));
+        }
+      }
+
+      isSyncingIncInput = true;
+      srvIn.value = crmRevManwon > 0 ? crmRevManwon : '';
+      isSyncingIncInput = false;
+      recalcIncentiveSettlement();
+    }
+
+    function onIncentiveRevenueDirectInput(val) {
+      const num = Math.max(0, Number(val) || 0);
+      const crmRevIn = document.getElementById('crmRevenueInput');
+      if (crmRevIn) {
+        isSyncingIncInput = true;
+        crmRevIn.value = val !== '' ? num : '';
+        updateCrmRevenueHelperUi();
+        recalcCrmLive();
+        isSyncingIncInput = false;
+      }
+      recalcIncentiveSettlement();
+    }
+
+    function highlightRateChip(rateNum) {
+      const grp = document.getElementById('incRateChipGroup');
+      if (!grp) return;
+      Array.from(grp.querySelectorAll('.rate-chip')).forEach(function(btn) {
+        btn.classList.toggle('active', btn.textContent === (rateNum + '%'));
+      });
+    }
+
+    function setIncentiveRatePreset(rateNum) {
+      const rateIn = document.getElementById('incRateInput');
+      if (rateIn) rateIn.value = rateNum;
+      highlightRateChip(rateNum);
+      const memId = (document.getElementById('crmMemberSelect') || {}).value;
+      saveMemberIncentiveRate(memId, rateNum);
+      recalcIncentiveSettlement();
+    }
+
+    function onIncentiveRateManualInput() {
+      const rateVal = Math.max(0, Math.min(100, Number((document.getElementById('incRateInput') || {}).value) || 0));
+      highlightRateChip(rateVal);
+      const memId = (document.getElementById('crmMemberSelect') || {}).value;
+      saveMemberIncentiveRate(memId, rateVal);
+      recalcIncentiveSettlement();
+    }
+
+    function computeIncentiveBreakdown(serviceRevManwon, retailRevManwon, ratePct, retailRatePct, matDeductPct, taxMode) {
+      const serviceWon = Math.round(Math.max(0, serviceRevManwon) * 10000);
+      const retailWon = Math.round(Math.max(0, retailRevManwon) * 10000);
+      const matDeductWon = Math.round(serviceWon * (Math.max(0, matDeductPct) / 100));
+      const netServiceBaseWon = Math.max(0, serviceWon - matDeductWon);
+      const servicePayoutWon = Math.round(netServiceBaseWon * (Math.max(0, ratePct) / 100));
+      const retailPayoutWon = Math.round(retailWon * (Math.max(0, retailRatePct) / 100));
+      const grossPayoutWon = servicePayoutWon + retailPayoutWon;
+      const taxWon = taxMode === 'tax33' ? Math.round(grossPayoutWon * 0.033) : 0;
+      const finalNetWon = Math.max(0, grossPayoutWon - taxWon);
+
+      return {
+        serviceWon: serviceWon,
+        retailWon: retailWon,
+        matDeductWon: matDeductWon,
+        servicePayoutWon: servicePayoutWon,
+        retailPayoutWon: retailPayoutWon,
+        grossPayoutWon: grossPayoutWon,
+        taxWon: taxWon,
+        finalNetWon: finalNetWon
+      };
+    }
+
+    function recalcIncentiveSettlement() {
+      const finalEl = document.getElementById('incFinalPayoutText');
+      if (!finalEl) return;
+
+      const serviceRev = Number((document.getElementById('incServiceRevInput') || {}).value) || 0;
+      const retailRev = Number((document.getElementById('incRetailRevInput') || {}).value) || 0;
+      const ratePct = Number((document.getElementById('incRateInput') || {}).value) || 0;
+      const retailRatePct = Number((document.getElementById('incRetailRateInput') || {}).value) || 0;
+      const matDeductPct = Number((document.getElementById('incMatDeductInput') || {}).value) || 0;
+      const taxMode = (document.getElementById('incTaxModeSelect') || {}).value || 'tax33';
+
+      const memId = (document.getElementById('crmMemberSelect') || {}).value;
+      const mem = appState.members.find(function(m) { return m.id === memId; });
+      const ymLabel = formatSelectedMonthLabel(getCrmTargetMonthKey());
+
+      const calc = computeIncentiveBreakdown(serviceRev, retailRev, ratePct, retailRatePct, matDeductPct, taxMode);
+
+      const lblEl = document.getElementById('incTargetMemberLabel');
+      if (lblEl) {
+        lblEl.textContent = (mem ? (mem.branch + ' · ' + mem.name + '님 ') : '') + ymLabel + ' 실수령 예상 정산액';
+      }
+      const grossBadge = document.getElementById('incGrossSummaryBadge');
+      if (grossBadge) {
+        grossBadge.textContent = '세전 ' + formatNumber(calc.grossPayoutWon) + '원';
+      }
+      finalEl.textContent = formatNumber(calc.finalNetWon) + '원';
+
+      const detailParts = [];
+      if (matDeductPct > 0) {
+        detailParts.push('재료·수수료 공제(-' + matDeductPct + '%) 후 시술정산(' + ratePct + '%): ' + formatNumber(calc.servicePayoutWon) + '원');
+      } else {
+        detailParts.push('시술정산(' + ratePct + '%): ' + formatNumber(calc.servicePayoutWon) + '원');
+      }
+      if (calc.retailPayoutWon > 0) {
+        detailParts.push('점판수당(' + retailRatePct + '%): +' + formatNumber(calc.retailPayoutWon) + '원');
+      }
+      if (calc.taxWon > 0) {
+        detailParts.push('원천징수(3.3%): -' + formatNumber(calc.taxWon) + '원');
+      }
+
+      const detailEl = document.getElementById('incBreakdownDetailText');
+      if (detailEl) {
+        detailEl.textContent = detailParts.join('  |  ');
+      }
+    }
+
+    function copyIncentiveStatementKakao() {
+      const serviceRev = Number((document.getElementById('incServiceRevInput') || {}).value) || 0;
+      const retailRev = Number((document.getElementById('incRetailRevInput') || {}).value) || 0;
+      if (serviceRev <= 0 && retailRev <= 0) {
+        showToast('먼저 POS 파일을 업로드하거나 시술 매출을 입력해 주세요.', 'error');
+        return;
+      }
+      const ratePct = Number((document.getElementById('incRateInput') || {}).value) || 0;
+      const retailRatePct = Number((document.getElementById('incRetailRateInput') || {}).value) || 0;
+      const matDeductPct = Number((document.getElementById('incMatDeductInput') || {}).value) || 0;
+      const taxMode = (document.getElementById('incTaxModeSelect') || {}).value || 'tax33';
+
+      const memId = (document.getElementById('crmMemberSelect') || {}).value;
+      const mem = appState.members.find(function(m) { return m.id === memId; });
+      const ymLabel = formatSelectedMonthLabel(getCrmTargetMonthKey());
+      const revisitCust = Math.max(0, Math.round(Number((document.getElementById('crmRevisitCustInput') || {}).value) || 0));
+      const newCust = Math.max(0, Math.round(Number((document.getElementById('crmNewCustInput') || {}).value) || 0));
+      const totalCust = revisitCust + newCust;
+      const liveKpiTxt = (document.getElementById('liveKpiScoreText') || {}).textContent || '0.0점';
+
+      const calc = computeIncentiveBreakdown(serviceRev, retailRev, ratePct, retailRatePct, matDeductPct, taxMode);
+
+      const lines = [
+        '🧾 [유로소 헤어 월간 매출 · 인센티브 정산 명세서]',
+        '• 대상: ' + (mem ? (mem.branch + ' ' + mem.name) : '디자이너') + ' (' + ymLabel + ')',
+        '• 시술 매출: ' + formatNumber(serviceRev, 1) + '만원 (' + formatNumber(calc.serviceWon) + '원)',
+      ];
+      if (retailRev > 0) {
+        lines.push('• 점판 매출: ' + formatNumber(retailRev, 1) + '만원 (' + formatNumber(calc.retailWon) + '원)');
+      }
+      if (totalCust > 0) {
+        lines.push('• 시술 고객: 총 ' + totalCust + '명 (재방문 ' + revisitCust + '명 / 신규 ' + newCust + '명) · KPI ' + liveKpiTxt);
+      }
+      lines.push('──────────────────');
+      if (matDeductPct > 0) {
+        lines.push('• 재료·수수료 공제(' + matDeductPct + '%): -' + formatNumber(calc.matDeductWon) + '원');
+      }
+      lines.push('• 시술 정산금(' + ratePct + '%): ' + formatNumber(calc.servicePayoutWon) + '원');
+      if (calc.retailPayoutWon > 0) {
+        lines.push('• 점판 수당(' + retailRatePct + '%): +' + formatNumber(calc.retailPayoutWon) + '원');
+      }
+      lines.push('• 세전 정산 합계: ' + formatNumber(calc.grossPayoutWon) + '원');
+      if (calc.taxWon > 0) {
+        lines.push('• 원천징수(3.3%): -' + formatNumber(calc.taxWon) + '원');
+      }
+      lines.push('💰 최종 실수령 예정액: ' + formatNumber(calc.finalNetWon) + '원');
+
+      const msg = lines.join('\n');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg).then(function() {
+          showToast('정산 명세서가 복사되었습니다! 카카오톡에 바로 붙여넣기 하세요.', 'success');
+        }).catch(function() { fallbackCopyStatementText(msg); });
+      } else {
+        fallbackCopyStatementText(msg);
+      }
+    }
+
+    function fallbackCopyStatementText(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast('정산 명세서가 복사되었습니다!', 'success');
+      } catch (e) {
+        showToast('복사 권한을 확인해 주세요.', 'info');
+      }
+      document.body.removeChild(ta);
+    }
+
+    /* ---------- 🧾 POS 캡처 이미지 · 엑셀(.xlsx/.xls/.csv) · 텍스트 3초 파서 ---------- */
+    function onPosDragOver(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const dz = document.getElementById('posDropzone');
+      if (dz) dz.classList.add('dragover');
+    }
+
+    function onPosDragLeave(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const dz = document.getElementById('posDropzone');
+      if (dz) dz.classList.remove('dragover');
+    }
+
+    function onPosDrop(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const dz = document.getElementById('posDropzone');
+      if (dz) dz.classList.remove('dragover');
+      const files = e.dataTransfer && e.dataTransfer.files;
+      if (files && files.length > 0) {
+        processUploadedPosFile(files[0]);
+      }
+    }
+
+    function handlePosFileChange(e) {
+      const file = e.target && e.target.files && e.target.files[0];
+      if (file) {
+        processUploadedPosFile(file);
+      }
+      e.target.value = '';
+    }
+
+    function togglePosTextPasteBox() {
+      const box = document.getElementById('posTextPasteWrap');
+      if (box) box.classList.toggle('hidden');
+    }
+
+    function setPosStatusUi(htmlMsg, thumbUrl, showQuickSave) {
+      const box = document.getElementById('posParseStatusBox');
+      const txt = document.getElementById('posParseStatusText');
+      const thumb = document.getElementById('posPreviewThumb');
+      const saveBtn = document.getElementById('posQuickSaveCrmBtn');
+      if (!box || !txt) return;
+      box.classList.remove('hidden');
+      txt.innerHTML = htmlMsg;
+      if (thumb) {
+        if (thumbUrl) {
+          thumb.src = thumbUrl;
+          thumb.classList.remove('hidden');
+        } else {
+          thumb.classList.add('hidden');
+        }
+      }
+      if (saveBtn) {
+        saveBtn.classList.toggle('hidden', !showQuickSave);
+      }
+    }
+
+    function normalizePosRevenueToManwon(rawNum) {
+      const val = Math.max(0, Number(rawNum) || 0);
+      if (val >= 100000) {
+        return Number((val / 10000).toFixed(1));
+      }
+      return Number(val.toFixed(1));
+    }
+
+    function cleanNumericCell(val) {
+      if (val == null) return 0;
+      const s = String(val).replace(/,/g, '').replace(/원|명|건|만원|%/g, '').trim();
+      const m = s.match(/-?\d+(\.\d+)?/);
+      return m ? Number(m[0]) : 0;
+    }
+
+    function matchMemberByDetectedName(rawName) {
+      if (!rawName) return null;
+      const clean = String(rawName).replace(/\s+|디자이너|선생님|실장|부원장|원장|점장|쌤|님/g, '').toLowerCase();
+      if (!clean) return null;
+      const candidates = appState.members.filter(function(m) { return m.approved !== false; });
+      return candidates.find(function(m) {
+        const mClean = String(m.name || '').replace(/\s+|디자이너|원장/g, '').toLowerCase();
+        return mClean && (mClean === clean || mClean.indexOf(clean) >= 0 || clean.indexOf(mClean) >= 0);
+      }) || null;
+    }
+
+    /* 브라우저 내장 DecompressionStream 기반 순수 JS .xlsx 파서 (외부 라이브러리 불필요) */
+    async function inflateRawBytes(compressedUint8) {
+      if (typeof DecompressionStream === 'undefined') {
+        throw new Error('브라우저 압축 해제 미지원');
+      }
+      const ds = new DecompressionStream('deflate-raw');
+      const writer = ds.writable.getWriter();
+      writer.write(compressedUint8);
+      writer.close();
+      const resp = new Response(ds.readable);
+      const ab = await resp.arrayBuffer();
+      return new Uint8Array(ab);
+    }
+
+    async function parseXlsxBufferToRows(arrayBuffer) {
+      const bytes = new Uint8Array(arrayBuffer);
+      const view = new DataView(arrayBuffer);
+      let eocdOffset = -1;
+      for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65557); i--) {
+        if (view.getUint32(i, true) === 0x06054b50) {
+          eocdOffset = i;
+          break;
+        }
+      }
+      if (eocdOffset < 0) throw new Error('유효한 .xlsx ZIP 구조가 아닙니다.');
+
+      const cdCount = view.getUint16(eocdOffset + 10, true);
+      const cdOffset = view.getUint32(eocdOffset + 16, true);
+      const entries = {};
+      let ptr = cdOffset;
+      const utf8Dec = new TextDecoder('utf-8');
+
+      for (let i = 0; i < cdCount; i++) {
+        if (ptr + 46 > bytes.length || view.getUint32(ptr, true) !== 0x02014b50) break;
+        const compMethod = view.getUint16(ptr + 10, true);
+        const compSize = view.getUint32(ptr + 20, true);
+        const nameLen = view.getUint16(ptr + 28, true);
+        const extraLen = view.getUint16(ptr + 30, true);
+        const commentLen = view.getUint16(ptr + 32, true);
+        const localHdrOffset = view.getUint32(ptr + 42, true);
+        const fileName = utf8Dec.decode(bytes.subarray(ptr + 46, ptr + 46 + nameLen));
+
+        const localNameLen = view.getUint16(localHdrOffset + 26, true);
+        const localExtraLen = view.getUint16(localHdrOffset + 28, true);
+        const dataStart = localHdrOffset + 30 + localNameLen + localExtraLen;
+        entries[fileName] = {
+          method: compMethod,
+          data: bytes.subarray(dataStart, dataStart + compSize)
+        };
+        ptr += 46 + nameLen + extraLen + commentLen;
+      }
+
+      async function readXmlEntry(pathKey) {
+        const entry = entries[pathKey];
+        if (!entry) return null;
+        const rawBytes = entry.method === 0 ? entry.data : await inflateRawBytes(entry.data);
+        const xmlStr = utf8Dec.decode(rawBytes);
+        return new DOMParser().parseFromString(xmlStr, 'application/xml');
+      }
+
+      const sharedStrings = [];
+      const ssDoc = await readXmlEntry('xl/sharedStrings.xml');
+      if (ssDoc) {
+        const siNodes = ssDoc.getElementsByTagName('si');
+        for (let i = 0; i < siNodes.length; i++) {
+          const tNodes = siNodes[i].getElementsByTagName('t');
+          let combined = '';
+          for (let j = 0; j < tNodes.length; j++) {
+            combined += tNodes[j].textContent || '';
+          }
+          sharedStrings.push(combined);
+        }
+      }
+
+      const sheetKey = Object.keys(entries).find(function(k) {
+        return /^xl\/worksheets\/sheet\d+\.xml$/i.test(k);
+      });
+      if (!sheetKey) throw new Error('엑셀 워크시트를 찾을 수 없습니다.');
+
+      const sheetDoc = await readXmlEntry(sheetKey);
+      const rowNodes = sheetDoc.getElementsByTagName('row');
+      const rows = [];
+
+      function colLettersToIdx(cellRef) {
+        const letters = (cellRef.match(/^[A-Z]+/i) || ['A'])[0].toUpperCase();
+        let idx = 0;
+        for (let c = 0; c < letters.length; c++) {
+          idx = idx * 26 + (letters.charCodeAt(c) - 64);
+        }
+        return Math.max(0, idx - 1);
+      }
+
+      for (let r = 0; r < rowNodes.length; r++) {
+        const cNodes = rowNodes[r].getElementsByTagName('c');
+        const rowArr = [];
+        for (let c = 0; c < cNodes.length; c++) {
+          const cell = cNodes[c];
+          const ref = cell.getAttribute('r') || '';
+          const colIdx = ref ? colLettersToIdx(ref) : c;
+          const cellType = cell.getAttribute('t') || '';
+          const vNode = cell.getElementsByTagName('v')[0];
+          const isNode = cell.getElementsByTagName('is')[0];
+          let val = '';
+          if (cellType === 's' && vNode) {
+            val = sharedStrings[ parseInt(vNode.textContent, 10) ] || '';
+          } else if (cellType === 'inlineStr' && isNode) {
+            val = isNode.textContent || '';
+          } else if (vNode) {
+            val = vNode.textContent || '';
+          }
+          rowArr[colIdx] = String(val).trim();
+        }
+        for (let k = 0; k < rowArr.length; k++) {
+          if (rowArr[k] == null) rowArr[k] = '';
+        }
+        if (rowArr.some(function(x) { return x !== ''; })) {
+          rows.push(rowArr);
+        }
+      }
+      return rows;
+    }
+
+    function decodeBufferSmartKorean(arrayBuffer) {
+      const uint8 = new Uint8Array(arrayBuffer);
+      const utf8Text = new TextDecoder('utf-8').decode(uint8);
+      if (utf8Text.indexOf('\uFFFD') >= 0) {
+        try {
+          return new TextDecoder('euc-kr').decode(uint8);
+        } catch (e) {}
+      }
+      return utf8Text;
+    }
+
+    function parseSpreadsheetTextToRows(rawText) {
+      const trimmed = String(rawText || '').trim();
+      if (!trimmed) return [];
+
+      /* 뷰티짱/헤어짱/핸드SOS HTML 기반 .xls 파일 자동 처리 */
+      if (/<table[\s>]/i.test(trimmed) || /<tr[\s>]/i.test(trimmed)) {
+        const doc = new DOMParser().parseFromString(trimmed, 'text/html');
+        const trs = doc.querySelectorAll('tr');
+        const htmlRows = [];
+        trs.forEach(function(tr) {
+          const cells = Array.from(tr.querySelectorAll('th, td')).map(function(td) {
+            return (td.textContent || '').replace(/\s+/g, ' ').trim();
+          });
+          if (cells.some(function(c) { return c !== ''; })) {
+            htmlRows.push(cells);
+          }
+        });
+        if (htmlRows.length > 0) return htmlRows;
+      }
+
+      /* CSV / TSV 줄 단위 파싱 */
+      const lines = trimmed.split(/\r?\n/).filter(function(l) { return l.trim() !== ''; });
+      return lines.map(function(line) {
+        const delim = line.indexOf('\t') >= 0 ? '\t' : ',';
+        const out = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i];
+          if (ch === '"') {
+            inQuotes = !inQuotes;
+          } else if (ch === delim && !inQuotes) {
+            out.push(cur.trim());
+            cur = '';
+          } else {
+            cur += ch;
+          }
+        }
+        out.push(cur.trim());
+        return out;
+      });
+    }
+
+    function extractSalonPosRecordsFromRows(rows) {
+      if (!Array.isArray(rows) || rows.length === 0) return [];
+      let headerIdx = -1;
+      let colMap = { name: -1, rev: -1, retail: -1, revisit: -1, newCust: -1, totalCust: -1, unitPrice: -1 };
+
+      for (let i = 0; i < Math.min(rows.length, 15); i++) {
+        const r = rows[i].map(function(c) { return String(c || '').replace(/\s+/g, ''); });
+        let score = 0;
+        const candidate = { name: -1, rev: -1, retail: -1, revisit: -1, newCust: -1, totalCust: -1, unitPrice: -1 };
+
+        r.forEach(function(cell, idx) {
+          if (!cell) return;
+          if (candidate.name < 0 && /디자이너|담당|성명|이름|직원/.test(cell)) { candidate.name = idx; score += 2; }
+          if (candidate.retail < 0 && /점판|제품매출|상품매출/.test(cell)) { candidate.retail = idx; score += 1; }
+          else if (candidate.rev < 0 && /개인매출|실매출|시술매출|총매출|결제금액|매출액|매출합계|^매출/.test(cell) && !/목표/.test(cell)) { candidate.rev = idx; score += 3; }
+          if (candidate.revisit < 0 && /재방문|기존|고정|재방객|지명객/.test(cell) && !/비율|율|%/.test(cell)) { candidate.revisit = idx; score += 2; }
+          if (candidate.newCust < 0 && /신규|첫방문|초방/.test(cell) && !/비율|율|%|목표/.test(cell)) { candidate.newCust = idx; score += 2; }
+          if (candidate.totalCust < 0 && /총고객|총객수|시술객수|방문객|고객수|^객수/.test(cell)) { candidate.totalCust = idx; score += 2; }
+          if (candidate.unitPrice < 0 && /객단가|평균단가|^단가/.test(cell) && !/목표|범위/.test(cell)) { candidate.unitPrice = idx; score += 1; }
+        });
+
+        if (score >= 3 && candidate.rev >= 0) {
+          headerIdx = i;
+          colMap = candidate;
+          break;
+        }
+      }
+
+      if (headerIdx < 0) return [];
+
+      const rawRecords = [];
+      for (let r = headerIdx + 1; r < rows.length; r++) {
+        const row = rows[r];
+        const rawName = colMap.name >= 0 ? String(row[colMap.name] || '').trim() : '';
+        const isSummaryRow = /^(합계|총계|소계|평균|전체|total|sum)$/i.test(rawName.replace(/\s+/g, ''));
+
+        const rawRevVal = colMap.rev >= 0 ? cleanNumericCell(row[colMap.rev]) : 0;
+        const revManwon = normalizePosRevenueToManwon(rawRevVal);
+        const retailManwon = colMap.retail >= 0 ? normalizePosRevenueToManwon(cleanNumericCell(row[colMap.retail])) : 0;
+
+        let revisit = colMap.revisit >= 0 ? Math.max(0, Math.round(cleanNumericCell(row[colMap.revisit]))) : 0;
+        let newCust = colMap.newCust >= 0 ? Math.max(0, Math.round(cleanNumericCell(row[colMap.newCust]))) : 0;
+        let totalCust = colMap.totalCust >= 0 ? Math.max(0, Math.round(cleanNumericCell(row[colMap.totalCust]))) : 0;
+
+        if (revisit === 0 && totalCust > 0 && newCust > 0 && totalCust >= newCust) {
+          revisit = totalCust - newCust;
+        } else if (newCust === 0 && totalCust > 0 && revisit > 0 && totalCust >= revisit) {
+          newCust = totalCust - revisit;
+        } else if (totalCust === 0 && (revisit + newCust) > 0) {
+          totalCust = revisit + newCust;
+        }
+
+        const unitPriceRaw = colMap.unitPrice >= 0 ? Math.round(cleanNumericCell(row[colMap.unitPrice])) : 0;
+        const unitPrice = unitPriceRaw >= 1000
+          ? unitPriceRaw
+          : (totalCust > 0 ? Math.round((revManwon * 10000) / totalCust) : 0);
+
+        if (revManwon <= 0 && totalCust <= 0) continue;
+
+        rawRecords.push({
+          name: rawName || '선택 디자이너',
+          isSummaryRow: isSummaryRow,
+          revenueManwon: revManwon,
+          retailManwon: retailManwon,
+          revisitCust: revisit,
+          newCust: newCust,
+          totalCust: totalCust,
+          unitPrice: unitPrice
+        });
+      }
+
+      const nonSummary = rawRecords.filter(function(item) { return !item.isSummaryRow; });
+      return nonSummary.length > 0 ? nonSummary : rawRecords;
+    }
+
+    function extractSalonPosFromFreeText(text) {
+      const src = String(text || '');
+      if (!src.trim()) return [];
+
+      function pickNumAfter(regex) {
+        const m = src.match(regex);
+        if (!m) return { num: 0, isManwonExplicit: false };
+        const numStr = (m[1] || '').replace(/,/g, '');
+        const unitStr = m[2] || '';
+        return {
+          num: Number(numStr) || 0,
+          isManwonExplicit: /만원|만/.test(unitStr)
+        };
+      }
+
+      const revMatch = pickNumAfter(/(?:시술매출|실매출|개인매출|총매출|결제금액|매출액|매출)\s*[:：=]?\s*([\d,]+(?:\.\d+)?)\s*(만원|만|원)?/i);
+      const retailMatch = pickNumAfter(/(?:점판매출|제품매출|점판)\s*[:：=]?\s*([\d,]+(?:\.\d+)?)\s*(만원|만|원)?/i);
+      const revisitMatch = pickNumAfter(/(?:재방문고객수|재방문객|재방문|기존고객|고정객|기존)\s*[:：=]?\s*([\d,]+)\s*(명|건)?/i);
+      const newMatch = pickNumAfter(/(?:신규고객수|신규객|첫방문|신규)\s*[:：=]?\s*([\d,]+)\s*(명|건)?/i);
+      const totalMatch = pickNumAfter(/(?:총고객수|총객수|시술객수|방문객수|총방문|고객수|객수)\s*[:：=]?\s*([\d,]+)\s*(명|건)?/i);
+      const unitMatch = pickNumAfter(/(?:객단가|평균단가)\s*[:：=]?\s*([\d,]+)\s*(원)?/i);
+
+      const revManwon = revMatch.isManwonExplicit
+        ? Number(revMatch.num.toFixed(1))
+        : normalizePosRevenueToManwon(revMatch.num);
+      const retailManwon = retailMatch.isManwonExplicit
+        ? Number(retailMatch.num.toFixed(1))
+        : normalizePosRevenueToManwon(retailMatch.num);
+
+      let revisit = Math.round(revisitMatch.num);
+      let newCust = Math.round(newMatch.num);
+      let totalCust = Math.round(totalMatch.num);
+
+      if (revisit === 0 && totalCust > 0 && newCust > 0 && totalCust >= newCust) {
+        revisit = totalCust - newCust;
+      } else if (newCust === 0 && totalCust > 0 && revisit > 0 && totalCust >= revisit) {
+        newCust = totalCust - revisit;
+      } else if (totalCust === 0) {
+        totalCust = revisit + newCust;
+      }
+
+      if (revManwon <= 0 && totalCust <= 0) return [];
+      const unitPrice = unitMatch.num >= 1000
+        ? Math.round(unitMatch.num)
+        : (totalCust > 0 ? Math.round((revManwon * 10000) / totalCust) : 0);
+
+      return [{
+        name: '선택 디자이너',
+        revenueManwon: revManwon,
+        retailManwon: retailManwon,
+        revisitCust: revisit,
+        newCust: newCust,
+        totalCust: totalCust,
+        unitPrice: unitPrice
+      }];
+    }
+
+    function compressImageFileToBase64(file) {
+      return new Promise(function(resolve, reject) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          const dataUrl = ev.target.result;
+          const img = new Image();
+          img.onload = function() {
+            const maxDim = 1440;
+            let w = img.width;
+            let h = img.height;
+            if (w > maxDim || h > maxDim) {
+              if (w >= h) {
+                h = Math.round((h * maxDim) / w);
+                w = maxDim;
+              } else {
+                w = Math.round((w * maxDim) / h);
+                h = maxDim;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            const jpegUrl = canvas.toDataURL('image/jpeg', 0.86);
+            const base64 = jpegUrl.split(',')[1] || '';
+            resolve({ base64: base64, thumbUrl: jpegUrl });
+          };
+          img.onerror = function() { reject(new Error('이미지를 불러올 수 없습니다.')); };
+          img.src = dataUrl;
+        };
+        reader.onerror = function() { reject(new Error('파일 읽기 오류')); };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function parseJsonRecordsFromAiResponse(aiText) {
+      const cleaned = String(aiText || '').replace(/```json|```/gi, '').trim();
+      const firstBrace = cleaned.indexOf('{');
+      const lastBrace = cleaned.lastIndexOf('}');
+      if (firstBrace < 0 || lastBrace <= firstBrace) return [];
+      const parsed = JSON.parse(cleaned.slice(firstBrace, lastBrace + 1));
+      const arr = Array.isArray(parsed.records) ? parsed.records : [];
+      return arr.map(function(item) {
+        const revRaw = Number(item.revenueManwon != null ? item.revenueManwon : item.revenue) || 0;
+        const retailRaw = Number(item.retailManwon != null ? item.retailManwon : item.retail) || 0;
+        const revManwon = normalizePosRevenueToManwon(revRaw);
+        const retailManwon = normalizePosRevenueToManwon(retailRaw);
+        let revisit = Math.max(0, Math.round(Number(item.revisitCust) || 0));
+        let newCust = Math.max(0, Math.round(Number(item.newCust) || 0));
+        let totalCust = Math.max(0, Math.round(Number(item.totalCust) || 0));
+        if (revisit === 0 && totalCust > 0 && newCust > 0 && totalCust >= newCust) {
+          revisit = totalCust - newCust;
+        } else if (totalCust === 0) {
+          totalCust = revisit + newCust;
+        }
+        const unitRaw = Math.round(Number(item.unitPrice) || 0);
+        const unitPrice = unitRaw >= 1000
+          ? unitRaw
+          : (totalCust > 0 ? Math.round((revManwon * 10000) / totalCust) : 0);
+
+        return {
+          name: String(item.name || '선택 디자이너').trim(),
+          revenueManwon: revManwon,
+          retailManwon: retailManwon,
+          revisitCust: revisit,
+          newCust: newCust,
+          totalCust: totalCust,
+          unitPrice: unitPrice
+        };
+      }).filter(function(r) { return r.revenueManwon > 0 || r.totalCust > 0; });
+    }
+
+    async function processUploadedPosFile(file) {
+      const nameLower = String(file.name || '').toLowerCase();
+      const isImage = (file.type && file.type.indexOf('image/') === 0) || /\.(jpg|jpeg|png|webp|heic|bmp)$/i.test(nameLower);
+      document.getElementById('posMultiResultWrap').classList.add('hidden');
+
+      if (isImage) {
+        try {
+          const imgData = await compressImageFileToBase64(file);
+          const resolvedKey = resolveActiveAiApiKey();
+          if (!resolvedKey.key) {
+            setPosStatusUi(
+              '⚠️ <strong>POS 사진 자동 판독을 위해 관리자 화면에서 AI 키 1회 설정이 필요합니다.</strong><br />' +
+              '<span style="font-size:11.5px; color:var(--espresso-muted);">엑셀(<code>.xlsx</code> · <code>.xls</code> · <code>.csv</code>) 정산 파일이나 [📋 정산 텍스트 붙여넣기]는 지금 바로 인식됩니다!</span>',
+              imgData.thumbUrl,
+              false
+            );
+            return;
+          }
+
+          setPosStatusUi('⏳ <strong>POS 화면 캡처 사진에서 매출·고객수·점판 숫자를 판독하고 있습니다...</strong> (약 2~3초 소요)', imgData.thumbUrl, false);
+
+          const visionPrompt =
+            '미용실 POS(핸드SOS, 뷰티짱, 헤어짱, 네이버페이, 정산표) 화면 캡처 이미지입니다. ' +
+            '이미지 속 디자이너별(또는 단일 합계) 실적을 정확히 읽어 오직 아래 JSON 형식으로만 응답하세요. 부연설명은 절대 쓰지 마세요.\n' +
+            '규칙:\n' +
+            '1) 금액이 원 단위(예: 18,500,000)로 적혀 있으면 10000으로 나누어 만원 단위(예: 1850)로 변환해 revenueManwon에 넣으세요.\n' +
+            '2) 점판(제품) 매출이 별도로 있으면 retailManwon에 만원 단위로 넣고 없으면 0으로 넣으세요.\n' +
+            '3) 재방문(기존/고정/지명) 고객수는 revisitCust, 신규(첫방문) 고객수는 newCust, 총 고객수는 totalCust에 정수로 넣으세요.\n' +
+            '4) 디자이너가 여러 명인 표라면 합계(총계) 행은 제외하고 개별 디자이너 행만 records 배열에 담으세요.\n' +
+            '형식: {"records":[{"name":"이름","revenueManwon":1850,"retailManwon":0,"revisitCust":138,"newCust":42,"totalCust":180,"unitPrice":102778}]}';
+
+          const aiRes = await callAiJsonPrompt(visionPrompt, imgData.base64);
+          if (!aiRes.ok) {
+            setPosStatusUi('⚠️ 이미지 판독 서버 응답이 지연되었습니다. 다시 한 번 선택하거나 엑셀/텍스트 붙여넣기를 이용해 주세요.', imgData.thumbUrl, false);
+            return;
+          }
+
+          const records = parseJsonRecordsFromAiResponse(aiRes.text);
+          if (!records.length) {
+            setPosStatusUi('⚠️ 사진에서 매출·고객수 숫자를 찾지 못했습니다. 글자가 선명하게 보이도록 캡처해 다시 올려주세요.', imgData.thumbUrl, false);
+            return;
+          }
+
+          applyExtractedPosRecords(records, imgData.thumbUrl, 'POS 캡처 사진');
+        } catch (err) {
+          setPosStatusUi('⚠️ 이미지 처리 중 오류가 발생했습니다: ' + escapeHtml(err.message || String(err)), null, false);
+        }
+        return;
+      }
+
+      /* 엑셀 (.xlsx / .xls / .csv / .tsv / .txt) 처리 */
+      setPosStatusUi('⏳ <strong>정산 파일(' + escapeHtml(file.name) + ')을 분석하고 있습니다...</strong>', null, false);
+      try {
+        const ab = await file.arrayBuffer();
+        let rows = [];
+        const sig = new Uint8Array(ab.slice(0, 4));
+        const isZipXlsx = sig[0] === 0x50 && sig[1] === 0x4b;
+
+        if (isZipXlsx || /\.xlsx$/i.test(nameLower)) {
+          rows = await parseXlsxBufferToRows(ab);
+        } else {
+          const decodedText = decodeBufferSmartKorean(ab);
+          rows = parseSpreadsheetTextToRows(decodedText);
+          if (rows.length <= 1) {
+            const freeRecs = extractSalonPosFromFreeText(decodedText);
+            if (freeRecs.length > 0) {
+              applyExtractedPosRecords(freeRecs, null, '정산 텍스트 파일');
+              return;
+            }
+          }
+        }
+
+        let records = extractSalonPosRecordsFromRows(rows);
+
+        /* 표 구조가 특이해서 규칙 파서가 못 찾았고 AI 키가 있다면 AI로 2차 정밀 추출 */
+        if (records.length === 0 && rows.length > 0 && resolveActiveAiApiKey().key) {
+          const sampleCsv = rows.slice(0, 40).map(function(r) { return r.join(' | '); }).join('\n');
+          const aiRes = await callAiJsonPrompt(
+            '다음 미용실 정산표 텍스트에서 디자이너별 실적을 추출해 JSON으로만 답하세요. 금액은 만원 단위 변환(예: 18500000 -> 1850).\n' +
+            '형식: {"records":[{"name":"이름","revenueManwon":1850,"retailManwon":0,"revisitCust":138,"newCust":42,"totalCust":180,"unitPrice":102778}]}\n\n' + sampleCsv,
+            null
+          );
+          if (aiRes.ok) {
+            records = parseJsonRecordsFromAiResponse(aiRes.text);
+          }
+        }
+
+        if (!records.length) {
+          setPosStatusUi(
+            '⚠️ 정산 파일에서 [매출 / 재방문 / 신규] 컬럼을 찾지 못했습니다.<br />' +
+            '<span style="font-size:11.5px; color:var(--espresso-muted);">POS 화면을 캡처해 사진으로 올리거나 [📋 정산 텍스트 붙여넣기]를 이용해 보세요!</span>',
+            null,
+            false
+          );
+          return;
+        }
+
+        applyExtractedPosRecords(records, null, '정산 엑셀·CSV');
+      } catch (err) {
+        setPosStatusUi('⚠️ 파일 분석 중 오류가 발생했습니다 (' + escapeHtml(err.message || String(err)) + '). CSV 또는 화면 캡처 사진으로 업로드해 보세요.', null, false);
+      }
+    }
+
+    async function parsePastedPosText() {
+      const raw = String((document.getElementById('posTextPasteInput') || {}).value || '').trim();
+      if (!raw) {
+        showToast('붙여넣을 정산 텍스트를 입력해 주세요.', 'error');
+        return;
+      }
+
+      const rows = parseSpreadsheetTextToRows(raw);
+      let records = extractSalonPosRecordsFromRows(rows);
+      if (!records.length) {
+        records = extractSalonPosFromFreeText(raw);
+      }
+      if (!records.length && resolveActiveAiApiKey().key) {
+        setPosStatusUi('⏳ 텍스트에서 정산 수치를 AI로 추출하고 있습니다...', null, false);
+        const aiRes = await callAiJsonPrompt(
+          '다음 미용실 정산 메모에서 실적을 추출해 JSON으로만 답하세요. 원 단위 금액은 만원 단위로 변환.\n' +
+          '형식: {"records":[{"name":"이름","revenueManwon":1850,"retailManwon":0,"revisitCust":138,"newCust":42,"totalCust":180,"unitPrice":102778}]}\n\n' + raw,
+          null
+        );
+        if (aiRes.ok) records = parseJsonRecordsFromAiResponse(aiRes.text);
+      }
+
+      if (!records.length) {
+        showToast('텍스트에서 매출 또는 고객수 숫자를 찾지 못했습니다. (예: 매출 1850만원 재방문 138명 신규 42명)', 'error');
+        return;
+      }
+
+      document.getElementById('posTextPasteWrap').classList.add('hidden');
+      applyExtractedPosRecords(records, null, '정산 텍스트');
+    }
+
+    function fillSinglePosRecordIntoForm(rec) {
+      const matched = matchMemberByDetectedName(rec.name);
+      const memSel = document.getElementById('crmMemberSelect');
+      if (matched && memSel && Array.from(memSel.options).some(function(o) { return o.value === matched.id; })) {
+        memSel.value = matched.id;
+        syncInlineUnitPriceInputs();
+      }
+
+      const revisit = Math.max(0, Math.round(rec.revisitCust || 0));
+      const newCust = Math.max(0, Math.round(rec.newCust || 0));
+      const totalCust = (revisit + newCust) > 0 ? (revisit + newCust) : Math.max(0, Math.round(rec.totalCust || 0));
+
+      document.getElementById('crmRevenueInput').value = rec.revenueManwon || 0;
+      document.getElementById('crmRevisitCustInput').value = revisit;
+      document.getElementById('crmNewCustInput').value = newCust;
+      document.getElementById('crmTotalCustInput').value = totalCust;
+      if (rec.unitPrice > 0 && isTopAdminLogged()) {
+        document.getElementById('crmUnitPriceInput').value = rec.unitPrice;
+      }
+
+      const retailIn = document.getElementById('incRetailRevInput');
+      if (retailIn) {
+        retailIn.value = rec.retailManwon > 0 ? rec.retailManwon : '';
+      }
+
+      updateCrmRevenueHelperUi();
+      recalcCrmLive();
+      recalcIncentiveSettlement();
+    }
+
+    function applyExtractedPosRecords(records, thumbUrl, sourceLabel) {
+      if (records.length === 1) {
+        const r = records[0];
+        fillSinglePosRecordIntoForm(r);
+        document.getElementById('posMultiResultWrap').classList.add('hidden');
+        setPosStatusUi(
+          '✅ <strong>[' + escapeHtml(sourceLabel) + '] 3초 자동 입력 완료!</strong><br />' +
+          '매출 <strong>' + formatNumber(r.revenueManwon, 1) + '만원</strong>' +
+          (r.retailManwon > 0 ? (' · 점판 <strong>' + formatNumber(r.retailManwon, 1) + '만원</strong>') : '') +
+          ' · 재방문 <strong>' + r.revisitCust + '명</strong> · 신규 <strong>' + r.newCust + '명</strong> (총 ' + (r.revisitCust + r.newCust || r.totalCust) + '명) → 아래 CRM 폼 및 우측 인센티브 정산기에 반영되었습니다.',
+          thumbUrl,
+          true
+        );
+        showToast('POS 정산 수치가 CRM 입력칸과 인센티브 계산기에 자동 입력되었습니다!', 'success');
+        return;
+      }
+
+      /* 다중 디자이너 정산표인 경우 */
+      detectedMultiPosRecords = records.map(function(r) {
+        const matched = matchMemberByDetectedName(r.name);
+        return Object.assign({}, r, { matchedMember: matched });
+      });
+
+      fillSinglePosRecordIntoForm(detectedMultiPosRecords[0]);
+
+      const ratePct = Number((document.getElementById('incRateInput') || {}).value) || 40;
+      const retailRatePct = Number((document.getElementById('incRetailRateInput') || {}).value) || 10;
+      const matDeductPct = Number((document.getElementById('incMatDeductInput') || {}).value) || 0;
+      const taxMode = (document.getElementById('incTaxModeSelect') || {}).value || 'tax33';
+      const rateMap = loadSavedIncentiveRateMap();
+
+      const tbody = document.getElementById('posMultiResultTbody');
+      let matchedCount = 0;
+      tbody.innerHTML = detectedMultiPosRecords.map(function(item, idx) {
+        if (item.matchedMember) matchedCount++;
+        const mRate = (item.matchedMember && rateMap[item.matchedMember.id] != null) ? Number(rateMap[item.matchedMember.id]) : ratePct;
+        const inc = computeIncentiveBreakdown(item.revenueManwon, item.retailManwon, mRate, retailRatePct, matDeductPct, taxMode);
+        const matchBadge = item.matchedMember
+          ? ('<span class="badge badge-sage">' + escapeHtml(item.matchedMember.branch + ' · ' + item.matchedMember.name) + '</span>')
+          : '<span class="badge badge-champagne-soft">미등록 이름</span>';
+        return '<tr>' +
+          '<td><strong>' + escapeHtml(item.name) + '</strong></td>' +
+          '<td>' + matchBadge + '</td>' +
+          '<td><strong>' + formatNumber(item.revenueManwon, 1) + '만원</strong></td>' +
+          '<td>재방문 ' + item.revisitCust + ' / 신규 ' + item.newCust + '명</td>' +
+          '<td><strong style="color:var(--espresso);">' + formatNumber(inc.finalNetWon) + '원</strong> <span style="font-size:10.5px; color:var(--espresso-muted);">(' + mRate + '%)</span></td>' +
+          '<td><button type="button" class="btn btn-outline btn-sm" style="padding:3px 8px; font-size:11px;" onclick="selectMultiPosRow(' + idx + ')">폼에 채우기</button></td>' +
+        '</tr>';
+      }).join('');
+
+      document.getElementById('posMultiResultTitle').textContent =
+        '📋 총 ' + detectedMultiPosRecords.length + '명 정산 데이터 인식됨 (자동 매칭 ' + matchedCount + '명)';
+      document.getElementById('posMultiResultWrap').classList.remove('hidden');
+
+      setPosStatusUi(
+        '✅ <strong>[' + escapeHtml(sourceLabel) + '] 총 ' + detectedMultiPosRecords.length + '명의 디자이너 정산표를 한 번에 읽었습니다!</strong><br />' +
+        '아래 목록에서 개별 확인하거나 <strong>[⚡ 매칭된 디자이너 전원 CRM 일괄 저장]</strong>을 누르면 한 번에 등록됩니다.',
+        thumbUrl,
+        false
+      );
+      showToast('총 ' + detectedMultiPosRecords.length + '명의 정산 데이터가 자동 추출되었습니다!', 'success');
+    }
+
+    function selectMultiPosRow(idx) {
+      const item = detectedMultiPosRecords[idx];
+      if (!item) return;
+      fillSinglePosRecordIntoForm(item);
+      showToast(item.name + '님의 수치와 예상 인센티브가 입력폼에 채워졌습니다.', 'info');
+    }
+
+    function quickSaveAutoFilledCrm() {
+      const submitBtn = document.getElementById('crmSubmitBtn');
+      if (submitBtn) submitBtn.click();
+    }
+
+    function applyAllMatchedPosRecordsToCrm() {
+      const matchedItems = detectedMultiPosRecords.filter(function(item) { return Boolean(item.matchedMember); });
+      if (!matchedItems.length) {
+        showToast('앱에 등록된 디자이너 이름과 일치하는 항목이 없습니다. 개별 [폼에 채우기] 후 대상 디자이너를 선택해 저장해 주세요.', 'error');
+        return;
+      }
+
+      const recYm = getCrmTargetMonthKey();
+      matchedItems.forEach(function(item) {
+        const member = item.matchedMember;
+        const revenue = Math.max(0, Number(item.revenueManwon) || 0);
+        const revisitCust = Math.max(0, Math.round(item.revisitCust || 0));
+        const newCust = Math.max(0, Math.round(item.newCust || 0));
+        const totalCust = revisitCust + newCust;
+        const unitPrice = item.unitPrice > 0 ? item.unitPrice : resolveEffectiveUnitPrice(member.id, revenue, totalCust, recYm);
+        const target = getMemberTarget(member.id, recYm);
+        const kpi = computeDesignerKpiFromMetrics({
+          revenue: revenue,
+          totalCust: totalCust,
+          newCust: newCust,
+          revisitCust: revisitCust,
+          unitPrice: unitPrice
+        }, target);
+
+        const existingIdx = appState.crmRecords.findIndex(function(r) {
+          return r.memberId === member.id && r.date && r.date.slice(0, 7) === recYm;
+        });
+
+        const recObj = {
+          id: existingIdx >= 0 ? appState.crmRecords[existingIdx].id : ('crm_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6)),
+          memberId: member.id,
+          memberName: member.name,
+          branch: member.branch,
+          date: recYm,
+          revenue: revenue,
+          totalCust: totalCust,
+          newCust: newCust,
+          revisitCust: revisitCust,
+          unitPrice: unitPrice,
+          revisitRate: Number(kpi.revisitRate.toFixed(1)),
+          kpiScore: Number(kpi.totalScore.toFixed(1)),
+          memo: 'POS·엑셀 자동정산 반영' + (item.retailManwon > 0 ? (' (점판 ' + item.retailManwon + '만원)') : '')
+        };
+
+        if (existingIdx >= 0) {
+          appState.crmRecords[existingIdx] = recObj;
+        } else {
+          appState.crmRecords.unshift(recObj);
+        }
+      });
+
+      saveStateEverywhere(true);
+      renderWorkspaceAll();
+      showToast('⚡ 총 ' + matchedItems.length + '명의 ' + formatSelectedMonthLabel(recYm) + ' CRM 실적 및 KPI 점수가 일괄 저장되었습니다!', 'success');
+    }
+
+    function loadSamplePosDemoData() {
+      const memSel = document.getElementById('crmMemberSelect');
+      const curMem = appState.members.find(function(m) { return memSel && m.id === memSel.value; });
+      const sampleRec = [{
+        name: curMem ? curMem.name : '샘플 디자이너',
+        revenueManwon: 2140,
+        retailManwon: 85,
+        revisitCust: 152,
+        newCust: 46,
+        totalCust: 198,
+        unitPrice: 108080
+      }];
+      applyExtractedPosRecords(sampleRec, null, '샘플 POS 정산표');
     }
 
     /* =========================================================================
