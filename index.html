@@ -1519,7 +1519,10 @@
           <button type="button" id="btnOpenQuickSignup" class="btn btn-dark-outline btn-sm hidden" onclick="openQuickMemberModal()">
             + 디자이너 등록
           </button>
-          <!-- DB 연동 버튼은 '관리자(admin)' 모드에서만 노출 -->
+          <!-- DB 연동 및 AI API 키 설정 버튼은 오직 '관리자(admin)' 모드에서만 노출 -->
+          <button type="button" id="btnOpenAiKeyHeader" class="btn btn-dark-outline btn-sm hidden" onclick="openAiKeyModal()">
+            🔑 AI API 키
+          </button>
           <button type="button" id="btnOpenDbHeader" class="btn btn-dark-outline btn-sm hidden" onclick="openDbModal()">
             ☁️ DB 연동
           </button>
@@ -2128,8 +2131,9 @@
                 <span style="font-size:12px; color:var(--champagne-light); font-weight:600;">대상:</span>
                 <select id="aiTargetMemberSelect" style="background:transparent; color:var(--ivory); border:none; outline:none; font-size:13px; font-weight:700; cursor:pointer;" onchange="onAiTargetMemberChange()"></select>
               </div>
-              <button type="button" class="btn btn-champagne btn-sm" onclick="openAiKeyModal()">
-                🔑 AI 엔진 키 연동 (OpenAI / Gemini)
+              <!-- API 키 설정 버튼은 오직 '관리자(admin)' 화면에서만 노출 -->
+              <button type="button" id="btnOpenAiKeyInTab" class="btn btn-champagne btn-sm hidden" onclick="openAiKeyModal()">
+                🔑 AI 엔진 키 설정 (관리자 전용)
               </button>
             </div>
           </div>
@@ -2309,41 +2313,41 @@
   </section>
 
   <!-- =========================================================================
-       모달 0: [🔑 AI 멀티 에이전트 엔진 키 설정] 모달 (OpenAI & Google Gemini 호환)
+       모달 0: 관리자 전용 [🔑 AI 멀티 에이전트 엔진 키 설정] 모달 (타 직급 열람·설정 차단)
        ========================================================================= -->
   <div id="aiKeyConfigModal" class="modal-backdrop hidden no-print">
     <div class="modal-panel modal-sm" style="max-width:540px;">
       <div class="modal-header">
         <div style="display:flex; align-items:center; gap:8px;">
-          <span class="badge badge-champagne">OpenAI · Gemini 호환</span>
-          <h3 style="font-size:16px; font-weight:700;">🔑 AI 멀티 에이전트 엔진 키 연동</h3>
+          <span class="badge badge-champagne">관리자 전용 · 보안</span>
+          <h3 style="font-size:16px; font-weight:700;">🔑 AI 멀티 에이전트 API 키 설정</h3>
         </div>
         <button type="button" style="color:var(--ivory); font-size:20px; padding:2px 6px;" onclick="closeAiKeyModal()">&times;</button>
       </div>
       <div class="modal-body" style="display:flex; flex-direction:column; gap:14px;">
         <div style="background:var(--champagne-bg); border:1px solid rgba(176,137,104,0.4); border-radius:12px; padding:12px 14px; font-size:12.5px; color:var(--espresso); line-height:1.55;">
-          ✨ <strong>OpenAI 키(<code>sk-...</code>)</strong> 또는 <strong>Google Gemini 키(<code>AIza...</code> / <code>AQ....</code>)</strong>를 입력하면 실시간 생성형 AI 에이전트가 더 깊이 있고 창의적인 코칭과 카톡 문구를 작성합니다.<br />
-          <span style="color:var(--espresso-muted); font-size:11.5px;">※ 키를 입력하지 않거나 서버가 혼잡할 때도 유로소 정밀 내장 엔진이 무중단으로 즉시 작동합니다.</span>
+          🔐 <strong>이 화면과 API 키는 오직 [관리자] 화면에서만 보이고 설정할 수 있습니다.</strong><br />
+          대표원장 · 지점원장 · 디자이너 화면에서는 API 키나 설정 버튼이 일절 노출되지 않으며, AI 매출 코칭과 안부 카톡 기능만 안전하게 작동합니다.
         </div>
 
         <div>
           <label class="field-label">API 키 입력 (OpenAI <code>sk-...</code> 또는 Gemini <code>AQ....</code> / <code>AIza...</code>)</label>
-          <input type="password" id="aiApiKeyInput" class="input" placeholder="여기에 API 키를 붙여넣으세요" autocomplete="off" />
+          <input type="password" id="aiApiKeyInput" class="input" placeholder="관리자 전용 API 키 입력" autocomplete="off" />
           <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
             <label style="font-size:12px; color:var(--espresso-muted); display:inline-flex; align-items:center; gap:5px; cursor:pointer;">
-              <input type="checkbox" onchange="document.getElementById('aiApiKeyInput').type = this.checked ? 'text' : 'password'" />
-              입력한 키 글자 보기
+              <input type="checkbox" id="aiShowKeyTextChk" onchange="document.getElementById('aiApiKeyInput').type = this.checked ? 'text' : 'password'" />
+              입력한 키 글자 보기 (관리자 확인용)
             </label>
             <button type="button" class="btn btn-outline btn-sm" style="padding:3px 9px; font-size:11.5px;" onclick="testAiApiKeyConnection()">⚡ 연결 테스트</button>
           </div>
         </div>
 
-        <div id="aiShareAcrossBranchesWrap" class="hidden" style="background:var(--ivory); border:1px solid var(--ivory-border); border-radius:11px; padding:11px 13px;">
+        <div id="aiShareAcrossBranchesWrap" style="background:var(--ivory); border:1px solid var(--ivory-border); border-radius:11px; padding:11px 13px;">
           <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-size:12.5px; color:var(--espresso);">
             <input type="checkbox" id="aiSyncToAllStaffChk" checked style="margin-top:3px;" />
             <span>
-              <strong>👑 전 지점 디자이너 앱에 AI 엔진 자동 공유 (대표원장·관리자 전용)</strong><br />
-              <span style="font-size:11.5px; color:var(--espresso-muted);">체크하면 파주 운정점 · 운정역점 · 마곡발산점 모든 디자이너가 각자 휴대폰에서 별도 키 입력 없이 AI 기능을 바로 사용할 수 있습니다.</span>
+              <strong>☁️ 전 지점 앱 백그라운드 AI 연동 활성화</strong><br />
+              <span style="font-size:11.5px; color:var(--espresso-muted);">체크 시 전 지점 원장·디자이너 기기에서 키 노출 없이 실시간 AI 응답이 작동합니다.</span>
             </span>
           </label>
         </div>
@@ -2351,10 +2355,10 @@
         <div id="aiKeyTestResultBar" class="hidden" style="font-size:12.5px; padding:10px 12px; border-radius:10px; background:var(--ivory); border:1px solid var(--ivory-border);"></div>
       </div>
       <div class="modal-footer" style="justify-content:space-between;">
-        <button type="button" class="btn btn-outline btn-sm" onclick="clearSavedAiApiKey()">키 삭제 (내장 엔진 사용)</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="clearSavedAiApiKey()">키 초기화</button>
         <div style="display:flex; gap:8px;">
           <button type="button" class="btn btn-outline" onclick="closeAiKeyModal()">닫기</button>
-          <button type="button" class="btn btn-espresso" onclick="saveAiApiKeyConfig()">저장 및 연동 적용</button>
+          <button type="button" class="btn btn-espresso" onclick="saveAiApiKeyConfig()">관리자 키 저장</button>
         </div>
       </div>
     </div>
@@ -3490,6 +3494,7 @@ create policy "Allow public read write" on public.yuroso_app_state
     function handleLogout() {
       loggedInSession = null;
       safeStorage.removeItem(STORAGE_SESSION_KEY);
+      if (typeof closeAiKeyModal === 'function') closeAiKeyModal();
       document.getElementById('appWorkspaceView').classList.add('hidden');
       document.getElementById('authGateView').classList.remove('hidden');
       updateLoginMemberCount();
@@ -4281,6 +4286,11 @@ create policy "Allow public read write" on public.yuroso_app_state
       document.getElementById('btnOpenVisibility').classList.toggle('hidden', !topAdmin);
       document.getElementById('btnOpenQuickSignup').classList.toggle('hidden', !topAdmin);
       document.getElementById('btnOpenDbHeader').classList.toggle('hidden', !showAdminDbUi);
+      const aiKeyHdrBtn = document.getElementById('btnOpenAiKeyHeader');
+      if (aiKeyHdrBtn) aiKeyHdrBtn.classList.toggle('hidden', !showAdminDbUi);
+      const aiKeyTabBtn = document.getElementById('btnOpenAiKeyInTab');
+      if (aiKeyTabBtn) aiKeyTabBtn.classList.toggle('hidden', !showAdminDbUi);
+      if (!showAdminDbUi && typeof closeAiKeyModal === 'function') closeAiKeyModal();
       document.getElementById('bannerTargetBtn').classList.toggle('hidden', !topAdmin);
       document.getElementById('branchTabTargetBtn').classList.toggle('hidden', !topAdmin);
 
@@ -7409,9 +7419,10 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function detectAiProviderLabel(apiKey) {
-      if (!apiKey) return '내장 정밀 엔진 가동 중';
-      if (apiKey.indexOf('sk-') === 0) return '⚡ OpenAI 실시간 에이전트 연동됨';
-      return '⚡ Gemini Swarm 실시간 에이전트 연동됨';
+      if (!isAdminViewVisible()) return 'AI 어시스턴트 가동 중';
+      if (!apiKey) return 'API 키 미설정 (내장 엔진)';
+      if (apiKey.indexOf('sk-') === 0) return '⚡ OpenAI API 연동됨';
+      return '⚡ Gemini API 연동됨';
     }
 
     async function callSalonAiAgent(systemPrompt, userPrompt) {
@@ -7513,12 +7524,24 @@ create policy "Allow public read write" on public.yuroso_app_state
       const statusBadge = document.getElementById('aiEngineStatusBadge');
       const monthLbl = document.getElementById('aiPeriodMonthLabel');
       const memSelect = document.getElementById('aiTargetMemberSelect');
-      if (!memSelect) return;
+      const adminOnly = isAdminViewVisible();
+      const hdrKeyBtn = document.getElementById('btnOpenAiKeyHeader');
+      const tabKeyBtn = document.getElementById('btnOpenAiKeyInTab');
 
       const resolvedKey = resolveActiveAiApiKey();
+      if (hdrKeyBtn) {
+        hdrKeyBtn.classList.toggle('hidden', !adminOnly);
+        hdrKeyBtn.textContent = resolvedKey.key ? '🔑 AI 키 연동됨' : '🔑 AI API 키';
+      }
+      if (tabKeyBtn) {
+        tabKeyBtn.classList.toggle('hidden', !adminOnly);
+      }
+
+      if (!memSelect) return;
+
       if (statusBadge) {
         statusBadge.textContent = detectAiProviderLabel(resolvedKey.key);
-        statusBadge.className = resolvedKey.key ? 'badge badge-sage' : 'badge badge-dark';
+        statusBadge.className = (adminOnly && resolvedKey.key) ? 'badge badge-sage' : 'badge badge-dark';
       }
       if (monthLbl) {
         monthLbl.textContent = formatSelectedMonthLabel(selectedPeriodMonth) + ' 기준';
@@ -7788,7 +7811,12 @@ create policy "Allow public read write" on public.yuroso_app_state
       const aiRes = await callSalonAiAgent(sysPrompt, userPrompt);
       if (aiRes.ok && aiRes.text) {
         outEl.value = aiRes.text;
-        showToast('⚡ 실시간 AI 에이전트(' + aiRes.model + ') 맞춤 코칭 리포트가 완성되었습니다!', 'success');
+        showToast(
+          isAdminViewVisible()
+            ? ('⚡ 실시간 AI 에이전트(' + aiRes.model + ') 맞춤 코칭 리포트가 완성되었습니다!')
+            : '✨ 맞춤형 AI 매출 코칭 액션플랜이 완성되었습니다!',
+          'success'
+        );
       } else {
         outEl.value = buildLocalSmartSalesCoachingReport(ctx);
         showToast('✨ 맞춤형 AI 매출 코칭 액션플랜이 생성되었습니다!', 'success');
@@ -8004,7 +8032,12 @@ create policy "Allow public read write" on public.yuroso_app_state
 
       if (parsedVariants) {
         aiKakaoVariants = parsedVariants;
-        showToast('⚡ 실시간 AI(' + aiRes.model + ') 초개인화 안부 카톡 3종이 완성되었습니다!', 'success');
+        showToast(
+          isAdminViewVisible()
+            ? ('⚡ 실시간 AI(' + aiRes.model + ') 초개인화 안부 카톡 3종이 완성되었습니다!')
+            : '💌 초개인화 안부 카톡 3종이 완성되었습니다! 탭을 눌러 비교해 보세요.',
+          'success'
+        );
       } else {
         aiKakaoVariants = buildLocalPersonalizedKakaoVariants(params);
         showToast('💌 초개인화 안부 카톡 3종이 완성되었습니다! 탭을 눌러 비교해 보세요.', 'success');
@@ -8046,16 +8079,21 @@ create policy "Allow public read write" on public.yuroso_app_state
       document.body.removeChild(ta);
     }
 
-    /* ---------- AI 엔진 API 키 설정 모달 ---------- */
+    /* ---------- AI 엔진 API 키 설정 모달 (오직 '관리자(admin)' 화면에서만 열람·설정 가능) ---------- */
     function openAiKeyModal() {
+      if (!isAdminViewVisible()) {
+        showToast('AI API 키 설정 및 열람은 관리자 화면에서만 가능합니다.', 'error');
+        return;
+      }
       const resolved = resolveActiveAiApiKey();
       const inputEl = document.getElementById('aiApiKeyInput');
-      if (inputEl) inputEl.value = resolved.key || '';
-
-      const shareWrap = document.getElementById('aiShareAcrossBranchesWrap');
-      if (shareWrap) {
-        shareWrap.classList.toggle('hidden', !isTopAdminLogged());
+      const showChk = document.getElementById('aiShowKeyTextChk');
+      if (showChk) showChk.checked = false;
+      if (inputEl) {
+        inputEl.type = 'password';
+        inputEl.value = resolved.key || '';
       }
+
       const resBar = document.getElementById('aiKeyTestResultBar');
       if (resBar) resBar.classList.add('hidden');
 
@@ -8063,10 +8101,22 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function closeAiKeyModal() {
-      document.getElementById('aiKeyConfigModal').classList.add('hidden');
+      const modalEl = document.getElementById('aiKeyConfigModal');
+      if (modalEl) modalEl.classList.add('hidden');
+      const inputEl = document.getElementById('aiApiKeyInput');
+      const showChk = document.getElementById('aiShowKeyTextChk');
+      if (showChk) showChk.checked = false;
+      if (inputEl) {
+        inputEl.type = 'password';
+        inputEl.value = '';
+      }
     }
 
     async function testAiApiKeyConnection() {
+      if (!isAdminViewVisible()) {
+        showToast('AI API 키 테스트는 관리자 화면에서만 가능합니다.', 'error');
+        return;
+      }
       const rawKey = String((document.getElementById('aiApiKeyInput') || {}).value || '').trim();
       const resBar = document.getElementById('aiKeyTestResultBar');
       if (!resBar) return;
@@ -8088,13 +8138,17 @@ create policy "Allow public read write" on public.yuroso_app_state
       }
 
       if (testRes.ok) {
-        resBar.innerHTML = '✅ <strong>연결 성공!</strong> (' + escapeHtml(testRes.model) + ') — 응답: "' + escapeHtml(testRes.text.slice(0, 60)) + '"<br />이제 우측 하단 <strong>[저장 및 연동 적용]</strong>을 눌러주세요.';
+        resBar.innerHTML = '✅ <strong>연결 성공!</strong> (' + escapeHtml(testRes.model) + ') — 응답: "' + escapeHtml(testRes.text.slice(0, 60)) + '"<br />이제 우측 하단 <strong>[관리자 키 저장]</strong>을 눌러주세요.';
       } else {
         resBar.innerHTML = '⚠️ 실시간 키 호출이 지연되었거나 키 형식을 확인해 주세요 (' + escapeHtml(testRes.reason) + '). 키 없이도 유로소 정밀 내장 엔진은 항상 정상 작동합니다.';
       }
     }
 
     function saveAiApiKeyConfig() {
+      if (!isAdminViewVisible()) {
+        showToast('AI API 키 저장은 관리자 화면에서만 가능합니다.', 'error');
+        return;
+      }
       const rawKey = String((document.getElementById('aiApiKeyInput') || {}).value || '').trim();
       if (!rawKey) {
         clearSavedAiApiKey();
@@ -8104,15 +8158,15 @@ create policy "Allow public read write" on public.yuroso_app_state
       safeStorage.setItem(LOCAL_AI_KEY_STORAGE, rawKey);
 
       const syncChk = document.getElementById('aiSyncToAllStaffChk');
-      if (isTopAdminLogged() && syncChk && syncChk.checked) {
+      if (syncChk && syncChk.checked) {
         if (!appState.aiSettings) appState.aiSettings = {};
         appState.aiSettings.sharedApiKey = rawKey;
         appState.aiSettings.provider = rawKey.indexOf('sk-') === 0 ? 'openai' : 'gemini';
         appState.aiSettings.updatedAt = getLocalDateParts().ymd;
         saveStateEverywhere(true);
-        showToast('🔑 AI 엔진 키가 저장되었으며 3대 지점 전 디자이너 앱에 실시간 동기화되었습니다!', 'success');
+        showToast('🔑 관리자 API 키가 저장되었으며 전 지점 앱 백그라운드에 안전하게 적용되었습니다.', 'success');
       } else {
-        showToast('🔑 현재 기기에 AI 엔진 키가 연동되었습니다!', 'success');
+        showToast('🔑 현재 관리자 기기에 API 키가 저장되었습니다.', 'success');
       }
 
       closeAiKeyModal();
@@ -8120,16 +8174,18 @@ create policy "Allow public read write" on public.yuroso_app_state
     }
 
     function clearSavedAiApiKey() {
+      if (!isAdminViewVisible()) {
+        showToast('AI API 키 초기화는 관리자 화면에서만 가능합니다.', 'error');
+        return;
+      }
       safeStorage.removeItem(LOCAL_AI_KEY_STORAGE);
-      if (isTopAdminLogged() && appState.aiSettings) {
+      if (appState.aiSettings) {
         appState.aiSettings.sharedApiKey = '';
         saveStateEverywhere(true);
       }
-      const inputEl = document.getElementById('aiApiKeyInput');
-      if (inputEl) inputEl.value = '';
       closeAiKeyModal();
       renderAiStudioPanel();
-      showToast('저장된 외부 API 키를 비우고 유로소 내장 정밀 엔진 모드로 전환했습니다.', 'info');
+      showToast('API 키가 초기화되었습니다.', 'info');
     }
 
     /* =========================================================================
