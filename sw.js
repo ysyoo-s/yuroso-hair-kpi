@@ -1,7 +1,7 @@
 /* =========================================================================
    YUROSO HAIR SALON | 통합 KPI & CRM 모바일 앱 Service Worker (PWA)
    ========================================================================= */
-const CACHE_NAME = 'yuroso-hair-pwa-v15';
+const CACHE_NAME = 'yuroso-hair-pwa-v16';
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
